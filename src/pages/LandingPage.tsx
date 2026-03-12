@@ -119,7 +119,7 @@ const LandingPage = () => {
         <section className="w-full px-5 pb-14">
           <div className="w-full max-w-md mx-auto text-center">
             <div className="glass-card rounded-3xl p-6">
-              <p className="text-lg font-bold text-foreground mb-2">나에게 끌리는 남자는?</p>
+              <p className="text-lg font-bold text-foreground mb-2">나에게 꼬이는 남자는?</p>
               <p className="text-xs text-muted-foreground mb-5">지금 바로 확인해보세요</p>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
