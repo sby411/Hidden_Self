@@ -1,15 +1,16 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { getRandomResult, premiumFeatures } from "@/data/sampleData";
-import { Lock, Share2, RotateCcw, Download, LinkIcon } from "lucide-react";
+import { Lock, Share2, RotateCcw, Download, LinkIcon, Palette, Tag } from "lucide-react";
 import { toast } from "sonner";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
+import { toPng } from "html-to-image";
 
 const ResultPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const id = searchParams.get("id") || "user";
   const result = getRandomResult(id);
-  const resultCardRef = useRef<HTMLDivElement>(null);
+  const shareCardRef = useRef<HTMLDivElement>(null);
 
   const handleCopyLink = async () => {
     try {
@@ -29,20 +30,30 @@ const ResultPage = () => {
           url: window.location.href,
         });
       } catch {
-        // user cancelled
+        // cancelled
       }
     } else {
       handleCopyLink();
     }
   };
 
-  const handleDownload = () => {
-    toast.success("결과 이미지 저장 기능은 곧 제공될 예정이에요 📸");
-  };
-
-  const handleRetry = () => {
-    navigate("/");
-  };
+  const handleDownload = useCallback(async () => {
+    if (!shareCardRef.current) return;
+    try {
+      const dataUrl = await toPng(shareCardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: "#faf9f7",
+      });
+      const link = document.createElement("a");
+      link.download = `추구미-${result.title}.png`;
+      link.href = dataUrl;
+      link.click();
+      toast.success("이미지가 저장되었어요! 📸");
+    } catch {
+      toast.error("이미지 저장에 실패했어요");
+    }
+  }, [result.title]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -59,20 +70,22 @@ const ResultPage = () => {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
         <div className="w-full max-w-md">
 
-          {/* Main Result Card */}
-          <div
-            ref={resultCardRef}
-            className={`rounded-3xl p-7 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30 shadow-sm`}
-          >
+          {/* ========== Main Result Card ========== */}
+          <div className={`rounded-3xl p-7 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30 shadow-sm`}>
             <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium mb-4">
               당신의 추구미
             </p>
-            <div className="text-5xl mb-4">{result.emoji}</div>
-            <h2 className="text-3xl font-bold text-foreground mb-1.5 tracking-tight">
+            <div className="text-5xl mb-3">{result.emoji}</div>
+            <h2 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
               {result.title}
             </h2>
-            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-6">
+            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-2">
               {result.subtitle}
+            </p>
+
+            {/* One-liner */}
+            <p className="text-sm text-foreground/70 mb-6 italic">
+              "{result.oneLiner}"
             </p>
 
             {/* Vibe Code Chips */}
@@ -98,8 +111,9 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* Description Card */}
-          <div className="glass-card rounded-2xl p-5 mb-5">
+          {/* ========== Description Card ========== */}
+          <div className="glass-card rounded-2xl p-5 mb-4">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">상세 분석</h3>
             <p className="text-sm text-foreground/90 leading-[1.8] whitespace-pre-line mb-4">
               {result.description}
             </p>
@@ -109,7 +123,62 @@ const ResultPage = () => {
             </p>
           </div>
 
-          {/* Share & Action Buttons */}
+          {/* ========== Color & Style Cards ========== */}
+          <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="glass-card rounded-2xl p-4">
+              <div className="flex items-center gap-1.5 mb-2.5">
+                <Palette className="w-3.5 h-3.5 text-primary" />
+                <h4 className="text-xs font-semibold text-foreground">어울리는 색감</h4>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {result.colors.map((c) => (
+                  <span key={c} className="text-[11px] bg-accent/80 text-accent-foreground px-2.5 py-1 rounded-full font-medium">
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="glass-card rounded-2xl p-4">
+              <div className="flex items-center gap-1.5 mb-2.5">
+                <Tag className="w-3.5 h-3.5 text-primary" />
+                <h4 className="text-xs font-semibold text-foreground">스타일 키워드</h4>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {result.styleKeywords.map((k) => (
+                  <span key={k} className="text-[11px] bg-chip text-chip-foreground px-2.5 py-1 rounded-full font-medium">
+                    {k}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ========== Share Card (for download) ========== */}
+          <div
+            ref={shareCardRef}
+            className={`rounded-3xl p-6 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30`}
+          >
+            <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium mb-1">
+              AI 인스타 분석
+            </p>
+            <p className="text-[11px] text-muted-foreground mb-4">내 추구미</p>
+            <div className="text-4xl mb-2">{result.emoji}</div>
+            <h3 className="text-2xl font-bold text-foreground mb-3 tracking-tight">
+              {result.title}
+            </h3>
+            <div className="flex justify-center gap-2 mb-4">
+              {result.vibeCodes.map((code) => (
+                <span key={code} className="text-[11px] text-muted-foreground font-medium">
+                  {code}
+                </span>
+              ))}
+            </div>
+            <div className="inline-flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30">
+              <span className="text-xs font-semibold text-foreground">나도 분석하기 →</span>
+            </div>
+          </div>
+
+          {/* ========== Action Buttons ========== */}
           <div className="grid grid-cols-3 gap-2 mb-3">
             <button
               onClick={handleCopyLink}
@@ -134,14 +203,14 @@ const ResultPage = () => {
             </button>
           </div>
           <button
-            onClick={handleRetry}
-            className="w-full h-11 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-8"
+            onClick={() => navigate("/")}
+            className="w-full h-11 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-10"
           >
             <RotateCcw className="w-4 h-4" />
             다시 분석하기
           </button>
 
-          {/* Premium Section */}
+          {/* ========== Premium Section ========== */}
           <div className="mb-5">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center">
@@ -155,22 +224,14 @@ const ResultPage = () => {
                   key={feature.title}
                   className="glass-card rounded-2xl p-4 flex items-center gap-3.5 relative overflow-hidden"
                 >
-                  {/* Blur overlay */}
                   <div className="absolute inset-0 bg-card/40 backdrop-blur-[2px] z-10 rounded-2xl" />
-
                   <div className="w-10 h-10 rounded-xl bg-accent/60 flex items-center justify-center shrink-0 relative z-0">
                     <span className="text-lg">{feature.emoji}</span>
                   </div>
                   <div className="flex-1 min-w-0 relative z-0">
-                    <h4 className="text-sm font-semibold text-foreground">
-                      {feature.title}
-                    </h4>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
-                      {feature.description}
-                    </p>
+                    <h4 className="text-sm font-semibold text-foreground">{feature.title}</h4>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{feature.description}</p>
                   </div>
-
-                  {/* Lock badge */}
                   <div className="absolute top-3 right-3 z-20">
                     <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
                       <Lock className="w-3 h-3 text-muted-foreground" />
