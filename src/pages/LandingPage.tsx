@@ -52,7 +52,7 @@ const LandingPage = () => {
               <br />
               AI가 당신의 인스타 vibe를 분석해
               <br />
-              당신에게 끌리는 남자 유형을 알려드립니다
+              당신에게 꼬이는 남자 유형을 알려드립니다
             </p>
 
             <div className="flex flex-col gap-3 w-full">
