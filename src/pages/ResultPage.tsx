@@ -1,20 +1,28 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { getRandomResult, getAdditionalTypes, getWarningType } from "@/data/sampleData";
-import { Share2, RotateCcw, Download, LinkIcon, AlertTriangle, ThumbsUp, ThumbsDown, Heart } from "lucide-react";
+import { getRandomResult, getVibeAnalysis } from "@/data/sampleData";
+import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useRef, useCallback, useMemo } from "react";
+import { useRef, useCallback } from "react";
 import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
+
+const lockedItems = [
+  "이 남자 유형의 진짜 속마음",
+  "당신에게 빠지는 이유",
+  "연애 시작 패턴",
+  "장점 & 단점 분석",
+  "당신에게 집착할 확률",
+  "추가로 끌리는 남자 유형 3개",
+  "당신이 조심해야 할 남자 유형",
+];
 
 const ResultPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const id = searchParams.get("id") || "user";
   const result = getRandomResult(id);
+  const vibe = getVibeAnalysis(id);
   const shareCardRef = useRef<HTMLDivElement>(null);
-
-  const additionalTypes = useMemo(() => getAdditionalTypes(result.id), [result.id]);
-  const warningType = useMemo(() => getWarningType(result.id), [result.id]);
 
   const handleCopyLink = async () => {
     try {
@@ -29,13 +37,11 @@ const ResultPage = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `나에게 끌리는 남자 유형: ${result.title}`,
-          text: `내 인스타로 분석한 끌리는 남자 유형은 "${result.title}" 이래! 너도 해봐 ✨`,
+          title: `나에게 꼬이는 남자 유형: ${result.title}`,
+          text: `내 인스타로 분석한 꼬이는 남자 유형은 "${result.title}" 이래! 너도 해봐 ✨`,
           url: window.location.href,
         });
-      } catch {
-        // cancelled
-      }
+      } catch { /* cancelled */ }
     } else {
       handleCopyLink();
     }
@@ -50,7 +56,7 @@ const ResultPage = () => {
         backgroundColor: "#faf9f7",
       });
       const link = document.createElement("a");
-      link.download = `끌리는남자유형-${result.title}.png`;
+      link.download = `꼬이는남자유형-${result.title}.png`;
       link.href = dataUrl;
       link.click();
       toast.success("이미지가 저장되었어요! 📸");
@@ -59,6 +65,13 @@ const ResultPage = () => {
     }
   }, [result.title]);
 
+  const vibeCards = [
+    { icon: Camera, label: "사진 분위기", value: vibe.photoMood },
+    { icon: Palette, label: "색감 톤", value: vibe.colorTone },
+    { icon: Waves, label: "인스타 vibe", value: vibe.vibeKeyword },
+    { icon: MessageCircle, label: "캡션 스타일", value: vibe.captionStyle },
+  ];
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -66,7 +79,7 @@ const ResultPage = () => {
         <div className="flex items-center gap-1.5">
           <Heart className="w-4 h-4 text-primary" fill="hsl(340 40% 72%)" />
           <span className="text-sm font-semibold tracking-tight text-foreground/80">
-            끌리는 남자 유형 테스트
+            꼬이는 남자 유형 테스트
           </span>
         </div>
         <span className="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">
@@ -77,30 +90,39 @@ const ResultPage = () => {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
         <div className="w-full max-w-md">
 
-          {/* Title */}
+          {/* Section label */}
           <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium text-center mb-5">
-            당신에게 끌리는 남자 유형
+            당신에게 꼬이는 남자 유형
           </p>
 
           {/* Main Result Card */}
-          <div className={`rounded-3xl p-7 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30 shadow-sm`}>
-            <div className="text-6xl mb-4">{result.emoji}</div>
+          <div className={`rounded-3xl p-8 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30 shadow-sm`}>
+            <div className="text-7xl mb-4">{result.emoji}</div>
             <h2 className="text-2xl font-bold text-foreground mb-1 tracking-tight">
               {result.title}
             </h2>
-            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-4">
+            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-5">
               {result.subtitle}
             </p>
-            <p className="text-sm text-foreground/70 italic mb-0">
-              "{result.oneLiner}"
+            <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
+              {result.description}
             </p>
           </div>
 
-          {/* Description */}
-          <div className="glass-card rounded-2xl p-5 mb-5">
-            <p className="text-sm text-foreground/90 leading-[1.8] whitespace-pre-line">
-              {result.description}
-            </p>
+          {/* Vibe Analysis Cards */}
+          <div className="mb-5">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              🔍 AI가 분석한 당신의 인스타 vibe
+            </h3>
+            <div className="grid grid-cols-2 gap-2.5">
+              {vibeCards.map((card) => (
+                <div key={card.label} className="glass-card rounded-2xl p-4 text-center">
+                  <card.icon className="w-5 h-5 text-primary mx-auto mb-2" />
+                  <p className="text-[10px] text-muted-foreground mb-1">{card.label}</p>
+                  <p className="text-sm font-bold text-foreground">{card.value}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Attraction Stats */}
@@ -121,78 +143,31 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* Pros & Cons */}
-          <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="glass-card rounded-2xl p-4">
-              <div className="flex items-center gap-1.5 mb-3">
-                <ThumbsUp className="w-3.5 h-3.5 text-primary" />
-                <h4 className="text-xs font-semibold text-foreground">장점</h4>
-              </div>
-              <ul className="space-y-1.5">
-                {result.pros.map((p) => (
-                  <li key={p} className="text-[11px] text-foreground/80 flex items-start gap-1.5">
-                    <span className="text-primary mt-0.5">•</span>
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="glass-card rounded-2xl p-4">
-              <div className="flex items-center gap-1.5 mb-3">
-                <ThumbsDown className="w-3.5 h-3.5 text-muted-foreground" />
-                <h4 className="text-xs font-semibold text-foreground">단점</h4>
-              </div>
-              <ul className="space-y-1.5">
-                {result.cons.map((c) => (
-                  <li key={c} className="text-[11px] text-foreground/80 flex items-start gap-1.5">
-                    <span className="text-muted-foreground mt-0.5">•</span>
-                    {c}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Additional Types */}
+          {/* Premium Locked Section */}
           <div className="mb-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-              💕 추가로 끌리는 남자 유형
+              🔒 프리미엄 상세 분석
             </h3>
             <div className="space-y-2.5">
-              {additionalTypes.map((t) => (
-                <div key={t.id} className={`glass-card rounded-2xl p-4 flex items-center gap-3.5 bg-gradient-to-br ${t.gradientClass}`}>
-                  <div className="text-3xl shrink-0">{t.emoji}</div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-foreground">{t.title}</h4>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{t.oneLiner}</p>
-                  </div>
+              {lockedItems.map((item) => (
+                <div
+                  key={item}
+                  className="glass-card rounded-2xl p-4 flex items-center justify-between"
+                >
+                  <span className="text-sm text-foreground/60">{item}</span>
+                  <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
                 </div>
               ))}
             </div>
-          </div>
 
-          {/* Warning Type */}
-          <div className="mb-5">
-            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-              <AlertTriangle className="w-4 h-4 text-destructive" />
-              당신이 조심해야 할 남자 유형
-            </h3>
-            <div className="rounded-2xl p-5 border-2 border-destructive/20 bg-destructive/5">
-              <div className="flex items-center gap-3.5">
-                <div className="text-3xl shrink-0">{warningType.emoji}</div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold text-foreground">{warningType.title}</h4>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">{warningType.oneLiner}</p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {warningType.cons.map((c) => (
-                      <span key={c} className="text-[10px] bg-destructive/10 text-destructive px-2 py-0.5 rounded-full font-medium">
-                        {c}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <button
+              onClick={() =>
+                navigate(`/premium?id=${encodeURIComponent(id)}`)
+              }
+              className="w-full h-12 rounded-xl gradient-premium text-foreground font-semibold text-sm mt-4 shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+            >
+              전체 분석 보기 · 4,900원
+            </button>
           </div>
 
           {/* Share Card (for download) */}
@@ -203,7 +178,7 @@ const ResultPage = () => {
             <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium mb-1">
               내 인스타로 본
             </p>
-            <p className="text-[11px] text-muted-foreground mb-4">나에게 끌리는 남자 유형</p>
+            <p className="text-[11px] text-muted-foreground mb-4">나에게 꼬이는 남자 유형</p>
             <div className="text-5xl mb-3">{result.emoji}</div>
             <h3 className="text-2xl font-bold text-foreground mb-4 tracking-tight">
               {result.title}
@@ -246,7 +221,7 @@ const ResultPage = () => {
           </button>
 
           <p className="text-[11px] text-muted-foreground text-center">
-            © 2026 끌리는 남자 유형 테스트 · 재미로 보는 테스트입니다
+            © 2026 꼬이는 남자 유형 테스트 · 재미로 보는 테스트입니다
           </p>
         </div>
       </main>

@@ -29,7 +29,7 @@ const LandingPage = () => {
         <div className="flex items-center gap-1.5">
           <Heart className="w-4 h-4 text-primary" fill="hsl(340 40% 72%)" />
           <span className="text-sm font-semibold tracking-tight text-foreground/80">
-            끌리는 남자 유형 테스트
+            꼬이는 남자 유형 테스트
           </span>
         </div>
       </header>
@@ -45,14 +45,14 @@ const LandingPage = () => {
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-foreground mb-3">
               내 인스타로 보는
               <br />
-              <span className="gradient-primary bg-clip-text text-transparent">나에게 끌리는 남자 유형</span>
+              <span className="gradient-primary bg-clip-text text-transparent">나에게 꼬이는 남자 유형</span>
             </h1>
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
               아이디만 입력하면
               <br />
               AI가 당신의 인스타 vibe를 분석해
               <br />
-              당신에게 끌리는 남자 유형을 알려드립니다
+              당신에게 꼬이는 남자 유형을 알려드립니다
             </p>
 
             <div className="flex flex-col gap-3 w-full">
@@ -119,7 +119,7 @@ const LandingPage = () => {
         <section className="w-full px-5 pb-14">
           <div className="w-full max-w-md mx-auto text-center">
             <div className="glass-card rounded-3xl p-6">
-              <p className="text-lg font-bold text-foreground mb-2">나에게 끌리는 남자는?</p>
+              <p className="text-lg font-bold text-foreground mb-2">나에게 꼬이는 남자는?</p>
               <p className="text-xs text-muted-foreground mb-5">지금 바로 확인해보세요</p>
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -132,7 +132,7 @@ const LandingPage = () => {
         </section>
 
         <p className="text-[11px] text-muted-foreground pb-6">
-          © 2026 끌리는 남자 유형 테스트 · 재미로 보는 테스트입니다
+          © 2026 꼬이는 남자 유형 테스트 · 재미로 보는 테스트입니다
         </p>
       </main>
     </div>
