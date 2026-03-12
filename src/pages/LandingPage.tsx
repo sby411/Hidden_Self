@@ -132,7 +132,7 @@ const LandingPage = () => {
         </section>
 
         <p className="text-[11px] text-muted-foreground pb-6">
-          © 2026 끌리는 남자 유형 테스트 · 재미로 보는 테스트입니다
+          © 2026 꼬이는 남자 유형 테스트 · 재미로 보는 테스트입니다
         </p>
       </main>
     </div>
