@@ -1,9 +1,10 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { getRandomResult, premiumFeatures } from "@/data/sampleData";
-import { Lock, Share2, RotateCcw, Download, LinkIcon, Palette, Tag } from "lucide-react";
+import { getRandomResult, getAdditionalTypes, getWarningType } from "@/data/sampleData";
+import { Share2, RotateCcw, Download, LinkIcon, AlertTriangle, ThumbsUp, ThumbsDown, Heart } from "lucide-react";
 import { toast } from "sonner";
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useMemo } from "react";
 import { toPng } from "html-to-image";
+import { Progress } from "@/components/ui/progress";
 
 const ResultPage = () => {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,9 @@ const ResultPage = () => {
   const id = searchParams.get("id") || "user";
   const result = getRandomResult(id);
   const shareCardRef = useRef<HTMLDivElement>(null);
+
+  const additionalTypes = useMemo(() => getAdditionalTypes(result.id), [result.id]);
+  const warningType = useMemo(() => getWarningType(result.id), [result.id]);
 
   const handleCopyLink = async () => {
     try {
@@ -25,8 +29,8 @@ const ResultPage = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `나의 추구미: ${result.title}`,
-          text: `AI가 분석한 나의 인스타 추구미는 "${result.title}" 이에요! 당신도 확인해보세요 ✨`,
+          title: `나에게 끌리는 남자 유형: ${result.title}`,
+          text: `내 인스타로 분석한 끌리는 남자 유형은 "${result.title}" 이래! 너도 해봐 ✨`,
           url: window.location.href,
         });
       } catch {
@@ -46,7 +50,7 @@ const ResultPage = () => {
         backgroundColor: "#faf9f7",
       });
       const link = document.createElement("a");
-      link.download = `추구미-${result.title}.png`;
+      link.download = `끌리는남자유형-${result.title}.png`;
       link.href = dataUrl;
       link.click();
       toast.success("이미지가 저장되었어요! 📸");
@@ -59,9 +63,12 @@ const ResultPage = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="px-5 py-4 flex items-center justify-between border-b border-border/50">
-        <span className="text-sm font-semibold tracking-tight text-foreground/80">
-          AI 인스타 분석
-        </span>
+        <div className="flex items-center gap-1.5">
+          <Heart className="w-4 h-4 text-primary" fill="hsl(340 40% 72%)" />
+          <span className="text-sm font-semibold tracking-tight text-foreground/80">
+            끌리는 남자 유형 테스트
+          </span>
+        </div>
         <span className="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">
           @{id}
         </span>
@@ -70,115 +77,143 @@ const ResultPage = () => {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
         <div className="w-full max-w-md">
 
-          {/* ========== Main Result Card ========== */}
+          {/* Title */}
+          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium text-center mb-5">
+            당신에게 끌리는 남자 유형
+          </p>
+
+          {/* Main Result Card */}
           <div className={`rounded-3xl p-7 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30 shadow-sm`}>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium mb-4">
-              당신의 추구미
-            </p>
-            <div className="text-5xl mb-3">{result.emoji}</div>
-            <h2 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
+            <div className="text-6xl mb-4">{result.emoji}</div>
+            <h2 className="text-2xl font-bold text-foreground mb-1 tracking-tight">
               {result.title}
             </h2>
-            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-2">
+            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-4">
               {result.subtitle}
             </p>
-
-            {/* One-liner */}
-            <p className="text-sm text-foreground/70 mb-6 italic">
+            <p className="text-sm text-foreground/70 italic mb-0">
               "{result.oneLiner}"
             </p>
+          </div>
 
-            {/* Vibe Code Chips */}
-            <div className="flex flex-wrap justify-center gap-2 mb-6">
-              {result.vibeCodes.map((code) => (
-                <span
-                  key={code}
-                  className="px-4 py-2 rounded-full bg-card/70 backdrop-blur-sm text-chip-foreground text-xs font-semibold border border-border/40 shadow-sm"
-                >
-                  {code}
-                </span>
-              ))}
-            </div>
+          {/* Description */}
+          <div className="glass-card rounded-2xl p-5 mb-5">
+            <p className="text-sm text-foreground/90 leading-[1.8] whitespace-pre-line">
+              {result.description}
+            </p>
+          </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-2">
-              {result.stats.map((stat) => (
-                <div key={stat.label} className="bg-card/60 backdrop-blur-sm rounded-2xl py-3 px-2 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-0.5">{stat.label}</p>
-                  <p className="text-sm font-bold text-foreground">{stat.value}</p>
+          {/* Attraction Stats */}
+          <div className="glass-card rounded-2xl p-5 mb-5">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+              💓 매력 지표
+            </h3>
+            <div className="space-y-3.5">
+              {result.attractionStats.map((stat) => (
+                <div key={stat.label}>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs font-medium text-foreground">{stat.label}</span>
+                    <span className="text-xs font-bold text-primary">{stat.value}%</span>
+                  </div>
+                  <Progress value={stat.value} className="h-2.5 rounded-full" />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ========== Description Card ========== */}
-          <div className="glass-card rounded-2xl p-5 mb-4">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">상세 분석</h3>
-            <p className="text-sm text-foreground/90 leading-[1.8] whitespace-pre-line mb-4">
-              {result.description}
-            </p>
-            <div className="w-10 h-px bg-border mx-auto mb-4" />
-            <p className="text-[13px] text-muted-foreground leading-[1.9]">
-              {result.detailParagraph}
-            </p>
-          </div>
-
-          {/* ========== Color & Style Cards ========== */}
+          {/* Pros & Cons */}
           <div className="grid grid-cols-2 gap-3 mb-5">
             <div className="glass-card rounded-2xl p-4">
-              <div className="flex items-center gap-1.5 mb-2.5">
-                <Palette className="w-3.5 h-3.5 text-primary" />
-                <h4 className="text-xs font-semibold text-foreground">어울리는 색감</h4>
+              <div className="flex items-center gap-1.5 mb-3">
+                <ThumbsUp className="w-3.5 h-3.5 text-primary" />
+                <h4 className="text-xs font-semibold text-foreground">장점</h4>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {result.colors.map((c) => (
-                  <span key={c} className="text-[11px] bg-accent/80 text-accent-foreground px-2.5 py-1 rounded-full font-medium">
-                    {c}
-                  </span>
+              <ul className="space-y-1.5">
+                {result.pros.map((p) => (
+                  <li key={p} className="text-[11px] text-foreground/80 flex items-start gap-1.5">
+                    <span className="text-primary mt-0.5">•</span>
+                    {p}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
             <div className="glass-card rounded-2xl p-4">
-              <div className="flex items-center gap-1.5 mb-2.5">
-                <Tag className="w-3.5 h-3.5 text-primary" />
-                <h4 className="text-xs font-semibold text-foreground">스타일 키워드</h4>
+              <div className="flex items-center gap-1.5 mb-3">
+                <ThumbsDown className="w-3.5 h-3.5 text-muted-foreground" />
+                <h4 className="text-xs font-semibold text-foreground">단점</h4>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {result.styleKeywords.map((k) => (
-                  <span key={k} className="text-[11px] bg-chip text-chip-foreground px-2.5 py-1 rounded-full font-medium">
-                    {k}
-                  </span>
+              <ul className="space-y-1.5">
+                {result.cons.map((c) => (
+                  <li key={c} className="text-[11px] text-foreground/80 flex items-start gap-1.5">
+                    <span className="text-muted-foreground mt-0.5">•</span>
+                    {c}
+                  </li>
                 ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Additional Types */}
+          <div className="mb-5">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              💕 추가로 끌리는 남자 유형
+            </h3>
+            <div className="space-y-2.5">
+              {additionalTypes.map((t) => (
+                <div key={t.id} className={`glass-card rounded-2xl p-4 flex items-center gap-3.5 bg-gradient-to-br ${t.gradientClass}`}>
+                  <div className="text-3xl shrink-0">{t.emoji}</div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-semibold text-foreground">{t.title}</h4>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{t.oneLiner}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Warning Type */}
+          <div className="mb-5">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-destructive" />
+              당신이 조심해야 할 남자 유형
+            </h3>
+            <div className="rounded-2xl p-5 border-2 border-destructive/20 bg-destructive/5">
+              <div className="flex items-center gap-3.5">
+                <div className="text-3xl shrink-0">{warningType.emoji}</div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-semibold text-foreground">{warningType.title}</h4>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">{warningType.oneLiner}</p>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {warningType.cons.map((c) => (
+                      <span key={c} className="text-[10px] bg-destructive/10 text-destructive px-2 py-0.5 rounded-full font-medium">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ========== Share Card (for download) ========== */}
+          {/* Share Card (for download) */}
           <div
             ref={shareCardRef}
             className={`rounded-3xl p-6 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30`}
           >
             <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium mb-1">
-              AI 인스타 분석
+              내 인스타로 본
             </p>
-            <p className="text-[11px] text-muted-foreground mb-4">내 추구미</p>
-            <div className="text-4xl mb-2">{result.emoji}</div>
-            <h3 className="text-2xl font-bold text-foreground mb-3 tracking-tight">
+            <p className="text-[11px] text-muted-foreground mb-4">나에게 끌리는 남자 유형</p>
+            <div className="text-5xl mb-3">{result.emoji}</div>
+            <h3 className="text-2xl font-bold text-foreground mb-4 tracking-tight">
               {result.title}
             </h3>
-            <div className="flex justify-center gap-2 mb-4">
-              {result.vibeCodes.map((code) => (
-                <span key={code} className="text-[11px] text-muted-foreground font-medium">
-                  {code}
-                </span>
-              ))}
-            </div>
             <div className="inline-flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30">
-              <span className="text-xs font-semibold text-foreground">나도 분석하기 →</span>
+              <span className="text-xs font-semibold text-foreground">나도 테스트하기 →</span>
             </div>
           </div>
 
-          {/* ========== Action Buttons ========== */}
+          {/* Action Buttons */}
           <div className="grid grid-cols-3 gap-2 mb-3">
             <button
               onClick={handleCopyLink}
@@ -207,51 +242,11 @@ const ResultPage = () => {
             className="w-full h-11 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-10"
           >
             <RotateCcw className="w-4 h-4" />
-            다시 분석하기
+            다시 테스트하기
           </button>
-
-          {/* ========== Premium Section ========== */}
-          <div className="mb-5">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center">
-                <Lock className="w-3 h-3 text-accent-foreground" />
-              </div>
-              <h3 className="text-sm font-bold text-foreground">프리미엄 상세 분석</h3>
-            </div>
-            <div className="space-y-2.5">
-              {premiumFeatures.map((feature) => (
-                <div
-                  key={feature.title}
-                  className="glass-card rounded-2xl p-4 flex items-center gap-3.5 relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-card/40 backdrop-blur-[2px] z-10 rounded-2xl" />
-                  <div className="w-10 h-10 rounded-xl bg-accent/60 flex items-center justify-center shrink-0 relative z-0">
-                    <span className="text-lg">{feature.emoji}</span>
-                  </div>
-                  <div className="flex-1 min-w-0 relative z-0">
-                    <h4 className="text-sm font-semibold text-foreground">{feature.title}</h4>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">{feature.description}</p>
-                  </div>
-                  <div className="absolute top-3 right-3 z-20">
-                    <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
-                      <Lock className="w-3 h-3 text-muted-foreground" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Premium CTA */}
-          <button className="w-full h-14 rounded-2xl gradient-premium text-premium-foreground font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] mb-2">
-            전체 프리미엄 리포트 보기 · ₩4,900
-          </button>
-          <p className="text-[10px] text-muted-foreground text-center mb-8">
-            결제 후 즉시 전체 결과를 확인할 수 있어요
-          </p>
 
           <p className="text-[11px] text-muted-foreground text-center">
-            © 2026 AI 인스타 분석 · 재미로 보는 테스트입니다
+            © 2026 끌리는 남자 유형 테스트 · 재미로 보는 테스트입니다
           </p>
         </div>
       </main>
