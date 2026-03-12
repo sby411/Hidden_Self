@@ -4,8 +4,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 const loadingMessages = [
   "사진 스타일 분석 중...",
   "색감 패턴 분석 중...",
-  "캡션 언어 분석 중...",
-  "당신의 vibe를 정리하는 중...",
+  "캡션 감성 분석 중...",
+  "당신의 인스타 vibe 정리 중...",
+  "당신에게 끌리는 남자 유형 계산 중...",
 ];
 
 const LoadingPage = () => {
@@ -20,7 +21,7 @@ const LoadingPage = () => {
         if (prev < loadingMessages.length - 1) return prev + 1;
         return prev;
       });
-    }, 700);
+    }, 550);
 
     const timer = setTimeout(() => {
       navigate(`/result?id=${encodeURIComponent(id)}`, { replace: true });
@@ -34,13 +35,11 @@ const LoadingPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-5">
-      {/* Spinner */}
       <div className="relative w-16 h-16 mb-8">
         <div className="absolute inset-0 rounded-full border-2 border-border" />
         <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
       </div>
 
-      {/* Messages */}
       <div className="space-y-2 text-center">
         {loadingMessages.map((msg, i) => (
           <p
