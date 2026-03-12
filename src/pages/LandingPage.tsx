@@ -29,7 +29,7 @@ const LandingPage = () => {
         <div className="flex items-center gap-1.5">
           <Heart className="w-4 h-4 text-primary" fill="hsl(340 40% 72%)" />
           <span className="text-sm font-semibold tracking-tight text-foreground/80">
-            끌리는 남자 유형 테스트
+            꼬이는 남자 유형 테스트
           </span>
         </div>
       </header>
