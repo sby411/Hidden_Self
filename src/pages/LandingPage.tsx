@@ -45,7 +45,7 @@ const LandingPage = () => {
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight text-foreground mb-3">
               내 인스타로 보는
               <br />
-              <span className="gradient-primary bg-clip-text text-transparent">나에게 끌리는 남자 유형</span>
+              <span className="gradient-primary bg-clip-text text-transparent">나에게 꼬이는 남자 유형</span>
             </h1>
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
               아이디만 입력하면
