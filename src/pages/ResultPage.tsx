@@ -80,12 +80,14 @@ const ResultPage = () => {
   };
 
   const handleDownload = useCallback(async () => {
-    if (!shareCardRef.current) return;
+    if (!basicReportRef.current) return;
     try {
-      const dataUrl = await toPng(shareCardRef.current, {
+      toast.info("리포트 이미지를 생성 중이에요...");
+      const dataUrl = await toPng(basicReportRef.current, {
         cacheBust: true,
         pixelRatio: 2,
         backgroundColor: "#faf9f7",
+        style: { padding: "20px" },
       });
       const link = document.createElement("a");
       link.download = `꼬이는남자유형-${result.title}.png`;
