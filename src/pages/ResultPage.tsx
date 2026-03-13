@@ -33,6 +33,7 @@ const ResultPage = () => {
   const confidence = getAiConfidence(id);
   const shareCardRef = useRef<HTMLDivElement>(null);
   const premiumRef = useRef<HTMLDivElement>(null);
+  const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
 
   const relationshipScore = useMemo(() => {
@@ -86,6 +87,26 @@ const ResultPage = () => {
       toast.success("이미지가 저장되었어요! 📸");
     } catch {
       toast.error("이미지 저장에 실패했어요");
+    }
+  }, [result.title]);
+
+  const handleDownloadPremiumReport = useCallback(async () => {
+    if (!premiumReportRef.current) return;
+    try {
+      toast.info("리포트 이미지를 생성 중이에요...");
+      const dataUrl = await toPng(premiumReportRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: "#faf9f7",
+        style: { padding: "20px" },
+      });
+      const link = document.createElement("a");
+      link.download = `프리미엄리포트-${result.title}.png`;
+      link.href = dataUrl;
+      link.click();
+      toast.success("프리미엄 리포트가 저장되었어요! 📸");
+    } catch {
+      toast.error("리포트 저장에 실패했어요");
     }
   }, [result.title]);
 
@@ -471,6 +492,7 @@ const ResultPage = () => {
           ) : (
             /* ====== PREMIUM CONTENT (Unlocked) ====== */
             <div ref={premiumRef}>
+              <div ref={premiumReportRef}>
               {/* Premium Chapter Header */}
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center text-xs font-black text-white">P</div>
@@ -655,6 +677,7 @@ const ResultPage = () => {
                 <Crown className="w-3 h-3 text-[hsl(45,60%,60%)]" />
                 <div className="h-px flex-1 bg-[hsl(45,60%,80%)]/50" />
               </div>
+              </div> {/* end premiumReportRef */}
             </div>
           )}
 
@@ -679,13 +702,13 @@ const ResultPage = () => {
             <h3 className="text-2xl font-bold text-foreground mb-4 tracking-tight">
               {result.title}
             </h3>
-            <div className="inline-flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30">
-              <span className="text-xs font-semibold text-foreground">나도 테스트하기 →</span>
+            <div onClick={() => navigate("/")} className="inline-flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30 cursor-pointer hover:bg-card/80 transition-colors">
+              <span className="text-xs font-semibold text-foreground">다시 테스트하기 →</span>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className={`grid ${premiumUnlocked ? "grid-cols-2" : "grid-cols-3"} gap-2 mb-3`}>
             <button
               onClick={handleCopyLink}
               className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform"
@@ -700,14 +723,25 @@ const ResultPage = () => {
               <Share2 className="w-4 h-4" />
               SNS 공유
             </button>
+            {!premiumUnlocked && (
+              <button
+                onClick={handleDownload}
+                className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform"
+              >
+                <Download className="w-4 h-4" />
+                이미지 저장
+              </button>
+            )}
+          </div>
+          {premiumUnlocked && (
             <button
-              onClick={handleDownload}
-              className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform"
+              onClick={handleDownloadPremiumReport}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-3 shadow-md"
             >
               <Download className="w-4 h-4" />
-              이미지 저장
+              프리미엄 리포트 이미지 저장
             </button>
-          </div>
+          )}
           <button
             onClick={() => navigate("/")}
             className="w-full h-11 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-10"
