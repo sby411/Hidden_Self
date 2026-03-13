@@ -9,6 +9,8 @@ export interface MaleType {
   pros: string[];
   cons: string[];
   attractionStats: { label: string; value: number }[];
+  aiSummary: string;
+  fallReasons: string[];
   // Premium fields
   whyAttracted: string;
   datingPattern: string;
