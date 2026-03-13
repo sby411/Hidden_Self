@@ -27,7 +27,7 @@ import {
   Eye,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useRef, useCallback, useMemo } from "react";
+import React, { useRef, useCallback, useMemo } from "react";
 import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 
