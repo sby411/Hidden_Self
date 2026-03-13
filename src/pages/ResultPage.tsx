@@ -141,14 +141,16 @@ const ResultPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="px-5 py-4 flex items-center justify-between border-b border-border/50">
-        <div className="flex items-center gap-1.5">
-          <Heart className="w-4 h-4 text-primary" fill="hsl(340 40% 72%)" />
-          <span className="text-sm font-semibold tracking-tight text-foreground/80">
-            꼬이는 남자 유형 테스트
+      <header className="px-5 py-4 flex items-center justify-between border-b border-border/50 backdrop-blur-sm bg-card/60">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-sm font-bold tracking-tight text-foreground">
+            InstAI
           </span>
         </div>
-        <span className="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">
+        <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full">
           @{id}
         </span>
       </header>
