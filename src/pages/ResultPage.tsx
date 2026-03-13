@@ -159,10 +159,16 @@ const ResultPage = () => {
         <div className="w-full max-w-md">
 
           <div ref={basicReportRef}>
+          {/* Report Header */}
+          <div className="text-center mb-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-ai-highlight mb-1">Instagram Attraction Report</p>
+            <div className="h-px w-12 mx-auto bg-ai-highlight/30" />
+          </div>
+
           {/* ====== CHAPTER 1: 인스타 프로필 분석 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-black text-primary">01</div>
+              <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">01</div>
               <div>
                 <h2 className="text-sm font-bold text-foreground tracking-tight">인스타그램 프로필 분석</h2>
                 <p className="text-[10px] text-muted-foreground">@{id}의 계정을 AI가 스캔했습니다</p>
