@@ -782,7 +782,7 @@ const ResultPage = () => {
           </button>
 
           <p className="text-[11px] text-muted-foreground text-center">
-            © 2026 꼬이는 남자 유형 테스트 · 재미로 보는 테스트입니다
+            © 2026 InstAI · 재미로 보는 테스트입니다
           </p>
         </div>
       </main>
