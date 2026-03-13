@@ -1,6 +1,7 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { getRandomResult, getVibeAnalysis, getAdditionalTypes, getWarningType, getUserVibeType, getAiConfidence, getInstaProfile } from "@/data/sampleData";
 import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap } from "lucide-react";
+import PremiumSections from "@/components/PremiumSections";
 import { toast } from "sonner";
 import { useRef, useCallback, useMemo, useState } from "react";
 import { toPng } from "html-to-image";
@@ -8,11 +9,15 @@ import { Progress } from "@/components/ui/progress";
 
 const lockedItems = [
   "이 남자가 당신에게 빠지는 이유",
-  "연애 시작 패턴",
-  "당신에게 집착할 확률",
-  "연애 지속 가능성",
-  "숨겨진 매력 분석",
-  "추가 남자 유형 분석",
+  "연애 진행 시뮬레이션",
+  "관심 행동 패턴 분석",
+  "연애 궁합 분석",
+  "연애 성공 전략",
+  "연애 리스크 분석",
+  "끌리는 남자 유형 TOP5",
+  "인스타 vibe 매력 분석",
+  "연애 시나리오 예측",
+  "위험 유형 분석",
 ];
 
 const ResultPage = () => {
@@ -638,6 +643,9 @@ const ResultPage = () => {
                   ))}
                 </div>
               </div>
+
+              {/* ====== NEW PREMIUM DEEP SECTIONS ====== */}
+              <PremiumSections id={id} resultTitle={result.title} />
 
               {/* End of Premium */}
               <div className="flex items-center justify-center gap-2 mb-6 text-[10px] text-muted-foreground">
