@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, Heart, Camera, Palette, MessageCircle, Smile, Waves } from "lucide-react";
+import { Sparkles, Heart, Camera, Palette, MessageCircle, Smile, Waves, Users, UserPlus, Clock, Activity, Hash, Image, Eye, BarChart3 } from "lucide-react";
 import { maleTypes } from "@/data/sampleData";
 
 const analysisElements = [
-  { icon: Waves, label: "인스타 vibe", desc: "전체 피드 분위기 분석" },
-  { icon: Camera, label: "사진 스타일", desc: "이미지 구도와 무드" },
-  { icon: Palette, label: "색감 분위기", desc: "컬러 팔레트 분석" },
-  { icon: MessageCircle, label: "캡션 감성", desc: "글쓰기 스타일 분석" },
-  { icon: Smile, label: "전체 이미지 톤", desc: "종합적인 톤 & 매너" },
+  { icon: Camera, label: "사진 스타일", desc: "이미지 구도·필터·무드 분석" },
+  { icon: Palette, label: "색감 팔레트", desc: "피드 전체 컬러톤 추출" },
+  { icon: Waves, label: "인스타 vibe", desc: "전체 피드 분위기 도출" },
+  { icon: MessageCircle, label: "캡션 감성", desc: "글쓰기 스타일·어조 분석" },
+  { icon: Users, label: "팔로워 구성", desc: "팔로워 성별·연령대 비율" },
+  { icon: UserPlus, label: "팔로잉 관심사", desc: "팔로잉 계정 카테고리 분석" },
+  { icon: Clock, label: "활동 시간대", desc: "업로드·접속 시간 패턴" },
+  { icon: Activity, label: "참여율 분석", desc: "좋아요·댓글 인게이지먼트" },
+  { icon: Image, label: "게시물 빈도", desc: "업로드 주기·패턴 분석" },
+  { icon: Hash, label: "해시태그 분석", desc: "자주 사용하는 키워드 추출" },
+  { icon: Eye, label: "스토리 패턴", desc: "스토리 사용 빈도·스타일" },
+  { icon: BarChart3, label: "종합 매력 지수", desc: "12개 항목 종합 점수 산출" },
 ];
 
 const previewTypes = maleTypes.slice(0, 6);
@@ -79,7 +86,7 @@ const LandingPage = () => {
         <section className="w-full px-5 pb-10">
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-lg font-bold text-foreground mb-1 text-center">이 테스트가 분석하는 요소</h2>
-            <p className="text-xs text-muted-foreground text-center mb-5">AI가 당신의 인스타를 다각도로 분석합니다</p>
+            <p className="text-xs text-muted-foreground text-center mb-5">AI가 12개 항목을 다각도로 정밀 분석합니다</p>
             <div className="grid grid-cols-2 gap-2.5">
               {analysisElements.map((el) => (
                 <div key={el.label} className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
