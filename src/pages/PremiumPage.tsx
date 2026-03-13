@@ -4,6 +4,8 @@ import {
   getAdditionalTypes,
   getWarningType,
   getAiConfidence,
+  getUserVibeType,
+  getVibeAnalysis,
 } from "@/data/sampleData";
 import {
   Share2,
@@ -15,6 +17,14 @@ import {
   ThumbsDown,
   Heart,
   ShieldCheck,
+  ArrowLeft,
+  Crown,
+  Sparkles,
+  TrendingUp,
+  HeartHandshake,
+  Flame,
+  Clock,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRef, useCallback, useMemo } from "react";
@@ -26,10 +36,19 @@ const PremiumPage = () => {
   const navigate = useNavigate();
   const id = searchParams.get("id") || "user";
   const result = getRandomResult(id);
+  const userVibe = getUserVibeType(id);
+  const vibe = getVibeAnalysis(id);
   const additionalTypes = useMemo(() => getAdditionalTypes(result.id), [result.id]);
   const warningType = useMemo(() => getWarningType(result.id), [result.id]);
   const confidence = getAiConfidence(id);
   const shareCardRef = useRef<HTMLDivElement>(null);
+
+  // Generate a deterministic "relationship duration" score
+  const relationshipScore = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h * 17 + id.charCodeAt(i)) % 41;
+    return 38 + (Math.abs(h) % 41); // 38~78
+  }, [id]);
 
   const handleCopyLink = async () => {
     try {
@@ -63,7 +82,7 @@ const PremiumPage = () => {
         backgroundColor: "#faf9f7",
       });
       const link = document.createElement("a");
-      link.download = `꼬이는남자유형-${result.title}.png`;
+      link.download = `꼬이는남자유형-프리미엄-${result.title}.png`;
       link.href = dataUrl;
       link.click();
       toast.success("이미지가 저장되었어요! 📸");
@@ -76,12 +95,13 @@ const PremiumPage = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="px-5 py-4 flex items-center justify-between border-b border-border/50">
-        <div className="flex items-center gap-1.5">
-          <Heart className="w-4 h-4 text-primary" fill="hsl(340 40% 72%)" />
-          <span className="text-sm font-semibold tracking-tight text-foreground/80">
-            프리미엄 분석 결과
-          </span>
-        </div>
+        <button
+          onClick={() => navigate(`/result?id=${encodeURIComponent(id)}`)}
+          className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          무료 결과로 돌아가기
+        </button>
         <span className="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">
           @{id}
         </span>
@@ -89,6 +109,14 @@ const PremiumPage = () => {
 
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
         <div className="w-full max-w-md">
+
+          {/* Premium Badge */}
+          <div className="flex justify-center mb-5">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white px-5 py-2.5 rounded-full shadow-lg">
+              <Crown className="w-4 h-4" />
+              <span className="text-sm font-bold tracking-wide">Premium Analysis</span>
+            </div>
+          </div>
 
           {/* AI Confidence */}
           <div className="glass-card rounded-2xl p-4 mb-5 flex items-center gap-3">
@@ -119,20 +147,27 @@ const PremiumPage = () => {
             </p>
           </div>
 
-          {/* Why Attracted */}
+          {/* Fall Reasons */}
           <div className="glass-card rounded-2xl p-5 mb-5">
-            <h3 className="text-sm font-bold text-foreground mb-3">
-              💫 왜 이 남자가 당신에게 끌리는지
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              <HeartHandshake className="w-4 h-4 text-primary" />
+              이 남자가 당신에게 빠지는 이유
             </h3>
-            <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
-              {result.whyAttracted}
-            </p>
+            <ul className="space-y-2.5">
+              {result.fallReasons.map((reason) => (
+                <li key={reason} className="text-sm text-foreground/80 flex items-start gap-2">
+                  <span className="text-primary mt-0.5 shrink-0">•</span>
+                  {reason}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Dating Pattern */}
           <div className="glass-card rounded-2xl p-5 mb-5">
-            <h3 className="text-sm font-bold text-foreground mb-3">
-              💕 이 남자의 연애 패턴
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-primary" />
+              연애 시작 패턴
             </h3>
             <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
               {result.datingPattern}
@@ -141,14 +176,64 @@ const PremiumPage = () => {
 
           {/* Obsession Rate */}
           <div className="glass-card rounded-2xl p-5 mb-5">
-            <h3 className="text-sm font-bold text-foreground mb-3">
-              🔥 당신에게 집착할 확률
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              <Flame className="w-4 h-4 text-primary" />
+              당신에게 집착할 확률
             </h3>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-2">
               <div className="flex-1">
-                <Progress value={result.obsessionRate} className="h-3 rounded-full" />
+                <Progress value={result.obsessionRate} className="h-3.5 rounded-full" />
               </div>
-              <span className="text-lg font-bold text-primary">{result.obsessionRate}%</span>
+              <span className="text-2xl font-bold text-primary">{result.obsessionRate}%</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              {result.obsessionRate >= 80
+                ? "이 유형은 한번 빠지면 강하게 집착하는 경향이 있습니다. 당신에 대한 관심이 빠르게 깊어질 수 있어요."
+                : result.obsessionRate >= 60
+                ? "적당한 수준의 집착을 보이며, 관심은 있지만 적절한 거리를 유지하려 합니다."
+                : "이 유형은 자유를 중시하여 과도한 집착은 보이지 않지만, 관심이 있을 때는 확실하게 표현합니다."}
+            </p>
+          </div>
+
+          {/* Relationship Duration */}
+          <div className="glass-card rounded-2xl p-5 mb-5">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              <TrendingUp className="w-4 h-4 text-primary" />
+              연애 지속 가능성
+            </h3>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex-1">
+                <Progress value={relationshipScore} className="h-3.5 rounded-full" />
+              </div>
+              <span className="text-2xl font-bold text-primary">{relationshipScore}%</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              {relationshipScore >= 65
+                ? "이 유형과의 관계는 안정적으로 유지될 가능성이 높습니다. 서로의 가치관이 맞을수록 장기적인 관계로 발전할 수 있어요."
+                : relationshipScore >= 50
+                ? "초반 매력은 강하지만 장기적 안정성은 노력이 필요합니다. 서로의 차이를 이해하려는 노력이 중요해요."
+                : "이 유형과의 관계는 초반 매력은 강하지만 장기 안정성은 낮은 경우가 많습니다. 감정적 롤러코스터에 주의가 필요해요."}
+            </p>
+          </div>
+
+          {/* Hidden Charm Analysis */}
+          <div className="glass-card rounded-2xl p-5 mb-5">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              <Eye className="w-4 h-4 text-primary" />
+              숨겨진 매력 분석
+            </h3>
+            <p className="text-sm text-foreground/80 leading-[1.9]">
+              당신의 인스타 vibe에는 <strong className="text-foreground">{vibe.photoMood}</strong> 분위기와{" "}
+              <strong className="text-foreground">{vibe.vibeKeyword}</strong> 매력이 함께 있습니다.
+              이 조합은 <strong className="text-foreground">{result.title}</strong> 타입의 남자들에게
+              특히 매력적으로 작용합니다.
+            </p>
+            <div className="mt-3 p-3 rounded-xl bg-primary/5 border border-primary/10">
+              <p className="text-[11px] text-foreground/70 leading-relaxed">
+                💡 <strong className="text-foreground">AI 인사이트:</strong> {userVibe.title}인 당신은
+                겉으로 드러나는 매력 외에도 내면에서 풍기는 안정감과 깊이가 있어요.
+                이 숨겨진 매력이 상대방이 점점 더 빠져드는 핵심 원인입니다.
+              </p>
             </div>
           </div>
 
@@ -187,7 +272,8 @@ const PremiumPage = () => {
           {/* Additional Types */}
           <div className="mb-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-              💕 추가로 끌리는 남자 유형
+              <Sparkles className="w-4 h-4 text-primary" />
+              추가 남자 유형 분석
             </h3>
             <div className="space-y-2.5">
               {additionalTypes.map((t) => (
@@ -241,6 +327,10 @@ const PremiumPage = () => {
             ref={shareCardRef}
             className={`rounded-3xl p-6 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30`}
           >
+            <div className="inline-flex items-center gap-1.5 bg-[hsl(45,80%,60%)]/20 rounded-full px-3 py-1 mb-3">
+              <Crown className="w-3 h-3 text-[hsl(45,80%,45%)]" />
+              <span className="text-[10px] font-bold text-[hsl(45,80%,35%)]">PREMIUM</span>
+            </div>
             <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium mb-1">
               내 인스타로 본
             </p>
