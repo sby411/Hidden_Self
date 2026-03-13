@@ -60,11 +60,17 @@ const PremiumPage = () => {
   };
 
   const isSharing = React.useRef(false);
+  const isMobile = React.useMemo(() => {
+    if (typeof navigator === 'undefined') return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }, []);
+
   const handleShare = async () => {
     if (isSharing.current) return;
     isSharing.current = true;
     try {
-      if (navigator.share) {
+      // PC에서는 navigator.share가 없거나 작동하지 않음 → 바로 링크 복사
+      if (navigator.share && isMobile) {
         await navigator.share({
           title: "InstAI | 내 인스타로 보는 꼬이는 남자 유형",
           text: `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${result.title}'이래. 너도 해봐!`,
@@ -73,7 +79,7 @@ const PremiumPage = () => {
         toast.success("공유창이 열렸어요");
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        toast.success("공유를 지원하지 않아 링크를 복사했어요");
+        toast.success("링크가 복사되었어요! 친구에게 공유해보세요 ✨");
       }
     } catch { /* user cancelled */ }
     finally { isSharing.current = false; }
