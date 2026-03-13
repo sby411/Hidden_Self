@@ -79,59 +79,57 @@ const ResultPage = () => {
     }
   };
 
+  const downloadNodeAsImage = useCallback(
+    async (node: HTMLDivElement | null, filename: string, successMessage: string) => {
+      if (!node) return;
+
+      try {
+        toast.info("리포트 이미지를 생성 중이에요...");
+
+        const captureWidth = Math.max(node.offsetWidth, node.scrollWidth);
+
+        const dataUrl = await toPng(node, {
+          cacheBust: true,
+          pixelRatio: 2,
+          backgroundColor: "#faf9f7",
+          width: captureWidth,
+          style: {
+            width: `${captureWidth}px`,
+            minWidth: `${captureWidth}px`,
+            maxWidth: `${captureWidth}px`,
+            overflow: "visible",
+            boxSizing: "border-box",
+          },
+        });
+
+        const link = document.createElement("a");
+        link.download = filename;
+        link.href = dataUrl;
+        link.click();
+
+        toast.success(successMessage);
+      } catch {
+        toast.error("리포트 저장에 실패했어요");
+      }
+    },
+    []
+  );
+
   const handleDownload = useCallback(async () => {
-    if (!basicReportRef.current) return;
-    try {
-      toast.info("리포트 이미지를 생성 중이에요...");
-      const node = basicReportRef.current;
-      const width = node.offsetWidth;
-      const dataUrl = await toPng(node, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: "#faf9f7",
-        width,
-        style: {
-          padding: "20px",
-          width: `${width}px`,
-          overflow: "visible",
-        },
-      });
-      const link = document.createElement("a");
-      link.download = `꼬이는남자유형-${result.title}.png`;
-      link.href = dataUrl;
-      link.click();
-      toast.success("이미지가 저장되었어요! 📸");
-    } catch {
-      toast.error("이미지 저장에 실패했어요");
-    }
-  }, [result.title]);
+    await downloadNodeAsImage(
+      basicReportRef.current,
+      `꼬이는남자유형-${result.title}.png`,
+      "이미지가 저장되었어요! 📸"
+    );
+  }, [downloadNodeAsImage, result.title]);
 
   const handleDownloadPremiumReport = useCallback(async () => {
-    if (!premiumReportRef.current) return;
-    try {
-      toast.info("리포트 이미지를 생성 중이에요...");
-      const node = premiumReportRef.current;
-      const width = node.offsetWidth;
-      const dataUrl = await toPng(node, {
-        cacheBust: true,
-        pixelRatio: 2,
-        backgroundColor: "#faf9f7",
-        width,
-        style: {
-          padding: "20px",
-          width: `${width}px`,
-          overflow: "visible",
-        },
-      });
-      const link = document.createElement("a");
-      link.download = `프리미엄리포트-${result.title}.png`;
-      link.href = dataUrl;
-      link.click();
-      toast.success("프리미엄 리포트가 저장되었어요! 📸");
-    } catch {
-      toast.error("리포트 저장에 실패했어요");
-    }
-  }, [result.title]);
+    await downloadNodeAsImage(
+      premiumReportRef.current,
+      `프리미엄리포트-${result.title}.png`,
+      "프리미엄 리포트가 저장되었어요! 📸"
+    );
+  }, [downloadNodeAsImage, result.title]);
 
   const vibeCards = [
     { icon: Camera, label: "사진 분위기", value: vibe.photoMood },
