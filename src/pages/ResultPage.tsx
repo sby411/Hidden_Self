@@ -685,7 +685,7 @@ const ResultPage = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className={`grid ${premiumUnlocked ? "grid-cols-2" : "grid-cols-3"} gap-2 mb-3`}>
             <button
               onClick={handleCopyLink}
               className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform"
@@ -700,14 +700,25 @@ const ResultPage = () => {
               <Share2 className="w-4 h-4" />
               SNS 공유
             </button>
+            {!premiumUnlocked && (
+              <button
+                onClick={handleDownload}
+                className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform"
+              >
+                <Download className="w-4 h-4" />
+                이미지 저장
+              </button>
+            )}
+          </div>
+          {premiumUnlocked && (
             <button
-              onClick={handleDownload}
-              className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform"
+              onClick={handleDownloadPremiumReport}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-3 shadow-md"
             >
               <Download className="w-4 h-4" />
-              이미지 저장
+              프리미엄 리포트 이미지 저장
             </button>
-          </div>
+          )}
           <button
             onClick={() => navigate("/")}
             className="w-full h-11 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-10"
