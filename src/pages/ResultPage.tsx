@@ -754,11 +754,11 @@ const ResultPage = () => {
               링크 복사
             </button>
             <button
-              onClick={handleShareSNS}
+              onClick={handleShare}
               className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform"
             >
               <Share2 className="w-4 h-4" />
-              SNS 공유
+              공유
             </button>
             {!premiumUnlocked && (
               <button
