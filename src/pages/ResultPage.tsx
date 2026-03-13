@@ -65,18 +65,24 @@ const ResultPage = () => {
     }
   };
 
-  const handleShareSNS = async () => {
-    if (navigator.share) {
-      try {
+  const isSharing = React.useRef(false);
+  const handleShare = async () => {
+    if (isSharing.current) return;
+    isSharing.current = true;
+    try {
+      if (navigator.share) {
         await navigator.share({
-          title: `나에게 꼬이는 남자 유형: ${result.title}`,
-          text: `내 인스타로 분석한 꼬이는 남자 유형은 "${result.title}" 이래! 너도 해봐 ✨`,
+          title: "InstAI | 내 인스타로 보는 꼬이는 남자 유형",
+          text: `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${result.title}'이래. 너도 해봐!`,
           url: window.location.href,
         });
-      } catch { /* cancelled */ }
-    } else {
-      handleCopyLink();
-    }
+        toast.success("공유창이 열렸어요");
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("공유를 지원하지 않아 링크를 복사했어요");
+      }
+    } catch { /* user cancelled */ }
+    finally { isSharing.current = false; }
   };
 
   const downloadNodeAsImage = useCallback(
