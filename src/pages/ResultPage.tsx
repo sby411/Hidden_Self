@@ -644,7 +644,35 @@ const ResultPage = () => {
                 </div>
               </div>
 
-              {/* ====== NEW PREMIUM DEEP SECTIONS ====== */}
+              {/* Warning Type - Premium */}
+              <div className="mb-5">
+                <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-destructive" />
+                  당신이 조심해야 할 남자 유형
+                </h3>
+                <div className="rounded-2xl p-5 border-2 border-destructive/20 bg-destructive/5 relative overflow-hidden">
+                  <div className="absolute top-2 right-3 text-[10px] font-black text-destructive/40 uppercase tracking-widest">⚠ WARNING</div>
+                  <div className="flex items-center gap-3.5 mt-2">
+                    <div className="text-3xl shrink-0">{warningType.emoji}</div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-semibold text-foreground">{warningType.title}</h4>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                        {warningType.oneLiner}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {warningType.cons.map((c) => (
+                          <span
+                            key={c}
+                            className="text-[10px] bg-destructive/10 text-destructive px-2 py-0.5 rounded-full font-medium"
+                          >
+                            {c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <PremiumSections id={id} resultTitle={result.title} />
 
               {/* End of Premium */}
