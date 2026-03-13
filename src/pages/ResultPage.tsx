@@ -83,11 +83,18 @@ const ResultPage = () => {
     if (!basicReportRef.current) return;
     try {
       toast.info("리포트 이미지를 생성 중이에요...");
-      const dataUrl = await toPng(basicReportRef.current, {
+      const node = basicReportRef.current;
+      const width = node.offsetWidth;
+      const dataUrl = await toPng(node, {
         cacheBust: true,
         pixelRatio: 2,
         backgroundColor: "#faf9f7",
-        style: { padding: "20px" },
+        width,
+        style: {
+          padding: "20px",
+          width: `${width}px`,
+          overflow: "visible",
+        },
       });
       const link = document.createElement("a");
       link.download = `꼬이는남자유형-${result.title}.png`;
@@ -103,11 +110,18 @@ const ResultPage = () => {
     if (!premiumReportRef.current) return;
     try {
       toast.info("리포트 이미지를 생성 중이에요...");
-      const dataUrl = await toPng(premiumReportRef.current, {
+      const node = premiumReportRef.current;
+      const width = node.offsetWidth;
+      const dataUrl = await toPng(node, {
         cacheBust: true,
         pixelRatio: 2,
         backgroundColor: "#faf9f7",
-        style: { padding: "20px" },
+        width,
+        style: {
+          padding: "20px",
+          width: `${width}px`,
+          overflow: "visible",
+        },
       });
       const link = document.createElement("a");
       link.download = `프리미엄리포트-${result.title}.png`;
