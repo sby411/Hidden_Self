@@ -558,3 +558,88 @@ export function getAiConfidence(id: string): number {
   }
   return 75 + (Math.abs(hash) % 21);
 }
+
+export interface InstaProfile {
+  followers: number;
+  following: number;
+  posts: number;
+  followerBreakdown: { label: string; percent: number; emoji: string }[];
+  followingBreakdown: { label: string; percent: number; emoji: string }[];
+  topInterests: string[];
+  activeTime: string;
+  avgLikes: number;
+  engagementRate: number;
+}
+
+const followerCategories = [
+  { label: "동갑 또래 친구", emoji: "👫" },
+  { label: "학교/직장 동료", emoji: "🏫" },
+  { label: "관심사 기반 팔로워", emoji: "💫" },
+  { label: "연애 관심 남성", emoji: "💘" },
+  { label: "브랜드/셀럽 계정", emoji: "✨" },
+  { label: "해외 팔로워", emoji: "🌍" },
+];
+
+const followingCategories = [
+  { label: "패션/뷰티 계정", emoji: "👗" },
+  { label: "카페/맛집 계정", emoji: "☕" },
+  { label: "감성 사진 계정", emoji: "📷" },
+  { label: "연예인/인플루언서", emoji: "⭐" },
+  { label: "여행/라이프 계정", emoji: "✈️" },
+  { label: "친구/지인", emoji: "🤝" },
+];
+
+const interestSets = [
+  ["카페투어", "필름카메라", "독립서점", "빈티지", "재즈"],
+  ["여행", "요가", "브런치", "와인", "갤러리"],
+  ["패션", "뷰티", "네일아트", "쇼핑", "OOTD"],
+  ["독서", "글쓰기", "차", "명상", "클래식"],
+  ["맛집탐방", "요리", "베이킹", "홈카페", "플레이팅"],
+  ["운동", "필라테스", "러닝", "헬시푸드", "셀프케어"],
+  ["음악", "공연", "페스티벌", "LP수집", "힙합"],
+  ["그림", "일러스트", "전시", "아트북", "캘리그라피"],
+];
+
+const activeTimes = ["밤 10시~새벽 1시", "오후 6시~9시", "오전 7시~9시", "새벽 1시~3시", "오후 12시~2시"];
+
+export function getInstaProfile(id: string): InstaProfile {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 29 + id.charCodeAt(i)) % 10000;
+
+  const followers = 180 + (Math.abs(h) % 2800);
+  const following = 120 + (Math.abs((h * 7) % 1500));
+  const posts = 30 + (Math.abs((h * 3) % 270));
+  const avgLikes = Math.round(followers * (0.08 + (Math.abs(h % 12) / 100)));
+  const engagementRate = parseFloat((avgLikes / followers * 100).toFixed(1));
+
+  // Generate follower breakdown
+  const fBreak: { label: string; percent: number; emoji: string }[] = [];
+  let remaining = 100;
+  const fIndices = [0, 1, 2, 3, 4, 5].sort((a, b) => ((h * (a + 1)) % 7) - ((h * (b + 1)) % 7));
+  for (let i = 0; i < followerCategories.length; i++) {
+    const cat = followerCategories[fIndices[i]];
+    const pct = i < followerCategories.length - 1
+      ? Math.max(5, Math.min(remaining - (followerCategories.length - i - 1) * 5, 10 + (Math.abs((h * (i + 3)) % 30))))
+      : remaining;
+    fBreak.push({ ...cat, percent: pct });
+    remaining -= pct;
+  }
+
+  // Generate following breakdown
+  const gBreak: { label: string; percent: number; emoji: string }[] = [];
+  remaining = 100;
+  const gIndices = [0, 1, 2, 3, 4, 5].sort((a, b) => ((h * (a + 2)) % 9) - ((h * (b + 2)) % 9));
+  for (let i = 0; i < followingCategories.length; i++) {
+    const cat = followingCategories[gIndices[i]];
+    const pct = i < followingCategories.length - 1
+      ? Math.max(5, Math.min(remaining - (followingCategories.length - i - 1) * 5, 10 + (Math.abs((h * (i + 5)) % 30))))
+      : remaining;
+    gBreak.push({ ...cat, percent: pct });
+    remaining -= pct;
+  }
+
+  const topInterests = interestSets[Math.abs(h) % interestSets.length];
+  const activeTime = activeTimes[Math.abs(h * 3) % activeTimes.length];
+
+  return { followers, following, posts, followerBreakdown: fBreak, followingBreakdown: gBreak, topInterests, activeTime, avgLikes, engagementRate };
+}
