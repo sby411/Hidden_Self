@@ -92,6 +92,9 @@ const LandingPage = () => {
                   <Scan className="w-4 h-4 text-muted-foreground" />
                 </div>
               </div>
+              <p className="text-[11px] text-muted-foreground text-center">
+                🔒 비공개 계정은 분석이 불가능해요. 잠시 공개로 전환 후 진행해주세요.
+              </p>
               <button
                 onClick={handleAnalyze}
                 disabled={!inputId.trim()}
