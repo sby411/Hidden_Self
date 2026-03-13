@@ -459,6 +459,7 @@ const ResultPage = () => {
 
             <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           </div>
+          </div> {/* end basicReportRef */}
 
           {/* ====== PREMIUM DIVIDER ====== */}
           {!premiumUnlocked ? (
