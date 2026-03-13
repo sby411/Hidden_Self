@@ -331,7 +331,7 @@ const ResultPage = () => {
           {/* ====== CHAPTER 3: 꼬이는 남자 유형 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-black text-primary">03</div>
+              <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">03</div>
               <div>
                 <h2 className="text-sm font-bold text-foreground tracking-tight">당신에게 꼬이는 남자 유형</h2>
                 <p className="text-[10px] text-muted-foreground">AI가 도출한 최종 매칭 결과</p>
