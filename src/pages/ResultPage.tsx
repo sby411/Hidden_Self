@@ -90,6 +90,26 @@ const ResultPage = () => {
     }
   }, [result.title]);
 
+  const handleDownloadPremiumReport = useCallback(async () => {
+    if (!premiumReportRef.current) return;
+    try {
+      toast.info("리포트 이미지를 생성 중이에요...");
+      const dataUrl = await toPng(premiumReportRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: "#faf9f7",
+        style: { padding: "20px" },
+      });
+      const link = document.createElement("a");
+      link.download = `프리미엄리포트-${result.title}.png`;
+      link.href = dataUrl;
+      link.click();
+      toast.success("프리미엄 리포트가 저장되었어요! 📸");
+    } catch {
+      toast.error("리포트 저장에 실패했어요");
+    }
+  }, [result.title]);
+
   const vibeCards = [
     { icon: Camera, label: "사진 분위기", value: vibe.photoMood },
     { icon: Palette, label: "색감 톤", value: vibe.colorTone },
