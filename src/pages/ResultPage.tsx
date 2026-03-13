@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { getRandomResult, getVibeAnalysis, getAdditionalTypes, getWarningType, getUserVibeType, getAiConfidence, getInstaProfile } from "@/data/sampleData";
-import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap } from "lucide-react";
+import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Scan } from "lucide-react";
 import PremiumSections from "@/components/PremiumSections";
 import { toast } from "sonner";
 import { useRef, useCallback, useMemo, useState } from "react";
@@ -141,14 +141,16 @@ const ResultPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="px-5 py-4 flex items-center justify-between border-b border-border/50">
-        <div className="flex items-center gap-1.5">
-          <Heart className="w-4 h-4 text-primary" fill="hsl(340 40% 72%)" />
-          <span className="text-sm font-semibold tracking-tight text-foreground/80">
-            꼬이는 남자 유형 테스트
+      <header className="px-5 py-4 flex items-center justify-between border-b border-border/50 backdrop-blur-sm bg-card/60">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+          </div>
+          <span className="text-sm font-bold tracking-tight text-foreground">
+            InstAI
           </span>
         </div>
-        <span className="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-full">
+        <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full">
           @{id}
         </span>
       </header>
@@ -157,10 +159,16 @@ const ResultPage = () => {
         <div className="w-full max-w-md">
 
           <div ref={basicReportRef}>
+          {/* Report Header */}
+          <div className="text-center mb-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-ai-highlight mb-1">Instagram Attraction Report</p>
+            <div className="h-px w-12 mx-auto bg-ai-highlight/30" />
+          </div>
+
           {/* ====== CHAPTER 1: 인스타 프로필 분석 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-black text-primary">01</div>
+              <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">01</div>
               <div>
                 <h2 className="text-sm font-bold text-foreground tracking-tight">인스타그램 프로필 분석</h2>
                 <p className="text-[10px] text-muted-foreground">@{id}의 계정을 AI가 스캔했습니다</p>
@@ -290,7 +298,7 @@ const ResultPage = () => {
           {/* ====== CHAPTER 2: 인스타 Vibe 유형 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-black text-primary">02</div>
+              <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">02</div>
               <div>
                 <h2 className="text-sm font-bold text-foreground tracking-tight">당신의 인스타 Vibe 유형</h2>
                 <p className="text-[10px] text-muted-foreground">피드 분석 기반 성격 유형 도출</p>
@@ -323,7 +331,7 @@ const ResultPage = () => {
           {/* ====== CHAPTER 3: 꼬이는 남자 유형 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-black text-primary">03</div>
+              <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">03</div>
               <div>
                 <h2 className="text-sm font-bold text-foreground tracking-tight">당신에게 꼬이는 남자 유형</h2>
                 <p className="text-[10px] text-muted-foreground">AI가 도출한 최종 매칭 결과</p>
@@ -774,7 +782,7 @@ const ResultPage = () => {
           </button>
 
           <p className="text-[11px] text-muted-foreground text-center">
-            © 2026 꼬이는 남자 유형 테스트 · 재미로 보는 테스트입니다
+            © 2026 InstAI · 재미로 보는 테스트입니다
           </p>
         </div>
       </main>
