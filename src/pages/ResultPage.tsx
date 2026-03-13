@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { getRandomResult, getVibeAnalysis, getAdditionalTypes, getWarningType } from "@/data/sampleData";
+import { getRandomResult, getVibeAnalysis, getAdditionalTypes, getWarningType, getUserVibeType } from "@/data/sampleData";
 import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake } from "lucide-react";
 import { toast } from "sonner";
 import { useRef, useCallback, useMemo } from "react";
@@ -7,10 +7,12 @@ import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 
 const lockedItems = [
-  "이 남자 유형의 진짜 속마음",
+  "이 남자가 당신에게 빠지는 이유",
+  "연애 시작 패턴",
   "당신에게 집착할 확률",
-  "추천 데이트 장소 TOP 3",
-  "이 남자의 약점 공략법",
+  "연애 지속 가능성",
+  "숨겨진 매력 분석",
+  "추가 남자 유형 분석",
 ];
 
 const ResultPage = () => {
@@ -19,6 +21,7 @@ const ResultPage = () => {
   const id = searchParams.get("id") || "user";
   const result = getRandomResult(id);
   const vibe = getVibeAnalysis(id);
+  const userVibe = getUserVibeType(id);
   const additionalTypes = useMemo(() => getAdditionalTypes(result.id), [result.id]);
   const warningType = useMemo(() => getWarningType(result.id), [result.id]);
   const shareCardRef = useRef<HTMLDivElement>(null);
@@ -67,7 +70,7 @@ const ResultPage = () => {
   const vibeCards = [
     { icon: Camera, label: "사진 분위기", value: vibe.photoMood },
     { icon: Palette, label: "색감 톤", value: vibe.colorTone },
-    { icon: Waves, label: "인스타 vibe", value: vibe.vibeKeyword },
+    { icon: Waves, label: "전체 vibe", value: vibe.vibeKeyword },
     { icon: MessageCircle, label: "캡션 스타일", value: vibe.captionStyle },
   ];
 
@@ -89,37 +92,21 @@ const ResultPage = () => {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
         <div className="w-full max-w-md">
 
-          {/* Section label */}
-          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium text-center mb-5">
-            당신에게 꼬이는 남자 유형
-          </p>
-
-          {/* Main Result Card */}
-          <div className={`rounded-3xl p-8 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30 shadow-sm`}>
-            <div className="text-7xl mb-4">{result.emoji}</div>
-            <h2 className="text-2xl font-bold text-foreground mb-1 tracking-tight">
-              {result.title}
+          {/* 1. User Vibe Type */}
+          <div className={`rounded-3xl p-6 text-center mb-5 bg-gradient-to-br ${userVibe.gradientClass} border border-border/30 shadow-sm`}>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium mb-3">
+              당신의 인스타 vibe 유형
+            </p>
+            <div className="text-4xl mb-3">{userVibe.emoji}</div>
+            <h2 className="text-xl font-bold text-foreground mb-3 tracking-tight">
+              {userVibe.title}
             </h2>
-            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-5">
-              {result.subtitle}
-            </p>
             <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
-              {result.description}
+              {userVibe.description}
             </p>
           </div>
 
-          {/* 1. AI Analysis Summary */}
-          <div className="glass-card rounded-2xl p-5 mb-5">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-primary" />
-              AI 분석 요약
-            </h3>
-            <p className="text-sm text-foreground/80 leading-[1.9]">
-              {result.aiSummary}
-            </p>
-          </div>
-
-          {/* 2. Vibe Analysis Cards */}
+          {/* 2. AI Vibe Analysis Cards */}
           <div className="mb-5">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
               🔍 AI가 분석한 당신의 인스타 vibe
@@ -135,7 +122,36 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* 3. Attraction Stats */}
+          {/* 3. Main Result - 꼬이는 남자 유형 */}
+          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium text-center mb-4">
+            당신에게 꼬이는 남자 유형
+          </p>
+
+          <div className={`rounded-3xl p-8 text-center mb-5 bg-gradient-to-br ${result.gradientClass} border border-border/30 shadow-sm`}>
+            <div className="text-7xl mb-4">{result.emoji}</div>
+            <h2 className="text-2xl font-bold text-foreground mb-1 tracking-tight">
+              {result.title}
+            </h2>
+            <p className="text-xs text-muted-foreground font-medium tracking-wide mb-5">
+              {result.subtitle}
+            </p>
+            <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
+              {result.description}
+            </p>
+          </div>
+
+          {/* AI Analysis Summary */}
+          <div className="glass-card rounded-2xl p-5 mb-5">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-primary" />
+              AI 분석 요약
+            </h3>
+            <p className="text-sm text-foreground/80 leading-[1.9]">
+              {result.aiSummary}
+            </p>
+          </div>
+
+          {/* 4. Attraction Stats */}
           <div className="glass-card rounded-2xl p-5 mb-5">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
               💓 매력 지표
@@ -153,7 +169,17 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* 4. Dating Pattern */}
+          {/* 5. Why This Type */}
+          <div className="glass-card rounded-2xl p-5 mb-5">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+              💫 왜 이런 남자가 꼬이는지
+            </h3>
+            <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
+              {result.whyAttracted}
+            </p>
+          </div>
+
+          {/* 6. Dating Pattern */}
           <div className="glass-card rounded-2xl p-5 mb-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
               💕 이 남자의 연애 패턴
@@ -163,23 +189,7 @@ const ResultPage = () => {
             </p>
           </div>
 
-          {/* 5. Why He Falls For You */}
-          <div className="glass-card rounded-2xl p-5 mb-5">
-            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-              <HeartHandshake className="w-4 h-4 text-primary" />
-              이 남자가 당신에게 빠지는 이유
-            </h3>
-            <ul className="space-y-2.5">
-              {result.fallReasons.map((reason) => (
-                <li key={reason} className="text-sm text-foreground/80 flex items-start gap-2">
-                  <span className="text-primary mt-0.5 shrink-0">•</span>
-                  {reason}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* 6. Pros & Cons */}
+          {/* 7 & 8. Pros & Cons */}
           <div className="grid grid-cols-2 gap-3 mb-5">
             <div className="glass-card rounded-2xl p-4">
               <div className="flex items-center gap-1.5 mb-3">
@@ -211,10 +221,10 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* 7. Additional Types */}
+          {/* 9. Additional Types */}
           <div className="mb-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-              💕 추가로 끌리는 남자 유형
+              💕 추가로 꼬이는 남자 유형
             </h3>
             <div className="space-y-2.5">
               {additionalTypes.map((t) => (
@@ -234,7 +244,7 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* 8. Warning Type */}
+          {/* 10. Warning Type */}
           <div className="mb-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
               <AlertTriangle className="w-4 h-4 text-destructive" />
@@ -263,7 +273,7 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* Premium Locked Section */}
+          {/* 11. Premium Locked Section */}
           <div className="mb-5">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
               🔒 프리미엄 상세 분석
