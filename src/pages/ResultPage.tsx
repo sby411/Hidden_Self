@@ -33,6 +33,7 @@ const ResultPage = () => {
   const confidence = getAiConfidence(id);
   const shareCardRef = useRef<HTMLDivElement>(null);
   const premiumRef = useRef<HTMLDivElement>(null);
+  const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
 
   const relationshipScore = useMemo(() => {
