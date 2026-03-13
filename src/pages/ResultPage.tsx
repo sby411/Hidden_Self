@@ -8,7 +8,13 @@ import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 
 const lockedItems = [
+  "AI 분석 신뢰도",
   "이 남자가 당신에게 빠지는 이유",
+  "연애 시작 패턴",
+  "집착 확률 & 지속 가능성",
+  "숨겨진 매력 분석",
+  "추가 남자 유형 심층 분석",
+  "조심해야 할 남자 유형",
   "연애 진행 시뮬레이션",
   "관심 행동 패턴 분석",
   "연애 궁합 분석",
