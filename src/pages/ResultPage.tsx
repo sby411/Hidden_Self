@@ -677,6 +677,7 @@ const ResultPage = () => {
                 <Crown className="w-3 h-3 text-[hsl(45,60%,60%)]" />
                 <div className="h-px flex-1 bg-[hsl(45,60%,80%)]/50" />
               </div>
+              </div> {/* end premiumReportRef */}
             </div>
           )}
 
