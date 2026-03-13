@@ -86,7 +86,7 @@ const LandingPage = () => {
         <section className="w-full px-5 pb-10">
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-lg font-bold text-foreground mb-1 text-center">이 테스트가 분석하는 요소</h2>
-            <p className="text-xs text-muted-foreground text-center mb-5">AI가 당신의 인스타를 다각도로 분석합니다</p>
+            <p className="text-xs text-muted-foreground text-center mb-5">AI가 12개 항목을 다각도로 정밀 분석합니다</p>
             <div className="grid grid-cols-2 gap-2.5">
               {analysisElements.map((el) => (
                 <div key={el.label} className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
