@@ -492,6 +492,7 @@ const ResultPage = () => {
           ) : (
             /* ====== PREMIUM CONTENT (Unlocked) ====== */
             <div ref={premiumRef}>
+              <div ref={premiumReportRef}>
               {/* Premium Chapter Header */}
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center text-xs font-black text-white">P</div>
