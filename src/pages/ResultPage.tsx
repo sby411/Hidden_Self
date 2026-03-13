@@ -298,7 +298,7 @@ const ResultPage = () => {
           {/* ====== CHAPTER 2: 인스타 Vibe 유형 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-black text-primary">02</div>
+              <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">02</div>
               <div>
                 <h2 className="text-sm font-bold text-foreground tracking-tight">당신의 인스타 Vibe 유형</h2>
                 <p className="text-[10px] text-muted-foreground">피드 분석 기반 성격 유형 도출</p>
