@@ -38,6 +38,7 @@ const ResultPage = () => {
   const warningType = useMemo(() => getWarningType(result.id), [result.id]);
   const confidence = getAiConfidence(id);
   const shareCardRef = useRef<HTMLDivElement>(null);
+  const basicReportRef = useRef<HTMLDivElement>(null);
   const premiumRef = useRef<HTMLDivElement>(null);
   const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
