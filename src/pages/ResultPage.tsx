@@ -144,6 +144,7 @@ const ResultPage = () => {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
         <div className="w-full max-w-md">
 
+          <div ref={basicReportRef}>
           {/* ====== CHAPTER 1: 인스타 프로필 분석 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
