@@ -644,6 +644,9 @@ const ResultPage = () => {
                 </div>
               </div>
 
+              {/* ====== NEW PREMIUM DEEP SECTIONS ====== */}
+              <PremiumSections id={id} resultTitle={result.title} />
+
               {/* End of Premium */}
               <div className="flex items-center justify-center gap-2 mb-6 text-[10px] text-muted-foreground">
                 <div className="h-px flex-1 bg-[hsl(45,60%,80%)]/50" />
