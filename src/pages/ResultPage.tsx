@@ -680,7 +680,7 @@ const ResultPage = () => {
               {result.title}
             </h3>
             <div className="inline-flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30">
-              <span className="text-xs font-semibold text-foreground">나도 테스트하기 →</span>
+              <span className="text-xs font-semibold text-foreground">다시 테스트하기 →</span>
             </div>
           </div>
 
