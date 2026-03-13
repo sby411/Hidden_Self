@@ -8,7 +8,13 @@ import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 
 const lockedItems = [
+  "AI 분석 신뢰도",
   "이 남자가 당신에게 빠지는 이유",
+  "연애 시작 패턴",
+  "집착 확률 & 지속 가능성",
+  "숨겨진 매력 분석",
+  "추가 남자 유형 심층 분석",
+  "조심해야 할 남자 유형",
   "연애 진행 시뮬레이션",
   "관심 행동 패턴 분석",
   "연애 궁합 분석",
@@ -32,6 +38,7 @@ const ResultPage = () => {
   const warningType = useMemo(() => getWarningType(result.id), [result.id]);
   const confidence = getAiConfidence(id);
   const shareCardRef = useRef<HTMLDivElement>(null);
+  const basicReportRef = useRef<HTMLDivElement>(null);
   const premiumRef = useRef<HTMLDivElement>(null);
   const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
@@ -73,12 +80,14 @@ const ResultPage = () => {
   };
 
   const handleDownload = useCallback(async () => {
-    if (!shareCardRef.current) return;
+    if (!basicReportRef.current) return;
     try {
-      const dataUrl = await toPng(shareCardRef.current, {
+      toast.info("리포트 이미지를 생성 중이에요...");
+      const dataUrl = await toPng(basicReportRef.current, {
         cacheBust: true,
         pixelRatio: 2,
         backgroundColor: "#faf9f7",
+        style: { padding: "20px" },
       });
       const link = document.createElement("a");
       link.download = `꼬이는남자유형-${result.title}.png`;
@@ -135,6 +144,7 @@ const ResultPage = () => {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
         <div className="w-full max-w-md">
 
+          <div ref={basicReportRef}>
           {/* ====== CHAPTER 1: 인스타 프로필 분석 ====== */}
           <div className="relative mb-8">
             <div className="flex items-center gap-3 mb-5">
@@ -449,6 +459,7 @@ const ResultPage = () => {
 
             <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
           </div>
+          </div> {/* end basicReportRef */}
 
           {/* ====== PREMIUM DIVIDER ====== */}
           {!premiumUnlocked ? (
