@@ -53,6 +53,11 @@ const ResultPage = () => {
     return 38 + (Math.abs(h) % 41);
   }, [id]);
 
+  const premiumCharCount = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 3000;
+    return 12000 + (Math.abs(h) % 3000);
+  }, [id]);
   const handleUnlockPremium = () => {
     setPremiumUnlocked(true);
     setTimeout(() => {
@@ -499,7 +504,7 @@ const ResultPage = () => {
                 <div className="absolute inset-0 flex items-center justify-center" style={{ top: '20%' }}>
                   <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,60%,80%)]/50 shadow-xl mx-6">
                     <Lock className="w-6 h-6 text-[hsl(45,70%,50%)] mx-auto mb-2" />
-                    <p className="text-xs font-bold text-foreground mb-1">나머지 9개 심층 분석이 잠겨있어요</p>
+                    <p className="text-xs font-bold text-foreground mb-1">{premiumCharCount.toLocaleString()}자 분량의 심층 분석이 잠겨있어요</p>
                     <p className="text-[10px] text-muted-foreground">아래 버튼으로 전체 결과를 확인하세요</p>
                   </div>
                 </div>
