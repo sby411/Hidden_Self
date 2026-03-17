@@ -458,6 +458,7 @@ const ResultPage = () => {
                   전체 분석 잠금 해제 · 4,900원
                 </span>
               </button>
+              <LegalLinks className="mt-3" />
             </div>
           ) : (
             /* ====== PREMIUM CONTENT (Unlocked) ====== */
