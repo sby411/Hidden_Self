@@ -634,8 +634,6 @@ const ResultPage = () => {
               </div>
             );
           })()}
-            </div>
-          )}
 
           {/* ====== SHARE & ACTIONS ====== */}
           <div
