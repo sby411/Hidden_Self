@@ -476,7 +476,7 @@ const ResultPage = () => {
 
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-destructive/5 to-card border border-destructive/15 border-l-4 border-l-destructive/50">
                       <h3 className="text-sm font-bold text-foreground mb-3">🚩 절대 조심해야 할 Red Flag</h3>
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.redFlags[0]}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.redFlags?.[0] ?? ''}</p>
                     </div>
                   </div>
                 </div>
