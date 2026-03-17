@@ -1,6 +1,42 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+export interface InstagramProfile {
+  fullName: string;
+  biography: string;
+  followersCount: number;
+  followsCount: number;
+  postsCount: number;
+  highlightReelCount: number;
+  isBusinessAccount: boolean;
+  profilePicUrl: string;
+}
+
+export interface InstagramStats {
+  avgLikes: number;
+  avgComments: number;
+  engagementRate: number;
+  totalLikes: number;
+  totalComments: number;
+  topHashtags: string[];
+}
+
+export interface InstagramPost {
+  caption: string;
+  likesCount: number;
+  commentsCount: number;
+  hashtags: string[];
+  alt: string;
+  timestamp: string;
+  type: string;
+}
+
+export interface InstagramData {
+  profile: InstagramProfile;
+  stats: InstagramStats;
+  posts: InstagramPost[];
+}
+
 export interface AiAnalysis {
   instaImpression: string;
   psychTriggers: string[];
@@ -34,6 +70,7 @@ export interface AiAnalysis {
   };
   obsessionRate: number;
   relationshipScore: number;
+  instagramData: InstagramData;
 }
 
 // Simple in-memory cache

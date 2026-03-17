@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { getVibeAnalysis, getUserVibeType, getInstaProfile } from "@/data/sampleData";
-import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2 } from "lucide-react";
+import { getVibeAnalysis, getUserVibeType } from "@/data/sampleData";
+import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2, BookOpen } from "lucide-react";
 import PremiumSections from "@/components/PremiumSections";
 import { toast } from "sonner";
 import React, { useRef, useCallback, useMemo, useState } from "react";
@@ -14,13 +14,12 @@ const ResultPage = () => {
   const navigate = useNavigate();
   const id = searchParams.get("id") || "user";
   
-  // AI-generated dynamic analysis
+  // AI-generated dynamic analysis (includes real Instagram data)
   const { data: ai, loading: aiLoading, error: aiError } = useAiAnalysis(id);
   
-  // Static data for profile section (kept as-is)
+  // Static data for vibe section (kept as-is)
   const vibe = getVibeAnalysis(id);
   const userVibe = getUserVibeType(id);
-  const insta = getInstaProfile(id);
 
   const shareCardRef = useRef<HTMLDivElement>(null);
   const basicReportRef = useRef<HTMLDivElement>(null);
@@ -108,6 +107,10 @@ const ResultPage = () => {
     await downloadNodeAsImage(premiumReportRef.current, `프리미엄리포트-${ai?.attractedType.name || id}.png`, "프리미엄 리포트가 저장되었어요! 📸");
   }, [downloadNodeAsImage, ai, id]);
 
+  // Derive Instagram display data from AI response
+  const igProfile = ai?.instagramData?.profile;
+  const igStats = ai?.instagramData?.stats;
+
   const vibeCards = [
     { icon: Camera, label: "사진 분위기", value: vibe.photoMood },
     { icon: Palette, label: "색감 톤", value: vibe.colorTone },
@@ -124,13 +127,13 @@ const ResultPage = () => {
             <Brain className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-lg font-bold text-foreground mb-2">AI가 분석 중이에요...</h2>
-          <p className="text-sm text-muted-foreground mb-6">@{id}의 인스타를 심층 분석하고 있습니다</p>
+          <p className="text-sm text-muted-foreground mb-6">인스타 데이터를 불러오는 중입니다...</p>
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span>심리 패턴 생성 중</span>
+            <span>@{id} 프로필 스캔 중</span>
           </div>
           <div className="mt-8 space-y-2">
-            {["프로필 분위기 스캔", "심리 트리거 분석", "매력 유형 매칭"].map((step, i) => (
+            {["인스타 데이터 수집 중", "프로필 분위기 스캔", "심리 트리거 분석", "매력 유형 매칭"].map((step, i) => (
               <div key={step} className="flex items-center gap-2 text-xs text-muted-foreground animate-pulse" style={{ animationDelay: `${i * 0.3}s` }}>
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                 {step}
@@ -197,17 +200,17 @@ const ResultPage = () => {
               <div className="grid grid-cols-3 gap-2 mb-4">
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10 p-3.5 text-center">
                   <Image className="w-4 h-4 text-primary mx-auto mb-1.5 opacity-70" />
-                  <p className="text-xl font-black text-foreground">{insta.posts}</p>
+                  <p className="text-xl font-black text-foreground">{igProfile?.postsCount ?? 0}</p>
                   <p className="text-[10px] text-muted-foreground font-medium">게시물</p>
                 </div>
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10 p-3.5 text-center">
                   <Users className="w-4 h-4 text-primary mx-auto mb-1.5 opacity-70" />
-                  <p className="text-xl font-black text-foreground">{insta.followers.toLocaleString()}</p>
+                  <p className="text-xl font-black text-foreground">{(igProfile?.followersCount ?? 0).toLocaleString()}</p>
                   <p className="text-[10px] text-muted-foreground font-medium">팔로워</p>
                 </div>
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10 p-3.5 text-center">
                   <UserPlus className="w-4 h-4 text-primary mx-auto mb-1.5 opacity-70" />
-                  <p className="text-xl font-black text-foreground">{insta.following.toLocaleString()}</p>
+                  <p className="text-xl font-black text-foreground">{(igProfile?.followsCount ?? 0).toLocaleString()}</p>
                   <p className="text-[10px] text-muted-foreground font-medium">팔로잉</p>
                 </div>
               </div>
@@ -220,7 +223,7 @@ const ResultPage = () => {
                   </div>
                   <div>
                     <p className="text-[10px] text-muted-foreground">평균 좋아요</p>
-                    <p className="text-base font-black text-foreground">{insta.avgLikes}</p>
+                    <p className="text-base font-black text-foreground">{igStats?.avgLikes ?? 0}</p>
                   </div>
                 </div>
                 <div className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
@@ -229,77 +232,56 @@ const ResultPage = () => {
                   </div>
                   <div>
                     <p className="text-[10px] text-muted-foreground">참여율</p>
-                    <p className="text-base font-black text-foreground">{insta.engagementRate}%</p>
+                    <p className="text-base font-black text-foreground">{igStats?.engagementRate ?? 0}%</p>
                   </div>
                 </div>
               </div>
 
-              {/* Follower Breakdown */}
-              <div className="glass-card rounded-2xl p-5 mb-4">
-                <h3 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-primary" />
-                  팔로워 구성 분석
-                </h3>
-                <div className="space-y-2.5">
-                  {insta.followerBreakdown.map((item) => (
-                    <div key={item.label}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[11px] text-foreground/80 flex items-center gap-1.5">
-                          <span>{item.emoji}</span> {item.label}
-                        </span>
-                        <span className="text-[11px] font-bold text-primary">{item.percent}%</span>
-                      </div>
-                      <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                        <div className="h-full rounded-full bg-gradient-to-r from-primary/60 to-primary transition-all" style={{ width: `${item.percent}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Following Breakdown */}
-              <div className="glass-card rounded-2xl p-5 mb-4">
-                <h3 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
-                  <UserPlus className="w-3.5 h-3.5 text-primary" />
-                  팔로잉 관심사 분석
-                </h3>
-                <div className="space-y-2.5">
-                  {insta.followingBreakdown.map((item) => (
-                    <div key={item.label}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[11px] text-foreground/80 flex items-center gap-1.5">
-                          <span>{item.emoji}</span> {item.label}
-                        </span>
-                        <span className="text-[11px] font-bold text-accent-foreground">{item.percent}%</span>
-                      </div>
-                      <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                        <div className="h-full rounded-full bg-gradient-to-r from-accent to-accent-foreground/30 transition-all" style={{ width: `${item.percent}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Interests & Activity */}
+              {/* Additional Stats */}
               <div className="grid grid-cols-2 gap-2 mb-4">
-                <div className="glass-card rounded-2xl p-4">
+                <div className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <MessageCircle className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground">평균 댓글</p>
+                    <p className="text-base font-black text-foreground">{igStats?.avgComments ?? 0}</p>
+                  </div>
+                </div>
+                <div className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <BookOpen className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground">하이라이트</p>
+                    <p className="text-base font-black text-foreground">{igProfile?.highlightReelCount ?? 0}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Biography */}
+              {igProfile?.biography && (
+                <div className="glass-card rounded-2xl p-4 mb-4">
+                  <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+                    <BookOpen className="w-3 h-3" /> 바이오
+                  </h4>
+                  <p className="text-sm text-foreground/80 leading-relaxed">{igProfile.biography}</p>
+                </div>
+              )}
+
+              {/* Top Hashtags from real data */}
+              {igStats?.topHashtags && igStats.topHashtags.length > 0 && (
+                <div className="glass-card rounded-2xl p-4 mb-4">
                   <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5 flex items-center gap-1">
-                    <Hash className="w-3 h-3" /> 관심 키워드
+                    <Hash className="w-3 h-3" /> 자주 사용하는 해시태그
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {insta.topInterests.map((t) => (
-                      <span key={t} className="text-[10px] bg-chip text-chip-foreground px-2 py-1 rounded-full font-medium">{t}</span>
+                    {igStats.topHashtags.map((t) => (
+                      <span key={t} className="text-[10px] bg-chip text-chip-foreground px-2 py-1 rounded-full font-medium">#{t}</span>
                     ))}
                   </div>
                 </div>
-                <div className="glass-card rounded-2xl p-4">
-                  <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5 flex items-center gap-1">
-                    <Zap className="w-3 h-3" /> 활동 패턴
-                  </h4>
-                  <p className="text-xs font-semibold text-foreground mb-1">{insta.activeTime}</p>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">주로 이 시간대에 피드 업로드 & 활동이 감지됨</p>
-                </div>
-              </div>
+              )}
 
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
