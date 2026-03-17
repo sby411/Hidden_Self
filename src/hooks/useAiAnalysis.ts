@@ -39,7 +39,7 @@ export interface InstagramData {
 
 export interface AiAnalysis {
   instaImpression: string;
-  psychTriggers: string[];
+  vibeKeywords: string[];
   attractedType: {
     name: string;
     emoji: string;
@@ -47,20 +47,6 @@ export interface AiAnalysis {
     earlyBehavior: string;
     feelings: string;
   };
-  datingPattern: {
-    beginning: string;
-    middle: string;
-    turningPoint: string;
-  };
-  risks: string[];
-  premiumPreview: {
-    decisiveMoment: string;
-    breakPoint: string;
-    perfectMatch: string;
-    avoidType: string;
-  };
-  confidence: number;
-  vibeKeywords: string[];
   attractionStats: {
     olderAttraction: number;
     sameAgeAttraction: number;
@@ -68,6 +54,18 @@ export interface AiAnalysis {
     aegenPower: number;
     tetoPower: number;
   };
+  psychTriggers: string[];
+  decisiveMoment: string;
+  datingPattern: {
+    beginning: string;
+    middle: string;
+    turningPoint: string;
+  };
+  risks: string[];
+  goodMatch: string;
+  badMatch: string;
+  redFlags: string[];
+  confidence: number;
   obsessionRate: number;
   relationshipScore: number;
   instagramData: InstagramData;
