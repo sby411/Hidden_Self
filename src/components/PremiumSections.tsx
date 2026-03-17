@@ -345,7 +345,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 8. 연애 시나리오 예측 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Film className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 시나리오 예측", "P8")}
+        {sectionHeader(<Film className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 시나리오 예측")}
         <p className="text-[11px] text-muted-foreground mb-4">
           <strong className="text-foreground">{resultTitle}</strong> 유형과 연애할 경우 예상되는 관계 흐름입니다.
         </p>
