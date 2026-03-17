@@ -6,10 +6,15 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const APIFY_DATASET_URL =
+  "https://api.apify.com/v2/datasets/cjunNKZy0jO8RhHyX/items?format=json&clean=true";
+
 const SYSTEM_PROMPT = `You are an expert in psychological attraction analysis based on Instagram profiles.
-Your job is to analyze a user's Instagram username/ID and generate a highly specific, realistic, and slightly provocative report about what kind of men are naturally attracted to this person and why.
+Your job is to analyze a user's REAL Instagram data and generate a highly specific, realistic, and slightly provocative report about what kind of men are naturally attracted to this person and why.
 
 [VERY IMPORTANT RULES]
+- You will receive REAL Instagram data including follower counts, post captions, hashtags, likes, and comments.
+- Use this REAL data to ground your analysis. Reference specific patterns you see in the data.
 - Do NOT generate generic personality descriptions.
 - Every output MUST feel specific, slightly sharp, and psychologically convincing.
 - Avoid safe, boring, or vague statements.
@@ -73,7 +78,42 @@ IMPORTANT:
 - premiumPreview texts MUST end with "..." to feel incomplete and curiosity-inducing
 - Make the attractedType name creative and unique every time
 - Write in a direct tone ("당신은 ~")
-- Mix emotional + analytical tone`;
+- Mix emotional + analytical tone
+- Reference the REAL data you receive (follower ratio, post themes, engagement patterns)`;
+
+function buildUserPrompt(userId: string, instagramData: any) {
+  const profile = instagramData.profile;
+  const posts = instagramData.posts;
+
+  const postSummaries = posts
+    .slice(0, 10)
+    .map((p: any, i: number) => {
+      return `  Post ${i + 1}: caption="${p.caption || '(없음)'}", likes=${p.likesCount}, comments=${p.commentsCount}, hashtags=[${(p.hashtags || []).join(', ')}]`;
+    })
+    .join('\n');
+
+  return `이 사용자의 실제 인스타그램 데이터를 기반으로 심리적 매력 분석 리포트를 생성해주세요.
+반드시 아래 실제 데이터를 분석의 핵심 근거로 활용하세요. 랜덤 데이터를 생성하지 마세요.
+
+[Input Data]
+username: @${userId}
+fullName: ${profile.fullName || '(비공개)'}
+biography: ${profile.biography || '(없음)'}
+followersCount: ${profile.followersCount}
+followsCount: ${profile.followsCount}
+postsCount: ${profile.postsCount}
+isBusinessAccount: ${profile.isBusinessAccount}
+followerRatio: ${(profile.followersCount / Math.max(profile.followsCount, 1)).toFixed(2)}
+
+[Recent Posts]
+${postSummaries}
+
+위 데이터를 기반으로:
+- 팔로워/팔로잉 비율에서 이 사람의 소셜 포지션을 읽어내세요
+- 게시물 캡션과 해시태그에서 이 사람의 관심사, 감성, 자기표현 방식을 분석하세요
+- 좋아요/댓글 수에서 engagement 패턴과 인기도를 파악하세요
+- 이 모든 것을 종합하여 어떤 남자가 이 사람에게 끌리는지 분석하세요`;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -98,15 +138,39 @@ Deno.serve(async (req) => {
       );
     }
 
-    const userPrompt = `이 사용자의 인스타그램 ID를 기반으로 심리적 매력 분석 리포트를 생성해주세요.
+    // Fetch real Instagram data from Apify
+    console.log("Fetching Instagram data from Apify for:", userId);
+    let instagramData: any = { profile: {}, posts: [] };
 
-ID의 글자, 느낌, 뉘앙스, 언어 선택, 숫자 패턴 등을 깊이 분석하여 이 사람의 인스타 분위기를 상상하고 분석하세요.
-반드시 이 ID만의 고유하고 구체적인 결과를 만들어주세요. 랜덤 데이터를 생성하지 마세요.
+    try {
+      const apifyRes = await fetch(APIFY_DATASET_URL);
+      if (apifyRes.ok) {
+        const rawData = await apifyRes.json();
+        if (Array.isArray(rawData) && rawData.length > 0) {
+          const firstItem = rawData[0];
+          instagramData.profile = {
+            fullName: firstItem.fullName || firstItem.ownerFullName || "",
+            biography: firstItem.biography || "",
+            followersCount: firstItem.followersCount || 0,
+            followsCount: firstItem.followsCount || 0,
+            postsCount: firstItem.metaData?.postsCount || rawData.length,
+            isBusinessAccount: firstItem.isBusinessAccount || false,
+          };
+          instagramData.posts = rawData.map((item: any) => ({
+            caption: item.caption || "",
+            likesCount: item.likesCount || 0,
+            commentsCount: item.commentsCount || 0,
+            hashtags: item.hashtags || [],
+          }));
+        }
+      } else {
+        console.warn("Apify fetch failed, status:", apifyRes.status);
+      }
+    } catch (apifyErr) {
+      console.warn("Apify fetch error:", apifyErr);
+    }
 
-[Input Data]
-username: @${userId}
-
-위 username을 반드시 분석의 핵심 입력으로 사용하세요. 이 ID의 글자 조합, 발음, 분위기, 숨겨진 의미를 기반으로 결과를 도출하세요.`;
+    const userPrompt = buildUserPrompt(userId, instagramData);
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -218,7 +282,7 @@ username: @${userId}
 
     const data = await response.json();
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-    
+
     if (!toolCall) {
       console.error("No tool call in response:", JSON.stringify(data));
       return new Response(
