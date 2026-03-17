@@ -377,7 +377,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 9. 끌어당기는 남자 위험도 분석 ====== */}
       <div className={`${premiumCardClass} border-l-4 border-l-destructive/50`}>
-        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "끌어당기는 위험 유형 분석", "P9")}
+        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "끌어당기는 위험 유형 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           당신이 반복적으로 끌어들이는 연애 위험 유형을 분석합니다.
         </p>
