@@ -59,7 +59,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
     <>
       {/* ====== 1. 연애 진행 시뮬레이션 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Footprints className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 진행 시뮬레이션", "P1")}
+        {sectionHeader(<Footprints className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 진행 시뮬레이션")}
         <p className="text-[11px] text-muted-foreground mb-4">
           <strong className="text-foreground">{resultTitle}</strong> 유형이 당신에게 빠지는 과정을 단계별로 분석합니다.
         </p>
