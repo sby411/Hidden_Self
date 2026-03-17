@@ -428,23 +428,80 @@ const ResultPage = () => {
                   <Lock className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-foreground tracking-tight">심층 분석 잠금 🔒</h2>
-                  <p className="text-[10px] text-muted-foreground">프리미엄 전용 콘텐츠</p>
+                  <h2 className="text-sm font-bold text-foreground tracking-tight">심층 분석 미리보기 🔓</h2>
+                  <p className="text-[10px] text-muted-foreground">잠금 해제하고 전체 내용을 확인하세요</p>
                 </div>
               </div>
 
-              {/* Locked cards with blur */}
-              <div className="relative mb-5">
-                <div className="space-y-2.5">
-                  {lockedItems.map((item) => (
-                    <div
-                      key={item}
-                      className="glass-card rounded-2xl p-4 flex items-center justify-between border border-[hsl(45,60%,80%)]/30"
-                    >
-                      <span className="text-sm text-foreground/40 blur-[1px]">{item}</span>
-                      <Lock className="w-4 h-4 text-[hsl(45,60%,60%)] shrink-0" />
+              {/* Blurred preview of actual premium content */}
+              <div className="relative mb-5 overflow-hidden rounded-2xl">
+                <div className="pointer-events-none select-none" aria-hidden="true">
+                  {/* AI Confidence preview */}
+                  <div className="rounded-2xl p-4 mb-3 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,60%,92%)] to-[hsl(35,50%,90%)] border border-[hsl(45,60%,80%)]/40">
+                    <ShieldCheck className="w-8 h-8 text-[hsl(45,70%,50%)] shrink-0" />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-semibold text-foreground">AI 분석 신뢰도</span>
+                        <span className="text-sm font-black text-[hsl(45,70%,45%)]">{confidence}%</span>
+                      </div>
+                      <Progress value={confidence} className="h-2 rounded-full" />
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Fall Reasons preview - blurred */}
+                  <div className="blur-[6px] space-y-3">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                      <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                        <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                        이 남자가 당신에게 빠지는 이유
+                      </h3>
+                      <ul className="space-y-2.5">
+                        {result.fallReasons.map((reason) => (
+                          <li key={reason} className="text-sm text-foreground/80 flex items-start gap-2">
+                            <span className="text-[hsl(45,70%,50%)] mt-0.5 shrink-0">◆</span>
+                            {reason}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                      <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                        💫 왜 이런 남자가 꼬이는지
+                      </h3>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{result.whyAttracted}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,60%,95%)] to-card border border-[hsl(0,40%,85%)]/30 text-center">
+                        <Flame className="w-5 h-5 text-destructive mx-auto mb-2" />
+                        <p className="text-[10px] text-muted-foreground font-medium mb-1">집착 확률</p>
+                        <p className="text-3xl font-black text-destructive">{result.obsessionRate}%</p>
+                      </div>
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 text-center">
+                        <TrendingUp className="w-5 h-5 text-[hsl(160,50%,40%)] mx-auto mb-2" />
+                        <p className="text-[10px] text-muted-foreground font-medium mb-1">지속 가능성</p>
+                        <p className="text-3xl font-black text-[hsl(160,50%,40%)]">{relationshipScore}%</p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                      <h3 className="text-sm font-bold text-foreground mb-3">💕 이 남자의 연애 패턴</h3>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{result.datingPattern}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gradient overlay to fade out */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" style={{ top: '30%' }} />
+                
+                {/* Centered CTA overlay */}
+                <div className="absolute inset-0 flex items-center justify-center" style={{ top: '20%' }}>
+                  <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,60%,80%)]/50 shadow-xl mx-6">
+                    <Lock className="w-6 h-6 text-[hsl(45,70%,50%)] mx-auto mb-2" />
+                    <p className="text-xs font-bold text-foreground mb-1">나머지 9개 심층 분석이 잠겨있어요</p>
+                    <p className="text-[10px] text-muted-foreground">아래 버튼으로 전체 결과를 확인하세요</p>
+                  </div>
                 </div>
               </div>
 
@@ -455,9 +512,12 @@ const ResultPage = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                 <span className="relative flex items-center justify-center gap-2">
                   <Crown className="w-4 h-4" />
-                  전체 분석 잠금 해제 · 4,900원
+                  전체 분석 잠금 해제 ·{" "}
+                  <span className="line-through text-white/60 text-xs">9,900원</span>{" "}
+                  <span className="text-base font-black">4,900원</span>
                 </span>
               </button>
+              <p className="text-center text-[10px] text-destructive font-bold mt-2 animate-pulse">🔥 지금만 50% 할인 중!</p>
               
             </div>
           ) : (
