@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles, Camera, Palette, MessageCircle, Waves, Users, UserPlus, Clock, Activity, Hash, Image, Eye, BarChart3, Scan, Heart, ArrowRight } from "lucide-react";
+import Footer from "@/components/Footer";
 
 const analysisElements = [
   { icon: Camera, label: "사진 스타일", desc: "당신이 보여주는 분위기 매력" },
@@ -200,9 +201,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <p className="text-[11px] text-muted-foreground pb-6">
-          © 2026 InstAI · 재미로 보는 테스트입니다
-        </p>
+        <Footer />
       </main>
     </div>
   );

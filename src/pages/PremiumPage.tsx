@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import React, { useRef, useCallback, useMemo } from "react";
 import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
+import Footer from "@/components/Footer";
 
 const PremiumPage = () => {
   const [searchParams] = useSearchParams();
@@ -388,9 +389,7 @@ const PremiumPage = () => {
             다시 테스트하기
           </button>
 
-          <p className="text-[11px] text-muted-foreground text-center">
-            © 2026 꼬이는 남자 유형 테스트 · 재미로 보는 테스트입니다
-          </p>
+          <Footer />
         </div>
       </main>
     </div>

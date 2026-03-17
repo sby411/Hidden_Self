@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import React, { useRef, useCallback, useMemo, useState } from "react";
 import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
+import Footer, { LegalLinks } from "@/components/Footer";
 
 const lockedItems = [
   "AI 분석 신뢰도",
@@ -457,6 +458,7 @@ const ResultPage = () => {
                   전체 분석 잠금 해제 · 4,900원
                 </span>
               </button>
+              <LegalLinks className="mt-3" />
             </div>
           ) : (
             /* ====== PREMIUM CONTENT (Unlocked) ====== */
@@ -797,9 +799,7 @@ const ResultPage = () => {
             다시 테스트하기
           </button>
 
-          <p className="text-[11px] text-muted-foreground text-center">
-            © 2026 InstAI · 재미로 보는 테스트입니다
-          </p>
+          <Footer />
         </div>
       </main>
     </div>
