@@ -350,7 +350,7 @@ const ResultPage = () => {
                   <div className="relative z-10">
                     <div className="inline-flex items-center gap-1.5 bg-card/50 backdrop-blur-sm rounded-full px-3 py-1 mb-4 border border-border/30">
                       <Sparkles className="w-3 h-3 text-primary" />
-                      <span className="text-[10px] font-bold text-primary uppercase tracking-wider">AI Generated Type</span>
+                      <span className="text-[10px] font-bold text-primary uppercase tracking-wider">AI가 발견한 당신의 매력 패턴</span>
                     </div>
                     <div className="text-7xl mb-4">{ai.attractedType.emoji}</div>
                     <h2 className="text-2xl font-black text-foreground mb-3 tracking-tight">{ai.attractedType.name}</h2>
