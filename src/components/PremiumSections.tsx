@@ -37,15 +37,10 @@ const premiumCardClass =
 
 const premiumAccentBorder = "border-l-4 border-l-[hsl(45,70%,55%)]";
 
-const sectionHeader = (icon: React.ReactNode, title: string, number: string) => (
-  <div className="flex items-center gap-2.5 mb-4">
-    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center">
-      <span className="text-[9px] font-black text-white">{number}</span>
-    </div>
-    <div className="flex items-center gap-1.5">
-      {icon}
-      <h3 className="text-sm font-bold text-foreground">{title}</h3>
-    </div>
+const sectionHeader = (icon: React.ReactNode, title: string) => (
+  <div className="flex items-center gap-1.5 mb-4">
+    {icon}
+    <h3 className="text-sm font-bold text-foreground">{title}</h3>
   </div>
 );
 
