@@ -410,110 +410,10 @@ const ResultPage = () => {
             </div>
           </div> {/* end basicReportRef */}
 
-          {/* ====== PREMIUM DIVIDER ====== */}
-          {!premiumUnlocked ? (
-            <div className="mb-8">
-              {/* Conversion trigger text */}
-              <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/15 text-center">
-                <p className="text-sm text-foreground/90 leading-[1.9] font-medium">
-                  이 분석은 실제 인스타 활동 데이터를 기반으로 생성되었습니다.
-                </p>
-                <p className="text-sm text-foreground/70 leading-[1.9] mt-1">
-                  당신이 왜 특정 유형의 남자를 반복해서 끌어들이는지<br />
-                  아래에서 확인할 수 있습니다.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center">
-                  <Lock className="w-3.5 h-3.5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-foreground tracking-tight">프리미엄 분석 미리보기 🔓</h2>
-                  <p className="text-[10px] text-muted-foreground">첫 문장만 공개 · 잠금 해제하고 전체 내용을 확인하세요</p>
-                </div>
-              </div>
-
-              {/* Teaser preview of premium content */}
-              <div className="space-y-3 mb-5">
-                {/* AI Confidence - fully visible */}
-                <div className="rounded-2xl p-4 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,60%,92%)] to-[hsl(35,50%,90%)] border border-[hsl(45,60%,80%)]/40">
-                  <ShieldCheck className="w-8 h-8 text-[hsl(45,70%,50%)] shrink-0" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold text-foreground">AI 분석 신뢰도</span>
-                      <span className="text-sm font-black text-[hsl(45,70%,45%)]">{ai.confidence}%</span>
-                    </div>
-                    <Progress value={ai.confidence} className="h-2 rounded-full" />
-                  </div>
-                </div>
-
-                {/* Teaser cards - title + first sentence visible, rest blurred */}
-                {[
-                  { icon: <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신이 남자를 끌어들이는 심리 트리거", teaser: ai.psychTriggers?.[0] ?? '' },
-                  { icon: <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "이 남자가 당신에게 빠지는 결정적 순간", teaser: ai.decisiveMoment },
-                  { icon: <Clock className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신의 연애 패턴", teaser: ai.datingPattern?.beginning ?? '' },
-                  { icon: <Siren className="w-4 h-4 text-destructive" />, title: "관계에서 발생할 수 있는 리스크", teaser: ai.risks?.[0] ?? '' },
-                  { icon: <Users className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자", teaser: ai.goodMatch },
-                  { icon: <AlertTriangle className="w-4 h-4 text-destructive" />, title: "절대 조심해야 할 Red Flag", teaser: ai.redFlags?.[0] ?? '' },
-                ].map((section, i) => {
-                  const teaserSentence = section.teaser ? section.teaser.split(/(?<=[.!?])\s/)[0] : '';
-                  return (
-                    <div key={i} className="rounded-2xl overflow-hidden border border-[hsl(45,60%,80%)]/30 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card">
-                      <div className="p-4 pb-2">
-                        <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                          {section.icon}
-                          {section.title}
-                        </h3>
-                      </div>
-                      <div className="px-4 pb-2">
-                        <p className="text-sm text-foreground/80 leading-[1.8] italic">"{teaserSentence}"</p>
-                      </div>
-                      <div className="px-4 pb-4 relative">
-                        <div className="blur-[6px] select-none pointer-events-none" aria-hidden="true">
-                          <p className="text-sm text-foreground/60 leading-[1.8]">
-                            더 깊은 심리 분석 내용이 여기에 포함되어 있습니다. 이 부분은 프리미엄 잠금 해제 후 확인할 수 있습니다. 당신만을 위한 맞춤 분석을 지금 확인하세요.
-                          </p>
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[hsl(45,50%,95%)]" />
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Stats teaser */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,60%,95%)] to-card border border-[hsl(0,40%,85%)]/30 text-center">
-                    <Flame className="w-5 h-5 text-destructive mx-auto mb-2" />
-                    <p className="text-[10px] text-muted-foreground font-medium mb-1">집착 확률</p>
-                    <p className="text-3xl font-black text-destructive">{ai.obsessionRate}%</p>
-                  </div>
-                  <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 text-center">
-                    <TrendingUp className="w-5 h-5 text-[hsl(160,50%,40%)] mx-auto mb-2" />
-                    <p className="text-[10px] text-muted-foreground font-medium mb-1">지속 가능성</p>
-                    <p className="text-3xl font-black text-[hsl(160,50%,40%)]">{ai.relationshipScore}%</p>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={handleUnlockPremium}
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
-                <span className="relative flex items-center justify-center gap-2">
-                  <Crown className="w-4 h-4" />
-                  전체 분석 잠금 해제 ·{" "}
-                  <span className="line-through text-white/60 text-xs">9,900원</span>{" "}
-                  <span className="text-base font-black">4,900원</span>
-                </span>
-              </button>
-              <p className="text-center text-[10px] text-destructive font-bold mt-2 animate-pulse">🔥 지금만 50% 할인 중!</p>
-            </div>
-          ) : (
-            /* ====== PREMIUM CONTENT (Unlocked) ====== */
-            <div ref={premiumRef}>
-              <div ref={premiumReportRef}>
+          {/* ====== PREMIUM CONTENT (shared for locked/unlocked) ====== */}
+          {(() => {
+            const premiumContent = (
+              <>
                 {/* Premium Chapter Header */}
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center text-xs font-black text-white">P</div>
@@ -547,7 +447,7 @@ const ResultPage = () => {
                     당신이 유발하는 심리 트리거
                   </h3>
                   <div className="space-y-3">
-                    {ai.psychTriggers.map((trigger, i) => (
+                    {(ai.psychTriggers ?? []).map((trigger, i) => (
                       <div key={i} className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
                         <div className="flex items-start gap-3">
                           <div className="w-6 h-6 rounded-full bg-[hsl(45,70%,50%)]/10 flex items-center justify-center shrink-0 mt-0.5">
@@ -578,15 +478,15 @@ const ResultPage = () => {
                   <div className="space-y-3">
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
                       <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌅 시작</h4>
-                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.beginning}</p>
+                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern?.beginning}</p>
                     </div>
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,50%)]">
                       <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌤️ 중반</h4>
-                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.middle}</p>
+                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern?.middle}</p>
                     </div>
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-destructive/60">
                       <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">⚡ 전환점</h4>
-                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.turningPoint}</p>
+                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern?.turningPoint}</p>
                     </div>
                   </div>
                 </div>
@@ -598,7 +498,7 @@ const ResultPage = () => {
                     관계에서 발생할 수 있는 리스크
                   </h3>
                   <div className="space-y-3">
-                    {ai.risks.map((risk, i) => (
+                    {(ai.risks ?? []).map((risk, i) => (
                       <div key={i} className="rounded-2xl p-4 border border-destructive/15 bg-destructive/5">
                         <div className="flex items-start gap-3">
                           <div className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
@@ -658,7 +558,7 @@ const ResultPage = () => {
                     절대 조심해야 할 Red Flag
                   </h3>
                   <div className="space-y-3">
-                    {ai.redFlags.map((flag, i) => (
+                    {(ai.redFlags ?? []).map((flag, i) => (
                       <div key={i} className="rounded-2xl p-4 border-2 border-destructive/20 bg-destructive/5 relative overflow-hidden">
                         <div className="flex items-start gap-3">
                           <div className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
@@ -679,7 +579,61 @@ const ResultPage = () => {
                   <Crown className="w-3 h-3 text-[hsl(45,60%,60%)]" />
                   <div className="h-px flex-1 bg-[hsl(45,60%,80%)]/50" />
                 </div>
+              </>
+            );
+
+            return !premiumUnlocked ? (
+              <div className="mb-8">
+                {/* Conversion trigger text */}
+                <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/15 text-center">
+                  <p className="text-sm text-foreground/90 leading-[1.9] font-medium">
+                    이 분석은 실제 인스타 활동 데이터를 기반으로 생성되었습니다.
+                  </p>
+                  <p className="text-sm text-foreground/70 leading-[1.9] mt-1">
+                    당신이 왜 특정 유형의 남자를 반복해서 끌어들이는지<br />
+                    아래에서 확인할 수 있습니다.
+                  </p>
+                </div>
+
+                {/* Blurred real premium content */}
+                <div className="relative overflow-hidden rounded-2xl mb-5">
+                  <div className="pointer-events-none select-none blur-[7px]" aria-hidden="true">
+                    {premiumContent}
+                  </div>
+                  {/* Gradient fade overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/80 pointer-events-none" />
+                  {/* CTA overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,60%,80%)]/50 shadow-xl mx-6">
+                      <Lock className="w-6 h-6 text-[hsl(45,70%,50%)] mx-auto mb-2" />
+                      <p className="text-xs font-bold text-foreground mb-1">{premiumCharCount.toLocaleString()}자 분량의 심층 분석이 잠겨있어요</p>
+                      <p className="text-[10px] text-muted-foreground">아래 버튼으로 전체 결과를 확인하세요</p>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleUnlockPremium}
+                  className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
+                  <span className="relative flex items-center justify-center gap-2">
+                    <Crown className="w-4 h-4" />
+                    전체 분석 잠금 해제 ·{" "}
+                    <span className="line-through text-white/60 text-xs">9,900원</span>{" "}
+                    <span className="text-base font-black">4,900원</span>
+                  </span>
+                </button>
+                <p className="text-center text-[10px] text-destructive font-bold mt-2 animate-pulse">🔥 지금만 50% 할인 중!</p>
               </div>
+            ) : (
+              <div ref={premiumRef}>
+                <div ref={premiumReportRef}>
+                  {premiumContent}
+                </div>
+              </div>
+            );
+          })()}
             </div>
           )}
 
