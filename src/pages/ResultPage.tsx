@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { getVibeAnalysis, getUserVibeType, getInstaProfile } from "@/data/sampleData";
-import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2 } from "lucide-react";
+import { getVibeAnalysis, getUserVibeType } from "@/data/sampleData";
+import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2, BookOpen } from "lucide-react";
 import PremiumSections from "@/components/PremiumSections";
 import { toast } from "sonner";
 import React, { useRef, useCallback, useMemo, useState } from "react";
@@ -14,13 +14,12 @@ const ResultPage = () => {
   const navigate = useNavigate();
   const id = searchParams.get("id") || "user";
   
-  // AI-generated dynamic analysis
+  // AI-generated dynamic analysis (includes real Instagram data)
   const { data: ai, loading: aiLoading, error: aiError } = useAiAnalysis(id);
   
-  // Static data for profile section (kept as-is)
+  // Static data for vibe section (kept as-is)
   const vibe = getVibeAnalysis(id);
   const userVibe = getUserVibeType(id);
-  const insta = getInstaProfile(id);
 
   const shareCardRef = useRef<HTMLDivElement>(null);
   const basicReportRef = useRef<HTMLDivElement>(null);
