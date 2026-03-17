@@ -419,7 +419,7 @@ const ResultPage = () => {
                   <Lock className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-foreground tracking-tight">심층 분석 미리보기 🔓</h2>
+                  <h2 className="text-sm font-bold text-foreground tracking-tight">프리미엄 분석 🔓</h2>
                   <p className="text-[10px] text-muted-foreground">잠금 해제하고 전체 내용을 확인하세요</p>
                 </div>
               </div>
@@ -443,15 +443,18 @@ const ResultPage = () => {
                   <div className="blur-[6px] space-y-3">
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
                       <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-                        <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />
-                        이 남자가 당신에게 빠지는 결정적 순간
+                        <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                        당신이 유발하는 심리 트리거
                       </h3>
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.decisiveMoment}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.psychTriggers[0]}</p>
                     </div>
 
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
-                      <h3 className="text-sm font-bold text-foreground mb-3">💔 관계에서 무너지는 포인트</h3>
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.breakPoint}</p>
+                      <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                        <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                        이 남자가 당신에게 빠지는 결정적 순간
+                      </h3>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.decisiveMoment}</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -468,13 +471,13 @@ const ResultPage = () => {
                     </div>
 
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
-                      <h3 className="text-sm font-bold text-foreground mb-3">💚 진짜 잘 맞는 남자 유형</h3>
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.perfectMatch}</p>
+                      <h3 className="text-sm font-bold text-foreground mb-3">💚 잘 맞는 남자 vs 힘든 남자</h3>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
                     </div>
 
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-destructive/5 to-card border border-destructive/15 border-l-4 border-l-destructive/50">
-                      <h3 className="text-sm font-bold text-foreground mb-3">🚫 절대 피해야 할 유형</h3>
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.avoidType}</p>
+                      <h3 className="text-sm font-bold text-foreground mb-3">🚩 절대 조심해야 할 Red Flag</h3>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.redFlags[0]}</p>
                     </div>
                   </div>
                 </div>
@@ -515,7 +518,7 @@ const ResultPage = () => {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center text-xs font-black text-white">P</div>
                   <div>
                     <h2 className="text-sm font-bold text-foreground tracking-tight flex items-center gap-1.5">
-                      심층 분석
+                      프리미엄 분석
                       <span className="inline-flex items-center gap-1 bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
                         <Crown className="w-2.5 h-2.5" /> PREMIUM
                       </span>
@@ -536,22 +539,78 @@ const ResultPage = () => {
                   </div>
                 </div>
 
-                {/* Decisive Moment */}
+                {/* P-1: 심리 트리거 */}
+                <div className="mb-5">
+                  <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                    <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                    당신이 유발하는 심리 트리거
+                  </h3>
+                  <div className="space-y-3">
+                    {ai.psychTriggers.map((trigger, i) => (
+                      <div key={i} className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                        <div className="flex items-start gap-3">
+                          <div className="w-6 h-6 rounded-full bg-[hsl(45,70%,50%)]/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <Zap className="w-3 h-3 text-[hsl(45,70%,50%)]" />
+                          </div>
+                          <p className="text-sm text-foreground/85 leading-[1.8]">{trigger}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* P-2: 결정적 순간 */}
                 <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
                   <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
                     <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />
                     이 남자가 당신에게 빠지는 결정적 순간
                   </h3>
-                  <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.decisiveMoment}</p>
+                  <p className="text-sm text-foreground/80 leading-[1.9]">{ai.decisiveMoment}</p>
                 </div>
 
-                {/* Break Point */}
-                <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
-                  <h3 className="text-sm font-bold text-foreground mb-3">💔 관계에서 무너지는 포인트</h3>
-                  <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.breakPoint}</p>
+                {/* P-3: 연애 패턴 */}
+                <div className="mb-5">
+                  <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                    당신의 연애 패턴
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
+                      <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌅 시작</h4>
+                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.beginning}</p>
+                    </div>
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,50%)]">
+                      <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌤️ 중반</h4>
+                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.middle}</p>
+                    </div>
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-destructive/60">
+                      <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">⚡ 전환점</h4>
+                      <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.turningPoint}</p>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Obsession & Relationship */}
+                {/* P-4: 리스크 */}
+                <div className="mb-5">
+                  <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                    <Siren className="w-4 h-4 text-destructive" />
+                    관계에서 발생할 수 있는 리스크
+                  </h3>
+                  <div className="space-y-3">
+                    {ai.risks.map((risk, i) => (
+                      <div key={i} className="rounded-2xl p-4 border border-destructive/15 bg-destructive/5">
+                        <div className="flex items-start gap-3">
+                          <div className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <AlertTriangle className="w-3 h-3 text-destructive" />
+                          </div>
+                          <p className="text-sm text-foreground/85 leading-[1.8]">{risk}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Obsession & Relationship Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
                   <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,60%,95%)] to-card border border-[hsl(0,40%,85%)]/30 text-center">
                     <Flame className="w-5 h-5 text-destructive mx-auto mb-2" />
@@ -575,26 +634,41 @@ const ResultPage = () => {
                   </div>
                 </div>
 
-                {/* Perfect Match */}
-                <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
+                {/* P-5: 잘 맞는 남자 vs 힘든 남자 */}
+                <div className="mb-5">
                   <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-                    💚 당신에게 진짜 잘 맞는 남자 유형
+                    <Users className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                    잘 맞는 남자 vs 자주 꼬이지만 힘든 남자
                   </h3>
-                  <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.perfectMatch}</p>
+                  <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
+                    <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">💚 잘 맞는 남자</h4>
+                    <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
+                  </div>
+                  <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(0,30%,95%)] to-card border border-[hsl(0,30%,85%)]/30 border-l-4 border-l-destructive/50">
+                    <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">💔 자주 꼬이지만 힘든 남자</h4>
+                    <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch}</p>
+                  </div>
                 </div>
 
-                {/* Avoid Type */}
-                <div className="rounded-2xl p-5 mb-5 border-2 border-destructive/20 bg-destructive/5 relative overflow-hidden">
-                  <div className="absolute top-2 right-3 text-[10px] font-black text-destructive/40 uppercase tracking-widest">⚠ WARNING</div>
-                  <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5 mt-2">
+                {/* P-6: Red Flags */}
+                <div className="mb-5">
+                  <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
                     <AlertTriangle className="w-4 h-4 text-destructive" />
-                    절대 피해야 할 유형
+                    절대 조심해야 할 Red Flag
                   </h3>
-                  <p className="text-sm text-foreground/80 leading-[1.9]">{ai.premiumPreview.avoidType}</p>
+                  <div className="space-y-3">
+                    {ai.redFlags.map((flag, i) => (
+                      <div key={i} className="rounded-2xl p-4 border-2 border-destructive/20 bg-destructive/5 relative overflow-hidden">
+                        <div className="flex items-start gap-3">
+                          <div className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-xs">🚩</span>
+                          </div>
+                          <p className="text-sm text-foreground/85 leading-[1.8]">{flag}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-
-                {/* Existing premium sections */}
-                <PremiumSections id={id} resultTitle={ai.attractedType.name} />
 
                 {/* End of Premium */}
                 <div className="flex items-center justify-center gap-2 mb-6 text-[10px] text-muted-foreground">
