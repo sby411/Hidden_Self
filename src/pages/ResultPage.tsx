@@ -117,28 +117,126 @@ const ResultPage = () => {
     { icon: MessageCircle, label: "캡션 스타일", value: vibe.captionStyle },
   ];
 
-  // Loading state
+  // Loading state with animated progress
+  const loadingSteps = useMemo(() => [
+    { text: "인스타 데이터 수집 중...", target: 15 },
+    { text: "당신의 인스타 첫인상 분석 중...", target: 35 },
+    { text: "남자들이 느끼는 분위기 해석 중...", target: 55 },
+    { text: "당신에게 끌리는 유형 찾는 중...", target: 70 },
+    { text: "연애 패턴 분석 중...", target: 82 },
+    { text: "AI가 흥미로운 패턴을 발견했습니다…", target: 90 },
+    { text: "거의 다 끝났어요...", target: 96 },
+  ], []);
+
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingStepIdx, setLoadingStepIdx] = useState(0);
+
+  useEffect(() => {
+    if (!aiLoading) return;
+    setLoadingProgress(0);
+    setLoadingStepIdx(0);
+
+    // Fast initial ramp to ~50%, then slow down
+    const timings = [300, 800, 2500, 5000, 8000, 12000, 16000];
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+
+    timings.forEach((ms, i) => {
+      timeouts.push(setTimeout(() => {
+        setLoadingStepIdx(i);
+        setLoadingProgress(loadingSteps[i].target);
+      }, ms));
+    });
+
+    // Smooth intermediate ticks
+    const interval = setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev >= 96) return 96;
+        return prev + 0.3;
+      });
+    }, 200);
+
+    return () => {
+      timeouts.forEach(clearTimeout);
+      clearInterval(interval);
+    };
+  }, [aiLoading, loadingSteps]);
+
+  const teaserInsights = useMemo(() => [
+    "당신의 연애 패턴에서 반복되는 특징이 있습니다...",
+    "특정 유형의 남자가 유독 당신에게 끌리는 이유가 보입니다...",
+    "당신의 인스타에서 강한 심리적 신호가 감지되었습니다...",
+  ], []);
+
+  const [teaserIdx, setTeaserIdx] = useState(0);
+  useEffect(() => {
+    if (!aiLoading) return;
+    const interval = setInterval(() => {
+      setTeaserIdx((prev) => (prev + 1) % teaserInsights.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [aiLoading, teaserInsights]);
+
   if (aiLoading) {
+    const currentStep = loadingSteps[loadingStepIdx];
+    const progressPct = Math.min(Math.round(loadingProgress), 96);
+
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-5">
-        <div className="text-center max-w-sm">
+        <div className="text-center max-w-sm w-full">
           <div className="w-16 h-16 rounded-2xl gradient-ai flex items-center justify-center mx-auto mb-6 animate-pulse">
             <Brain className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-lg font-bold text-foreground mb-2">AI가 분석 중이에요...</h2>
-          <p className="text-sm text-muted-foreground mb-6">인스타 데이터를 불러오는 중입니다...</p>
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>@{id} 프로필 스캔 중</span>
+          <h2 className="text-lg font-bold text-foreground mb-1">AI가 분석 중이에요...</h2>
+          <p className="text-sm text-muted-foreground mb-5">@{id}의 매력 패턴을 해석하고 있어요</p>
+
+          {/* Progress bar */}
+          <div className="w-full mb-2">
+            <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full gradient-primary transition-all duration-500 ease-out"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
           </div>
-          <div className="mt-8 space-y-2">
-            {["인스타 데이터 수집 중", "프로필 분위기 스캔", "심리 트리거 분석", "매력 유형 매칭"].map((step, i) => (
-              <div key={step} className="flex items-center gap-2 text-xs text-muted-foreground animate-pulse" style={{ animationDelay: `${i * 0.3}s` }}>
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                {step}
+          <div className="flex justify-between items-center mb-6">
+            <span className="text-xs text-muted-foreground">{currentStep.text}</span>
+            <span className="text-xs font-bold text-primary">{progressPct}%</span>
+          </div>
+
+          {/* Step indicators */}
+          <div className="space-y-2.5 mb-8">
+            {loadingSteps.slice(0, 5).map((step, i) => (
+              <div
+                key={step.text}
+                className={`flex items-center gap-2.5 text-xs transition-all duration-300 ${
+                  i < loadingStepIdx ? 'text-primary font-medium' :
+                  i === loadingStepIdx ? 'text-foreground font-semibold' :
+                  'text-muted-foreground/50'
+                }`}
+              >
+                <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  i < loadingStepIdx ? 'bg-primary scale-100' :
+                  i === loadingStepIdx ? 'bg-primary animate-pulse scale-125' :
+                  'bg-muted-foreground/30'
+                }`} />
+                {step.text.replace('...', '')}
+                {i < loadingStepIdx && <span className="text-primary">✓</span>}
               </div>
             ))}
           </div>
+
+          {/* Teaser insight */}
+          {loadingStepIdx >= 2 && (
+            <div className="rounded-2xl p-4 bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/15 animate-in fade-in duration-500">
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="text-[10px] font-bold text-primary uppercase tracking-wider">AI Insight</span>
+              </div>
+              <p className="text-sm text-foreground/80 leading-relaxed italic">
+                "{teaserInsights[teaserIdx]}"
+              </p>
+            </div>
+          )}
         </div>
       </div>
     );
