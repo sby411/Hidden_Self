@@ -890,6 +890,20 @@ const ResultPage = () => {
           <Footer />
         </div>
       </main>
+      {/* Sticky CTA */}
+      {showStickyCta && !premiumUnlocked && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-background via-background to-transparent pb-6">
+          <div className="max-w-md mx-auto">
+            <button
+              onClick={handleUnlockPremium}
+              className="w-full h-14 rounded-full bg-gradient-to-r from-[hsl(270,80%,60%)] to-[hsl(330,80%,65%)] text-white font-bold text-sm shadow-[0_4px_20px_rgba(139,92,246,0.4)] hover:shadow-[0_6px_30px_rgba(139,92,246,0.5)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              <Crown className="w-4 h-4" />
+              전체 분석 잠금 해제 · 4,900원
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
