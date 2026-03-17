@@ -293,7 +293,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 7. 인스타 vibe 매력 분석 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Radar className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "인스타 vibe 매력 분석", "P7")}
+        {sectionHeader(<Radar className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "인스타 vibe 매력 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           당신의 인스타에서 느껴지는 매력 요소를 구체적으로 분석합니다.
         </p>
