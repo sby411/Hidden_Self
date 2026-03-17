@@ -333,36 +333,10 @@ const ResultPage = () => {
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
 
-            {/* ====== CHAPTER 3: 심리 트리거 ====== */}
+            {/* ====== CHAPTER 3: 꼬이는 남자 유형 (CORE) ====== */}
             <div className="relative mb-8">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">03</div>
-                <div>
-                  <h2 className="text-sm font-bold text-foreground tracking-tight">당신이 유발하는 심리 트리거</h2>
-                  <p className="text-[10px] text-muted-foreground">왜 특정 남자들이 당신에게 끌리는가</p>
-                </div>
-              </div>
-
-              <div className="space-y-3 mb-5">
-                {ai.psychTriggers.map((trigger, i) => (
-                  <div key={i} className="glass-card rounded-2xl p-4 border-l-4 border-l-primary/60">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <Target className="w-3 h-3 text-primary" />
-                      </div>
-                      <p className="text-sm text-foreground/85 leading-[1.8]">{trigger}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            </div>
-
-            {/* ====== CHAPTER 4: 꼬이는 남자 유형 (CORE) ====== */}
-            <div className="relative mb-8">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">04</div>
                 <div>
                   <h2 className="text-sm font-bold text-foreground tracking-tight">당신에게 꼬이는 남자 유형</h2>
                   <p className="text-[10px] text-muted-foreground">AI가 도출한 고유 매칭 결과</p>
@@ -434,58 +408,6 @@ const ResultPage = () => {
               </div>
 
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            </div>
-
-            {/* ====== CHAPTER 5: 연애 패턴 ====== */}
-            <div className="relative mb-8">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white">05</div>
-                <div>
-                  <h2 className="text-sm font-bold text-foreground tracking-tight">연애 패턴 분석</h2>
-                  <p className="text-[10px] text-muted-foreground">이 남자와의 관계가 어떻게 흘러가는지</p>
-                </div>
-              </div>
-
-              <div className="space-y-3 mb-5">
-                <div className="glass-card rounded-2xl p-5 border-l-4 border-l-[hsl(160,50%,45%)]">
-                  <h3 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌅 시작</h3>
-                  <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.beginning}</p>
-                </div>
-                <div className="glass-card rounded-2xl p-5 border-l-4 border-l-[hsl(45,70%,50%)]">
-                  <h3 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌤️ 중반</h3>
-                  <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.middle}</p>
-                </div>
-                <div className="glass-card rounded-2xl p-5 border-l-4 border-l-destructive/60">
-                  <h3 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">⚡ 전환점</h3>
-                  <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern.turningPoint}</p>
-                </div>
-              </div>
-
-              <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            </div>
-
-            {/* ====== CHAPTER 6: 리스크 ====== */}
-            <div className="relative mb-8">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center text-xs font-black text-destructive">06</div>
-                <div>
-                  <h2 className="text-sm font-bold text-foreground tracking-tight">리스크 분석</h2>
-                  <p className="text-[10px] text-muted-foreground">솔직하게 짚어드립니다</p>
-                </div>
-              </div>
-
-              <div className="space-y-3 mb-5">
-                {ai.risks.map((risk, i) => (
-                  <div key={i} className="glass-card rounded-2xl p-4 border border-destructive/15">
-                    <div className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
-                        <Siren className="w-3 h-3 text-destructive" />
-                      </div>
-                      <p className="text-sm text-foreground/85 leading-[1.8]">{risk}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div> {/* end basicReportRef */}
 
