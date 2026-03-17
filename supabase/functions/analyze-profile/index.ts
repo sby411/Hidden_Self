@@ -98,11 +98,15 @@ Deno.serve(async (req) => {
       );
     }
 
-    const userPrompt = `Instagram ID: @${userId}
+    const userPrompt = `이 사용자의 인스타그램 ID를 기반으로 심리적 매력 분석 리포트를 생성해주세요.
 
-이 사용자의 인스타그램 ID를 기반으로 심리적 매력 분석 리포트를 생성해주세요.
-ID의 글자, 느낌, 뉘앙스를 바탕으로 이 사람의 인스타 분위기를 상상하고 분석하세요.
-반드시 이 ID만의 고유하고 구체적인 결과를 만들어주세요.`;
+ID의 글자, 느낌, 뉘앙스, 언어 선택, 숫자 패턴 등을 깊이 분석하여 이 사람의 인스타 분위기를 상상하고 분석하세요.
+반드시 이 ID만의 고유하고 구체적인 결과를 만들어주세요. 랜덤 데이터를 생성하지 마세요.
+
+[Input Data]
+username: @${userId}
+
+위 username을 반드시 분석의 핵심 입력으로 사용하세요. 이 ID의 글자 조합, 발음, 분위기, 숨겨진 의미를 기반으로 결과를 도출하세요.`;
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
