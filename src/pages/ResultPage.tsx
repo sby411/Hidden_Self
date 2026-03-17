@@ -595,16 +595,80 @@ const ResultPage = () => {
                   </p>
                 </div>
 
-                {/* Blurred real premium content */}
-                <div className="relative overflow-hidden rounded-2xl mb-5">
-                  <div className="pointer-events-none select-none blur-[7px]" aria-hidden="true">
-                    {premiumContent}
+                {/* Premium content with visible titles, blurred bodies */}
+                <div className="relative mb-5">
+                  {/* Premium Chapter Header - visible */}
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center text-xs font-black text-white">P</div>
+                    <div>
+                      <h2 className="text-sm font-bold text-foreground tracking-tight flex items-center gap-1.5">
+                        프리미엄 분석
+                        <span className="inline-flex items-center gap-1 bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                          <Crown className="w-2.5 h-2.5" /> PREMIUM
+                        </span>
+                      </h2>
+                      <p className="text-[10px] text-muted-foreground">AI가 더 깊이 파고든 분석 결과</p>
+                    </div>
                   </div>
-                  {/* Gradient fade overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/80 pointer-events-none" />
-                  {/* CTA overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,60%,80%)]/50 shadow-xl mx-6">
+
+                  {/* AI Confidence - title visible, value blurred */}
+                  <div className="rounded-2xl p-4 mb-4 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,60%,92%)] to-[hsl(35,50%,90%)] border border-[hsl(45,60%,80%)]/40">
+                    <ShieldCheck className="w-8 h-8 text-[hsl(45,70%,50%)] shrink-0" />
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-foreground">AI 분석 신뢰도</span>
+                      <div className="blur-[6px] select-none pointer-events-none mt-1">
+                        <Progress value={ai.confidence} className="h-2 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section teasers - titles visible, content blurred */}
+                  <div className="space-y-4">
+                    {[
+                      { icon: <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신이 유발하는 심리 트리거" },
+                      { icon: <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "이 남자가 당신에게 빠지는 결정적 순간" },
+                      { icon: <Clock className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신의 연애 패턴" },
+                      { icon: <Siren className="w-4 h-4 text-destructive" />, title: "관계에서 발생할 수 있는 리스크" },
+                      { icon: <Users className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자" },
+                      { icon: <AlertTriangle className="w-4 h-4 text-destructive" />, title: "절대 조심해야 할 Red Flag" },
+                    ].map((section, i) => (
+                      <div key={i} className="rounded-2xl overflow-hidden border border-[hsl(45,60%,80%)]/30 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card">
+                        <div className="p-4 pb-2">
+                          <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                            {section.icon}
+                            {section.title}
+                          </h3>
+                        </div>
+                        <div className="px-4 pb-4 blur-[7px] select-none pointer-events-none" aria-hidden="true">
+                          <p className="text-sm text-foreground/60 leading-[1.8]">
+                            이 섹션에는 당신만을 위한 심층 심리 분석이 포함되어 있습니다. 실제 인스타그램 데이터를 기반으로 생성된 맞춤 분석 결과를 확인하세요.
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Stats teaser - titles visible, numbers blurred */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,60%,95%)] to-card border border-[hsl(0,40%,85%)]/30 text-center">
+                        <Flame className="w-5 h-5 text-destructive mx-auto mb-2" />
+                        <p className="text-[10px] text-muted-foreground font-medium mb-1">집착 확률</p>
+                        <div className="blur-[7px] select-none pointer-events-none">
+                          <p className="text-3xl font-black text-destructive">??%</p>
+                        </div>
+                      </div>
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 text-center">
+                        <TrendingUp className="w-5 h-5 text-[hsl(160,50%,40%)] mx-auto mb-2" />
+                        <p className="text-[10px] text-muted-foreground font-medium mb-1">지속 가능성</p>
+                        <div className="blur-[7px] select-none pointer-events-none">
+                          <p className="text-3xl font-black text-[hsl(160,50%,40%)]">??%</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTA overlay centered */}
+                  <div className="flex justify-center mt-5">
+                    <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,60%,80%)]/50 shadow-xl">
                       <Lock className="w-6 h-6 text-[hsl(45,70%,50%)] mx-auto mb-2" />
                       <p className="text-xs font-bold text-foreground mb-1">{premiumCharCount.toLocaleString()}자 분량의 심층 분석이 잠겨있어요</p>
                       <p className="text-[10px] text-muted-foreground">아래 버튼으로 전체 결과를 확인하세요</p>
