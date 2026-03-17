@@ -25,9 +25,12 @@ export const LegalLinks = ({ className = "" }: { className?: string }) => (
 const Footer = () => (
   <footer className="text-center pb-6 pt-2 space-y-2">
     <LegalLinks />
-    <p className="text-[11px] text-muted-foreground">
-      © 2026 InstAI · 재미로 보는 테스트입니다
-    </p>
+    <div className="text-[10px] text-muted-foreground space-y-0.5">
+      <p>상호명: 퍼즐리 · 대표자: 양세빈</p>
+      <p>사업자등록번호: 174-06-03144</p>
+      <p>주소: 서울특별시 서초구 서초대로19길 11, 501호</p>
+      <p>이메일: sby411@naver.com</p>
+    </div>
   </footer>
 );
 
