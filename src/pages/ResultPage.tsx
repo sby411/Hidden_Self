@@ -127,13 +127,13 @@ const ResultPage = () => {
             <Brain className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-lg font-bold text-foreground mb-2">AI가 분석 중이에요...</h2>
-          <p className="text-sm text-muted-foreground mb-6">@{id}의 인스타를 심층 분석하고 있습니다</p>
+          <p className="text-sm text-muted-foreground mb-6">인스타 데이터를 불러오는 중입니다...</p>
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span>심리 패턴 생성 중</span>
+            <span>@{id} 프로필 스캔 중</span>
           </div>
           <div className="mt-8 space-y-2">
-            {["프로필 분위기 스캔", "심리 트리거 분석", "매력 유형 매칭"].map((step, i) => (
+            {["인스타 데이터 수집 중", "프로필 분위기 스캔", "심리 트리거 분석", "매력 유형 매칭"].map((step, i) => (
               <div key={step} className="flex items-center gap-2 text-xs text-muted-foreground animate-pulse" style={{ animationDelay: `${i * 0.3}s` }}>
                 <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                 {step}
