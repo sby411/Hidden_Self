@@ -277,7 +277,7 @@ Deno.serve(async (req) => {
                   type: "object",
                   properties: {
                     instaImpression: { type: "string" },
-                    psychTriggers: { type: "array", items: { type: "string" } },
+                    vibeKeywords: { type: "array", items: { type: "string" } },
                     attractedType: {
                       type: "object",
                       properties: {
@@ -289,28 +289,6 @@ Deno.serve(async (req) => {
                       },
                       required: ["name", "emoji", "approach", "earlyBehavior", "feelings"],
                     },
-                    datingPattern: {
-                      type: "object",
-                      properties: {
-                        beginning: { type: "string" },
-                        middle: { type: "string" },
-                        turningPoint: { type: "string" },
-                      },
-                      required: ["beginning", "middle", "turningPoint"],
-                    },
-                    risks: { type: "array", items: { type: "string" } },
-                    premiumPreview: {
-                      type: "object",
-                      properties: {
-                        decisiveMoment: { type: "string" },
-                        breakPoint: { type: "string" },
-                        perfectMatch: { type: "string" },
-                        avoidType: { type: "string" },
-                      },
-                      required: ["decisiveMoment", "breakPoint", "perfectMatch", "avoidType"],
-                    },
-                    confidence: { type: "number" },
-                    vibeKeywords: { type: "array", items: { type: "string" } },
                     attractionStats: {
                       type: "object",
                       properties: {
@@ -322,14 +300,30 @@ Deno.serve(async (req) => {
                       },
                       required: ["olderAttraction", "sameAgeAttraction", "youngerAttraction", "aegenPower", "tetoPower"],
                     },
+                    psychTriggers: { type: "array", items: { type: "string" } },
+                    decisiveMoment: { type: "string" },
+                    datingPattern: {
+                      type: "object",
+                      properties: {
+                        beginning: { type: "string" },
+                        middle: { type: "string" },
+                        turningPoint: { type: "string" },
+                      },
+                      required: ["beginning", "middle", "turningPoint"],
+                    },
+                    risks: { type: "array", items: { type: "string" } },
+                    goodMatch: { type: "string" },
+                    badMatch: { type: "string" },
+                    redFlags: { type: "array", items: { type: "string" } },
+                    confidence: { type: "number" },
                     obsessionRate: { type: "number" },
                     relationshipScore: { type: "number" },
                   },
                   required: [
-                    "instaImpression", "psychTriggers", "attractedType",
-                    "datingPattern", "risks", "premiumPreview",
-                    "confidence", "vibeKeywords", "attractionStats",
-                    "obsessionRate", "relationshipScore",
+                    "instaImpression", "vibeKeywords", "attractedType",
+                    "attractionStats", "psychTriggers", "decisiveMoment",
+                    "datingPattern", "risks", "goodMatch", "badMatch",
+                    "redFlags", "confidence", "obsessionRate", "relationshipScore",
                   ],
                 },
               },
