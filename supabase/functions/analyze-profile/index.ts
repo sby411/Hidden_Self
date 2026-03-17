@@ -53,11 +53,11 @@ Return a valid JSON object with this exact structure. Write everything in Korean
     "feelings": "이 남자가 당신에 대해 느끼는 감정 (2-3문장)"
   },
   "attractionStats": {
-    "olderAttraction": 75,
-    "sameAgeAttraction": 60,
-    "youngerAttraction": 45,
-    "aegenPower": 80,
-    "tetoPower": 65
+    "olderAttraction": 75,   // 연상 남성이 당신에게 끌릴 확률
+    "sameAgeAttraction": 60, // 동갑 남성이 당신에게 끌릴 확률
+    "youngerAttraction": 45, // 연하 남성이 당신에게 끌릴 확률
+    "aegenPower": 80,        // 당신이 주는 에겐(애기같은) 이미지 강도
+    "tetoPower": 65          // 당신이 주는 테토(도도한) 이미지 강도
   },
   "psychTriggers": ["심리 트리거 1", "심리 트리거 2", "심리 트리거 3"],
   "decisiveMoment": "이 남자가 당신에게 빠지는 결정적 순간 (2-3문장)",
