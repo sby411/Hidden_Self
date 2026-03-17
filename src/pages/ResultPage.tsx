@@ -673,12 +673,15 @@ const ResultPage = () => {
                     </div>
                   </div>
 
-                  {/* CTA overlay centered */}
+                  {/* Lock message */}
                   <div className="flex justify-center mt-5">
                     <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,60%,80%)]/50 shadow-xl">
                       <Lock className="w-6 h-6 text-[hsl(45,70%,50%)] mx-auto mb-2" />
-                      <p className="text-xs font-bold text-foreground mb-1">{premiumCharCount.toLocaleString()}자 분량의 심층 분석이 잠겨있어요</p>
-                      <p className="text-[10px] text-muted-foreground">아래 버튼으로 전체 결과를 확인하세요</p>
+                      <p className="text-xs font-bold text-foreground mb-1">{premiumCharCount.toLocaleString()}자 분량의 심층 분석이 잠겨 있습니다.</p>
+                      <p className="text-[10px] text-muted-foreground leading-relaxed mt-1">
+                        당신이 왜 특정 남자를 반복해서 끌어들이는지,<br />
+                        그리고 어떤 남자가 당신에게 진짜 잘 맞는지 확인해보세요.
+                      </p>
                     </div>
                   </div>
                 </div>
