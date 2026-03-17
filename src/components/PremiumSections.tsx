@@ -260,7 +260,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 6. 끌리는 남자 유형 TOP5 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Trophy className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "당신에게 끌리는 남자 유형 TOP5", "P6")}
+        {sectionHeader(<Trophy className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "당신에게 끌리는 남자 유형 TOP5")}
 
         <div className="space-y-2.5">
           {top5.map(({ rank, type }) => (
