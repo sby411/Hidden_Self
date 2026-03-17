@@ -501,6 +501,84 @@ const ResultPage = () => {
                 </ul>
               </div>
 
+              {/* Why this type is attracted */}
+              <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                  💫 왜 이런 남자가 꼬이는지
+                </h3>
+                <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
+                  {result.whyAttracted}
+                </p>
+              </div>
+
+              {/* Dating Pattern */}
+              <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                  💕 이 남자의 연애 패턴
+                </h3>
+                <p className="text-sm text-foreground/80 leading-[1.9] whitespace-pre-line">
+                  {result.datingPattern}
+                </p>
+              </div>
+
+              {/* Pros & Cons */}
+              <div className="grid grid-cols-2 gap-3 mb-5">
+                <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30">
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <ThumbsUp className="w-3.5 h-3.5 text-[hsl(45,70%,50%)]" />
+                    <h4 className="text-xs font-bold text-foreground">장점</h4>
+                  </div>
+                  <ul className="space-y-2">
+                    {result.pros.map((p) => (
+                      <li key={p} className="text-[11px] text-foreground/80 flex items-start gap-1.5">
+                        <span className="text-[hsl(45,70%,50%)] mt-0.5">•</span>
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30">
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <ThumbsDown className="w-3.5 h-3.5 text-destructive" />
+                    <h4 className="text-xs font-bold text-foreground">단점</h4>
+                  </div>
+                  <ul className="space-y-2">
+                    {result.cons.map((c) => (
+                      <li key={c} className="text-[11px] text-foreground/80 flex items-start gap-1.5">
+                        <span className="text-destructive mt-0.5">•</span>
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Additional Types */}
+              <div className="mb-5">
+                <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                  💕 추가로 꼬이는 남자 유형
+                </h3>
+                <div className="space-y-2.5">
+                  {additionalTypes.map((t, i) => (
+                    <div
+                      key={t.id}
+                      className={`rounded-2xl p-4 flex items-center gap-3.5 bg-gradient-to-br ${t.gradientClass} border border-border/30 shadow-sm`}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-card/50 flex items-center justify-center text-[10px] font-black text-muted-foreground shrink-0">
+                        #{i + 2}
+                      </div>
+                      <div className="text-3xl shrink-0">{t.emoji}</div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-semibold text-foreground">{t.title}</h4>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
+                          {t.oneLiner}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Dating Start Pattern */}
               <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
