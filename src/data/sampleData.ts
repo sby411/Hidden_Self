@@ -554,9 +554,9 @@ export function getVibeAnalysis(id: string): VibeAnalysis {
 export function getAiConfidence(id: string): number {
   let hash = 0;
   for (let i = 0; i < id.length; i++) {
-    hash = (hash * 13 + id.charCodeAt(i)) % 21;
+    hash = (hash * 13 + id.charCodeAt(i)) % 6;
   }
-  return 75 + (Math.abs(hash) % 21);
+  return 91 + (Math.abs(hash) % 6);
 }
 
 export interface InstaProfile {
