@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import React, { useRef, useCallback, useMemo, useState, useEffect } from "react";
 import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
-import Footer, { LegalLinks } from "@/components/Footer";
+import Footer from "@/components/Footer";
 
 const lockedItems = [
   "AI 분석 신뢰도",
