@@ -445,7 +445,7 @@ const ResultPage = () => {
                         <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />
                         당신이 유발하는 심리 트리거
                       </h3>
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.psychTriggers[0]}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.psychTriggers?.[0] ?? ''}</p>
                     </div>
 
                     <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
