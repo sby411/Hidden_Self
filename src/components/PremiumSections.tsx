@@ -168,7 +168,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 4. 연애 성공 전략 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Shield className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 성공 전략", "P4")}
+        {sectionHeader(<Shield className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 성공 전략")}
         <p className="text-[11px] text-muted-foreground mb-4">
           <strong className="text-foreground">{resultTitle}</strong> 유형과의 연애 성공 확률을 높이는 전략입니다.
         </p>
