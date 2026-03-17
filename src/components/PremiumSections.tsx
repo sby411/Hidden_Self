@@ -37,15 +37,10 @@ const premiumCardClass =
 
 const premiumAccentBorder = "border-l-4 border-l-[hsl(45,70%,55%)]";
 
-const sectionHeader = (icon: React.ReactNode, title: string, number: string) => (
-  <div className="flex items-center gap-2.5 mb-4">
-    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center">
-      <span className="text-[9px] font-black text-white">{number}</span>
-    </div>
-    <div className="flex items-center gap-1.5">
-      {icon}
-      <h3 className="text-sm font-bold text-foreground">{title}</h3>
-    </div>
+const sectionHeader = (icon: React.ReactNode, title: string) => (
+  <div className="flex items-center gap-1.5 mb-4">
+    {icon}
+    <h3 className="text-sm font-bold text-foreground">{title}</h3>
   </div>
 );
 
@@ -64,7 +59,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
     <>
       {/* ====== 1. 연애 진행 시뮬레이션 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Footprints className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 진행 시뮬레이션", "P1")}
+        {sectionHeader(<Footprints className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 진행 시뮬레이션")}
         <p className="text-[11px] text-muted-foreground mb-4">
           <strong className="text-foreground">{resultTitle}</strong> 유형이 당신에게 빠지는 과정을 단계별로 분석합니다.
         </p>
@@ -104,7 +99,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 2. 관심 있을 때 보이는 행동 패턴 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Eye className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "관심 행동 패턴 분석", "P2")}
+        {sectionHeader(<Eye className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "관심 행동 패턴 분석")}
 
         <div className="space-y-4">
           <div>
@@ -145,7 +140,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 3. 연애 궁합 분석 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 궁합 분석", "P3")}
+        {sectionHeader(<Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 궁합 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           당신과 <strong className="text-foreground">{resultTitle}</strong> 유형의 관계 궁합을 점수로 분석합니다.
         </p>
@@ -173,7 +168,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 4. 연애 성공 전략 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Shield className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 성공 전략", "P4")}
+        {sectionHeader(<Shield className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 성공 전략")}
         <p className="text-[11px] text-muted-foreground mb-4">
           <strong className="text-foreground">{resultTitle}</strong> 유형과의 연애 성공 확률을 높이는 전략입니다.
         </p>
@@ -217,7 +212,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 5. 연애 리스크 분석 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "연애 리스크 분석", "P5")}
+        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "연애 리스크 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           이 유형과 연애할 때 발생할 수 있는 위험 요소를 분석합니다.
         </p>
@@ -265,7 +260,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 6. 끌리는 남자 유형 TOP5 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Trophy className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "당신에게 끌리는 남자 유형 TOP5", "P6")}
+        {sectionHeader(<Trophy className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "당신에게 끌리는 남자 유형 TOP5")}
 
         <div className="space-y-2.5">
           {top5.map(({ rank, type }) => (
@@ -298,7 +293,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 7. 인스타 vibe 매력 분석 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Radar className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "인스타 vibe 매력 분석", "P7")}
+        {sectionHeader(<Radar className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "인스타 vibe 매력 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           당신의 인스타에서 느껴지는 매력 요소를 구체적으로 분석합니다.
         </p>
@@ -350,7 +345,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 8. 연애 시나리오 예측 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Film className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 시나리오 예측", "P8")}
+        {sectionHeader(<Film className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 시나리오 예측")}
         <p className="text-[11px] text-muted-foreground mb-4">
           <strong className="text-foreground">{resultTitle}</strong> 유형과 연애할 경우 예상되는 관계 흐름입니다.
         </p>
@@ -382,7 +377,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 9. 끌어당기는 남자 위험도 분석 ====== */}
       <div className={`${premiumCardClass} border-l-4 border-l-destructive/50`}>
-        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "끌어당기는 위험 유형 분석", "P9")}
+        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "끌어당기는 위험 유형 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           당신이 반복적으로 끌어들이는 연애 위험 유형을 분석합니다.
         </p>
