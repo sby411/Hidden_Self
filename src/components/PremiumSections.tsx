@@ -212,7 +212,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 5. 연애 리스크 분석 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "연애 리스크 분석", "P5")}
+        {sectionHeader(<AlertOctagon className="w-4 h-4 text-destructive" />, "연애 리스크 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           이 유형과 연애할 때 발생할 수 있는 위험 요소를 분석합니다.
         </p>
