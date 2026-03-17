@@ -39,6 +39,13 @@ Section 3 (Premium): Contains these subsections IN ORDER:
   3-5: 잘 맞는 남자 vs 자주 꼬이지만 힘든 남자 (goodMatch + badMatch) - each 2-3 sentences
   3-6: 절대 조심해야 할 red flag (redFlags) - 3 specific red flags
 
+Section 4: 프리미엄 미리보기 티저 (premiumTeasers)
+  - For EACH premium subsection, generate ONE intriguing teaser sentence.
+  - The teaser must be psychologically sharp and create strong curiosity.
+  - It should feel like revealing just enough to make the user desperate to read more.
+  - NEVER use generic phrases. Each teaser must be specific to this user's data.
+  - Format: 6 teaser strings matching the 6 premium subsections in order.
+
 [OUTPUT - JSON FORMAT]
 Return a valid JSON object with this exact structure. Write everything in Korean. Be vivid, sharp, provocative.
 
@@ -70,6 +77,14 @@ Return a valid JSON object with this exact structure. Write everything in Korean
   "goodMatch": "당신과 진짜 잘 맞는 남자 유형 설명 (2-3문장)",
   "badMatch": "자주 꼬이지만 결국 힘든 남자 유형 설명 (2-3문장)",
   "redFlags": ["red flag 1", "red flag 2", "red flag 3"],
+  "premiumTeasers": [
+    "당신이 유발하는 심리 트리거 티저 (호기심 유발하는 1문장)",
+    "이 남자가 당신에게 빠지는 결정적 순간 티저 (1문장)",
+    "당신의 연애 패턴 티저 (1문장)",
+    "관계 리스크 티저 (1문장)",
+    "잘 맞는 남자 vs 힘든 남자 티저 (1문장)",
+    "red flag 티저 (1문장)"
+  ],
   "confidence": 93,
   "obsessionRate": 72,
   "relationshipScore": 55
