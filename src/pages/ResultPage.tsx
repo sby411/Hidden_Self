@@ -799,9 +799,7 @@ const ResultPage = () => {
             다시 테스트하기
           </button>
 
-          <p className="text-[11px] text-muted-foreground text-center">
-            © 2026 InstAI · 재미로 보는 테스트입니다
-          </p>
+          <Footer />
         </div>
       </main>
     </div>
