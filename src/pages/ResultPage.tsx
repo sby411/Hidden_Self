@@ -53,6 +53,11 @@ const ResultPage = () => {
     return 38 + (Math.abs(h) % 41);
   }, [id]);
 
+  const premiumCharCount = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 3000;
+    return 12000 + (Math.abs(h) % 3000);
+  }, [id]);
   const handleUnlockPremium = () => {
     setPremiumUnlocked(true);
     setTimeout(() => {
