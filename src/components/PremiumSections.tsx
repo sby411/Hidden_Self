@@ -99,7 +99,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 2. 관심 있을 때 보이는 행동 패턴 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Eye className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "관심 행동 패턴 분석", "P2")}
+        {sectionHeader(<Eye className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "관심 행동 패턴 분석")}
 
         <div className="space-y-4">
           <div>
