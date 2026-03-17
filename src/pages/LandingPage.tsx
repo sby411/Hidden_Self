@@ -65,7 +65,7 @@ const LandingPage = () => {
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-foreground mb-3">
               내 인스타그램으로 분석하는
-              <br className="sm:hidden" />
+              <br />
               <span className="bg-gradient-to-r from-ai-highlight to-accent bg-clip-text text-transparent">나에게 꼬이는 남자 유형</span>
             </h1>
             <p className="text-base font-bold text-foreground mb-2">
