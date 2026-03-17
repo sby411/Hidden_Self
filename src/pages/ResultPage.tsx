@@ -107,6 +107,10 @@ const ResultPage = () => {
     await downloadNodeAsImage(premiumReportRef.current, `프리미엄리포트-${ai?.attractedType.name || id}.png`, "프리미엄 리포트가 저장되었어요! 📸");
   }, [downloadNodeAsImage, ai, id]);
 
+  // Derive Instagram display data from AI response
+  const igProfile = ai?.instagramData?.profile;
+  const igStats = ai?.instagramData?.stats;
+
   const vibeCards = [
     { icon: Camera, label: "사진 분위기", value: vibe.photoMood },
     { icon: Palette, label: "색감 톤", value: vibe.colorTone },
