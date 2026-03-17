@@ -3,10 +3,10 @@ import { getRandomResult, getVibeAnalysis, getAdditionalTypes, getWarningType, g
 import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Scan } from "lucide-react";
 import PremiumSections from "@/components/PremiumSections";
 import { toast } from "sonner";
-import React, { useRef, useCallback, useMemo, useState } from "react";
+import React, { useRef, useCallback, useMemo, useState, useEffect } from "react";
 import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
-import Footer, { LegalLinks } from "@/components/Footer";
+import Footer from "@/components/Footer";
 
 const lockedItems = [
   "AI 분석 신뢰도",
@@ -46,6 +46,36 @@ const ResultPage = () => {
   const premiumRef = useRef<HTMLDivElement>(null);
   const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
+  const [showStickyCta, setShowStickyCta] = useState(false);
+  const lockedSectionRef = useRef<HTMLDivElement>(null);
+
+  // Delayed toast after 2s
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!premiumUnlocked) {
+        toast("🔍 AI가 추가 패턴을 발견했습니다", {
+          description: "심층 분석에서 17개의 연애 패턴이 감지되었어요",
+          duration: 4000,
+        });
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Sticky CTA on scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!premiumUnlocked) {
+          setShowStickyCta(entry.isIntersecting);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    const el = lockedSectionRef.current;
+    if (el) observer.observe(el);
+    return () => { if (el) observer.unobserve(el); };
+  }, [premiumUnlocked]);
 
   const relationshipScore = useMemo(() => {
     let h = 0;
@@ -422,7 +452,55 @@ const ResultPage = () => {
 
           {/* ====== PREMIUM DIVIDER ====== */}
           {!premiumUnlocked ? (
-            <div className="mb-8">
+            <div className="mb-8" ref={lockedSectionRef}>
+              {/* AI 심층 분석 진행 중 - Blurred Preview Cards */}
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white animate-pulse">
+                    <Scan className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-foreground tracking-tight">AI 심층 연애 패턴 분석 진행 중...</h2>
+                    <p className="text-[10px] text-muted-foreground">잠금 해제 시 전체 결과를 확인할 수 있습니다</p>
+                  </div>
+                </div>
+
+                {/* Blurred teaser cards */}
+                <div className="space-y-3">
+                  {[
+                    { title: "이 남자가 당신에게 끌리는 진짜 이유", content: "당신의 인스타 피드에는 ○○한 신호가 있습니다.\n그래서 특정 유형의 남성이 반복적으로..." },
+                    { title: "연애 초반 남자의 행동 패턴", content: "이 유형의 남자는 처음에는 ○○하게 접근하지만\n시간이 지나면 ○○한 행동을 보일 확률이..." },
+                    { title: "당신에게 특히 강하게 끌리는 남자 유형", content: "AI 분석 결과 당신은 ○○한 성향의 남성에게\n높은 확률로 매력을 느끼고..." },
+                  ].map((card) => (
+                    <div key={card.title} className="relative bg-card rounded-2xl p-4 border border-border/50 shadow-sm overflow-hidden">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-bold text-foreground mb-2">{card.title}</h4>
+                          <p className="text-xs text-foreground/70 leading-relaxed whitespace-pre-line blur-[6px] opacity-60 select-none">
+                            {card.content}
+                          </p>
+                        </div>
+                        <Lock className="w-4 h-4 text-muted-foreground/50 shrink-0 mt-0.5" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pattern count message */}
+                <div className="text-center mt-5 space-y-1">
+                  <p className="text-sm font-bold text-foreground">
+                    AI가 총 <span className="text-primary">17개</span>의 연애 패턴을 발견했습니다.
+                  </p>
+                  <p className="text-sm text-foreground/80">
+                    지금까지 <span className="font-bold">3개</span>만 공개되었습니다.
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    전체 분석을 확인하려면 잠금을 해제하세요.
+                  </p>
+                </div>
+              </div>
+
+              {/* Existing locked items */}
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center">
                   <Lock className="w-3.5 h-3.5 text-white" />
@@ -433,7 +511,6 @@ const ResultPage = () => {
                 </div>
               </div>
 
-              {/* Locked cards with blur */}
               <div className="relative mb-5">
                 <div className="space-y-2.5">
                   {lockedItems.map((item) => (
@@ -448,6 +525,14 @@ const ResultPage = () => {
                 </div>
               </div>
 
+              {/* CTA Area */}
+              <div className="text-center mb-2">
+                <p className="text-xs font-semibold text-destructive flex items-center justify-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  당신이 반복적으로 끌리는 남자 유형이 포함되어 있습니다
+                </p>
+              </div>
+
               <button
                 onClick={handleUnlockPremium}
                 className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group"
@@ -458,7 +543,10 @@ const ResultPage = () => {
                   전체 분석 잠금 해제 · 4,900원
                 </span>
               </button>
-              
+
+              <p className="text-[11px] text-muted-foreground text-center mt-2">
+                이미 <span className="font-bold text-foreground">1,284명</span>이 분석을 완료했습니다
+              </p>
             </div>
           ) : (
             /* ====== PREMIUM CONTENT (Unlocked) ====== */
@@ -802,6 +890,20 @@ const ResultPage = () => {
           <Footer />
         </div>
       </main>
+      {/* Sticky CTA */}
+      {showStickyCta && !premiumUnlocked && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-gradient-to-t from-background via-background to-transparent pb-6">
+          <div className="max-w-md mx-auto">
+            <button
+              onClick={handleUnlockPremium}
+              className="w-full h-14 rounded-full bg-gradient-to-r from-[hsl(270,80%,60%)] to-[hsl(330,80%,65%)] text-white font-bold text-sm shadow-[0_4px_20px_rgba(139,92,246,0.4)] hover:shadow-[0_6px_30px_rgba(139,92,246,0.5)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            >
+              <Crown className="w-4 h-4" />
+              전체 분석 잠금 해제 · 4,900원
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
