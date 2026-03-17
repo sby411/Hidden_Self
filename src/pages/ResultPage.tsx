@@ -46,6 +46,36 @@ const ResultPage = () => {
   const premiumRef = useRef<HTMLDivElement>(null);
   const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
+  const [showStickyCta, setShowStickyCta] = useState(false);
+  const lockedSectionRef = useRef<HTMLDivElement>(null);
+
+  // Delayed toast after 2s
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!premiumUnlocked) {
+        toast("🔍 AI가 추가 패턴을 발견했습니다", {
+          description: "심층 분석에서 17개의 연애 패턴이 감지되었어요",
+          duration: 4000,
+        });
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Sticky CTA on scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!premiumUnlocked) {
+          setShowStickyCta(entry.isIntersecting);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    const el = lockedSectionRef.current;
+    if (el) observer.observe(el);
+    return () => { if (el) observer.unobserve(el); };
+  }, [premiumUnlocked]);
 
   const relationshipScore = useMemo(() => {
     let h = 0;
