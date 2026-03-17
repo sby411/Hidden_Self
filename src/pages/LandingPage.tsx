@@ -200,9 +200,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <p className="text-[11px] text-muted-foreground pb-6">
-          © 2026 InstAI · 재미로 보는 테스트입니다
-        </p>
+        <Footer />
       </main>
     </div>
   );
