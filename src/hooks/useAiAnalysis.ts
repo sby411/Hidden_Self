@@ -65,6 +65,7 @@ export interface AiAnalysis {
   goodMatch: string;
   badMatch: string;
   redFlags: string[];
+  premiumTeasers: string[];
   confidence: number;
   obsessionRate: number;
   relationshipScore: number;

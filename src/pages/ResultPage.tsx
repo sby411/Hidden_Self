@@ -622,26 +622,33 @@ const ResultPage = () => {
                     </div>
                   </div>
 
-                  {/* Section teasers - titles visible, content blurred */}
+                  {/* Section teasers - titles visible, AI teaser sentence + blurred rest */}
                   <div className="space-y-4">
                     {[
-                      { icon: <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신이 유발하는 심리 트리거" },
-                      { icon: <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "이 남자가 당신에게 빠지는 결정적 순간" },
-                      { icon: <Clock className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신의 연애 패턴" },
-                      { icon: <Siren className="w-4 h-4 text-destructive" />, title: "관계에서 발생할 수 있는 리스크" },
-                      { icon: <Users className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자" },
-                      { icon: <AlertTriangle className="w-4 h-4 text-destructive" />, title: "절대 조심해야 할 Red Flag" },
-                    ].map((section, i) => (
-                      <div key={i} className="rounded-2xl overflow-hidden border border-[hsl(45,60%,80%)]/30 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card">
+                      { icon: <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신이 유발하는 심리 트리거", idx: 0 },
+                      { icon: <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "이 남자가 당신에게 빠지는 결정적 순간", idx: 1 },
+                      { icon: <Clock className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신의 연애 패턴", idx: 2 },
+                      { icon: <Siren className="w-4 h-4 text-destructive" />, title: "관계에서 발생할 수 있는 리스크", idx: 3 },
+                      { icon: <Users className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자", idx: 4 },
+                      { icon: <AlertTriangle className="w-4 h-4 text-destructive" />, title: "절대 조심해야 할 Red Flag", idx: 5 },
+                    ].map((section) => (
+                      <div key={section.idx} className="rounded-2xl overflow-hidden border border-[hsl(45,60%,80%)]/30 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card">
                         <div className="p-4 pb-2">
                           <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                             {section.icon}
                             {section.title}
                           </h3>
                         </div>
+                        {/* AI-generated teaser sentence - visible */}
+                        <div className="px-4 pb-1">
+                          <p className="text-sm text-foreground/80 leading-[1.8] italic">
+                            "{ai.premiumTeasers?.[section.idx] ?? '이 섹션에는 당신만을 위한 심층 분석이 포함되어 있습니다...'}"
+                          </p>
+                        </div>
+                        {/* Blurred remaining content */}
                         <div className="px-4 pb-4 blur-[7px] select-none pointer-events-none" aria-hidden="true">
-                          <p className="text-sm text-foreground/60 leading-[1.8]">
-                            이 섹션에는 당신만을 위한 심층 심리 분석이 포함되어 있습니다. 실제 인스타그램 데이터를 기반으로 생성된 맞춤 분석 결과를 확인하세요.
+                          <p className="text-sm text-foreground/40 leading-[1.8]">
+                            이 분석의 나머지 내용은 프리미엄 잠금 해제 후 확인할 수 있습니다. 실제 인스타그램 데이터를 기반으로 생성된 깊이 있는 심리 분석을 확인하세요.
                           </p>
                         </div>
                       </div>
