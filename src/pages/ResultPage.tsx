@@ -1,7 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { getVibeAnalysis, getUserVibeType } from "@/data/sampleData";
-import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, ThumbsUp, ThumbsDown, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2, BookOpen } from "lucide-react";
-import PremiumSections from "@/components/PremiumSections";
+import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import React, { useRef, useCallback, useMemo, useState } from "react";
 import { toPng } from "html-to-image";
