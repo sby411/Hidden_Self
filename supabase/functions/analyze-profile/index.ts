@@ -22,12 +22,29 @@ Your job is to analyze a user's REAL Instagram data and generate a highly specif
 - Dynamically create a UNIQUE male pattern per user. Never repeat the same pattern.
 - Use concrete behavioral descriptions, not abstract words.
 
+[SECTION ORDER - MUST FOLLOW EXACTLY]
+The output MUST follow this exact section structure. Do NOT invent new sections. Do NOT reorder.
+
+Section 1: 당신의 인스타 인상 (instaImpression)
+- 2-3 sentences about the user's Instagram first impression based on real data.
+
+Section 2: 당신에게 자주 꼬이는 남자 (attractedType)
+- A unique, provocative type name, emoji, approach style, early behavior, and feelings.
+
+Section 3 (Premium): Contains these subsections IN ORDER:
+  3-1: 당신이 유발하는 심리 트리거 (psychTriggers) - 3 specific triggers
+  3-2: 이 남자가 당신에게 빠지는 결정적 순간 (decisiveMoment) - 2-3 sentences
+  3-3: 당신의 연애 패턴 (datingPattern) - beginning, middle, turningPoint each 2-3 sentences
+  3-4: 관계에서 발생할 수 있는 리스크 (risks) - 3 risks
+  3-5: 잘 맞는 남자 vs 자주 꼬이지만 힘든 남자 (goodMatch + badMatch) - each 2-3 sentences
+  3-6: 절대 조심해야 할 red flag (redFlags) - 3 specific red flags
+
 [OUTPUT - JSON FORMAT]
 Return a valid JSON object with this exact structure. Write everything in Korean. Be vivid, sharp, provocative.
 
 {
   "instaImpression": "당신의 인스타 첫인상 분석 (2-3문장)",
-  "psychTriggers": ["심리 트리거 1", "심리 트리거 2", "심리 트리거 3"],
+  "vibeKeywords": ["키워드1", "키워드2", "키워드3"],
   "attractedType": {
     "name": "고유하고 약간 도발적인 타입 이름",
     "emoji": "이모지 1개",
@@ -35,20 +52,6 @@ Return a valid JSON object with this exact structure. Write everything in Korean
     "earlyBehavior": "초반에 어떻게 행동하는지 (2-3문장)",
     "feelings": "이 남자가 당신에 대해 느끼는 감정 (2-3문장)"
   },
-  "datingPattern": {
-    "beginning": "연애 초반 (2-3문장)",
-    "middle": "중반 감정 역학 (2-3문장)",
-    "turningPoint": "관계가 변하는 순간 (2-3문장)"
-  },
-  "risks": ["리스크 1", "리스크 2", "리스크 3"],
-  "premiumPreview": {
-    "decisiveMoment": "결정적 순간 (1문장, '...'으로 끝나기)",
-    "breakPoint": "무너지는 포인트 (1문장, '...'으로 끝나기)",
-    "perfectMatch": "잘 맞는 유형 힌트 (1문장, '...'으로 끝나기)",
-    "avoidType": "피해야 할 유형 (1문장, '...'으로 끝나기)"
-  },
-  "confidence": 93,
-  "vibeKeywords": ["키워드1", "키워드2", "키워드3"],
   "attractionStats": {
     "olderAttraction": 75,
     "sameAgeAttraction": 60,
@@ -56,6 +59,18 @@ Return a valid JSON object with this exact structure. Write everything in Korean
     "aegenPower": 80,
     "tetoPower": 65
   },
+  "psychTriggers": ["심리 트리거 1", "심리 트리거 2", "심리 트리거 3"],
+  "decisiveMoment": "이 남자가 당신에게 빠지는 결정적 순간 (2-3문장)",
+  "datingPattern": {
+    "beginning": "연애 초반 (2-3문장)",
+    "middle": "중반 감정 역학 (2-3문장)",
+    "turningPoint": "관계가 변하는 순간 (2-3문장)"
+  },
+  "risks": ["리스크 1", "리스크 2", "리스크 3"],
+  "goodMatch": "당신과 진짜 잘 맞는 남자 유형 설명 (2-3문장)",
+  "badMatch": "자주 꼬이지만 결국 힘든 남자 유형 설명 (2-3문장)",
+  "redFlags": ["red flag 1", "red flag 2", "red flag 3"],
+  "confidence": 93,
   "obsessionRate": 72,
   "relationshipScore": 55
 }
@@ -65,10 +80,10 @@ IMPORTANT:
 - All stats must be between 20 and 95
 - obsessionRate between 40 and 95
 - relationshipScore between 35 and 78
-- premiumPreview texts MUST end with "..."
 - Make the attractedType name creative and unique every time
 - Write in a direct tone ("당신은 ~")
-- Reference the REAL data you receive`;
+- Reference the REAL data you receive
+- Follow the section order EXACTLY as specified above`;
 
 function buildUserPrompt(userId: string, profile: any, posts: any[]) {
   const postSummaries = posts
@@ -262,7 +277,7 @@ Deno.serve(async (req) => {
                   type: "object",
                   properties: {
                     instaImpression: { type: "string" },
-                    psychTriggers: { type: "array", items: { type: "string" } },
+                    vibeKeywords: { type: "array", items: { type: "string" } },
                     attractedType: {
                       type: "object",
                       properties: {
@@ -274,28 +289,6 @@ Deno.serve(async (req) => {
                       },
                       required: ["name", "emoji", "approach", "earlyBehavior", "feelings"],
                     },
-                    datingPattern: {
-                      type: "object",
-                      properties: {
-                        beginning: { type: "string" },
-                        middle: { type: "string" },
-                        turningPoint: { type: "string" },
-                      },
-                      required: ["beginning", "middle", "turningPoint"],
-                    },
-                    risks: { type: "array", items: { type: "string" } },
-                    premiumPreview: {
-                      type: "object",
-                      properties: {
-                        decisiveMoment: { type: "string" },
-                        breakPoint: { type: "string" },
-                        perfectMatch: { type: "string" },
-                        avoidType: { type: "string" },
-                      },
-                      required: ["decisiveMoment", "breakPoint", "perfectMatch", "avoidType"],
-                    },
-                    confidence: { type: "number" },
-                    vibeKeywords: { type: "array", items: { type: "string" } },
                     attractionStats: {
                       type: "object",
                       properties: {
@@ -307,14 +300,30 @@ Deno.serve(async (req) => {
                       },
                       required: ["olderAttraction", "sameAgeAttraction", "youngerAttraction", "aegenPower", "tetoPower"],
                     },
+                    psychTriggers: { type: "array", items: { type: "string" } },
+                    decisiveMoment: { type: "string" },
+                    datingPattern: {
+                      type: "object",
+                      properties: {
+                        beginning: { type: "string" },
+                        middle: { type: "string" },
+                        turningPoint: { type: "string" },
+                      },
+                      required: ["beginning", "middle", "turningPoint"],
+                    },
+                    risks: { type: "array", items: { type: "string" } },
+                    goodMatch: { type: "string" },
+                    badMatch: { type: "string" },
+                    redFlags: { type: "array", items: { type: "string" } },
+                    confidence: { type: "number" },
                     obsessionRate: { type: "number" },
                     relationshipScore: { type: "number" },
                   },
                   required: [
-                    "instaImpression", "psychTriggers", "attractedType",
-                    "datingPattern", "risks", "premiumPreview",
-                    "confidence", "vibeKeywords", "attractionStats",
-                    "obsessionRate", "relationshipScore",
+                    "instaImpression", "vibeKeywords", "attractedType",
+                    "attractionStats", "psychTriggers", "decisiveMoment",
+                    "datingPattern", "risks", "goodMatch", "badMatch",
+                    "redFlags", "confidence", "obsessionRate", "relationshipScore",
                   ],
                 },
               },
