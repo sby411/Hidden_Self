@@ -140,7 +140,7 @@ const PremiumSections = ({ id, resultTitle }: Props) => {
 
       {/* ====== 3. 연애 궁합 분석 ====== */}
       <div className={`${premiumCardClass} ${premiumAccentBorder}`}>
-        {sectionHeader(<Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 궁합 분석", "P3")}
+        {sectionHeader(<Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, "연애 궁합 분석")}
         <p className="text-[11px] text-muted-foreground mb-4">
           당신과 <strong className="text-foreground">{resultTitle}</strong> 유형의 관계 궁합을 점수로 분석합니다.
         </p>
