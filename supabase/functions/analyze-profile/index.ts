@@ -77,13 +77,20 @@ Return a valid JSON object with this exact structure. Write everything in Korean
 
 IMPORTANT:
 - confidence must be between 91 and 96
-- All stats must be between 20 and 95
+- All attractionStats must be between 20 and 95
 - obsessionRate between 40 and 95
 - relationshipScore between 35 and 78
 - Make the attractedType name creative and unique every time
 - Write in a direct tone ("당신은 ~")
 - Reference the REAL data you receive
-- Follow the section order EXACTLY as specified above`;
+- Follow the section order EXACTLY as specified above
+- attractionStats 설명:
+  - olderAttraction: 연상 남성이 당신에게 끌릴 확률 (older men attracted to you)
+  - sameAgeAttraction: 동갑 남성이 당신에게 끌릴 확률 (same-age men attracted to you)
+  - youngerAttraction: 연하 남성이 당신에게 끌릴 확률 (younger men attracted to you)
+  - aegenPower: 당신이 주는 에겐(애기같은) 이미지 강도 (how strongly you project a cute/baby-like vibe)
+  - tetoPower: 당신이 주는 테토(도도한) 이미지 강도 (how strongly you project a cool/chic vibe)
+- 매력 지표의 주어를 절대 모호하게 두지 마세요. 끌림 확률은 항상 "남성이 당신에게 끌리는" 방향이고, 에겐력/테토력은 항상 "당신이 주는 이미지"입니다.`;
 
 function buildUserPrompt(userId: string, profile: any, posts: any[]) {
   const postSummaries = posts
