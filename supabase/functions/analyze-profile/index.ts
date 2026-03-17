@@ -6,8 +6,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const APIFY_DATASET_URL =
-  "https://api.apify.com/v2/datasets/cjunNKZy0jO8RhHyX/items?format=json&clean=true";
+const APIFY_ACTOR_URL =
+  "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items";
 
 const SYSTEM_PROMPT = `You are an expert in psychological attraction analysis based on Instagram profiles.
 Your job is to analyze a user's REAL Instagram data and generate a highly specific, realistic, and slightly provocative report about what kind of men are naturally attracted to this person and why.
@@ -21,41 +21,31 @@ Your job is to analyze a user's REAL Instagram data and generate a highly specif
 - The tone should feel like: "this is kind of scary accurate" / "why is this so accurate?"
 - Dynamically create a UNIQUE male pattern per user. Never repeat the same pattern.
 - Use concrete behavioral descriptions, not abstract words.
-- BAD: "emotionally unstable men may like you"
-- GOOD: "처음엔 쿨한 척하지만, 당신의 답장 하나하나에 과하게 의미를 부여하고, 읽씹당하면 몇 시간째 핸드폰만 들여다보는 남자"
 
 [OUTPUT - JSON FORMAT]
 Return a valid JSON object with this exact structure. Write everything in Korean. Be vivid, sharp, provocative.
 
 {
-  "instaImpression": "당신의 인스타 첫인상 분석 (2-3문장, 반드시 긴장감 포함 - 예: 다가가기 쉬워 보이지만 실제론 읽히지 않는, 따뜻해 보이지만 벽이 있는 등)",
-  "psychTriggers": [
-    "심리 트리거 1 - 왜 특정 남자들이 끌리는지 구체적으로 (호기심, 인정욕구, 감정투사, 통제vs불확실성 등)",
-    "심리 트리거 2",
-    "심리 트리거 3"
-  ],
+  "instaImpression": "당신의 인스타 첫인상 분석 (2-3문장)",
+  "psychTriggers": ["심리 트리거 1", "심리 트리거 2", "심리 트리거 3"],
   "attractedType": {
-    "name": "고유하고 약간 도발적인 타입 이름 (예: '읽씹 공포증 집착러', '감정 도망자 알파남' 등)",
+    "name": "고유하고 약간 도발적인 타입 이름",
     "emoji": "이모지 1개",
-    "approach": "이 남자가 어떻게 접근하는지 구체적 행동 묘사 (2-3문장)",
-    "earlyBehavior": "초반에 어떻게 행동하는지 (2-3문장, 매우 구체적)",
+    "approach": "이 남자가 어떻게 접근하는지 (2-3문장)",
+    "earlyBehavior": "초반에 어떻게 행동하는지 (2-3문장)",
     "feelings": "이 남자가 당신에 대해 느끼는 감정 (2-3문장)"
   },
   "datingPattern": {
-    "beginning": "연애 초반 어떻게 시작되는지 (2-3문장)",
+    "beginning": "연애 초반 (2-3문장)",
     "middle": "중반 감정 역학 (2-3문장)",
     "turningPoint": "관계가 변하는 순간 (2-3문장)"
   },
-  "risks": [
-    "리스크 1 - 날카롭고 솔직하게",
-    "리스크 2 - 감정 불균형",
-    "리스크 3 - 반복되는 패턴"
-  ],
+  "risks": ["리스크 1", "리스크 2", "리스크 3"],
   "premiumPreview": {
-    "decisiveMoment": "이 남자가 당신에게 빠지는 결정적 순간 (1문장, 불완전하게 끊기. '...'으로 끝나기)",
-    "breakPoint": "관계에서 무너지는 포인트 (1문장, 불완전하게 끊기)",
-    "perfectMatch": "당신에게 진짜 잘 맞는 남자 유형 힌트 (1문장, 불완전하게 끊기)",
-    "avoidType": "절대 피해야 할 유형 힌트 (1문장, 불완전하게 끊기)"
+    "decisiveMoment": "결정적 순간 (1문장, '...'으로 끝나기)",
+    "breakPoint": "무너지는 포인트 (1문장, '...'으로 끝나기)",
+    "perfectMatch": "잘 맞는 유형 힌트 (1문장, '...'으로 끝나기)",
+    "avoidType": "피해야 할 유형 (1문장, '...'으로 끝나기)"
   },
   "confidence": 93,
   "vibeKeywords": ["키워드1", "키워드2", "키워드3"],
@@ -75,21 +65,17 @@ IMPORTANT:
 - All stats must be between 20 and 95
 - obsessionRate between 40 and 95
 - relationshipScore between 35 and 78
-- premiumPreview texts MUST end with "..." to feel incomplete and curiosity-inducing
+- premiumPreview texts MUST end with "..."
 - Make the attractedType name creative and unique every time
 - Write in a direct tone ("당신은 ~")
-- Mix emotional + analytical tone
-- Reference the REAL data you receive (follower ratio, post themes, engagement patterns)`;
+- Reference the REAL data you receive`;
 
-function buildUserPrompt(userId: string, instagramData: any) {
-  const profile = instagramData.profile;
-  const posts = instagramData.posts;
-
+function buildUserPrompt(userId: string, profile: any, posts: any[]) {
   const postSummaries = posts
-    .slice(0, 10)
-    .map((p: any, i: number) => {
-      return `  Post ${i + 1}: caption="${p.caption || '(없음)'}", likes=${p.likesCount}, comments=${p.commentsCount}, hashtags=[${(p.hashtags || []).join(', ')}]`;
-    })
+    .slice(0, 6)
+    .map((p: any, i: number) =>
+      `  Post ${i + 1}: caption="${(p.caption || '(없음)').slice(0, 100)}", likes=${p.likesCount}, comments=${p.commentsCount}, hashtags=[${(p.hashtags || []).join(', ')}], alt="${(p.alt || '').slice(0, 80)}"`
+    )
     .join('\n');
 
   return `이 사용자의 실제 인스타그램 데이터를 기반으로 심리적 매력 분석 리포트를 생성해주세요.
@@ -102,10 +88,11 @@ biography: ${profile.biography || '(없음)'}
 followersCount: ${profile.followersCount}
 followsCount: ${profile.followsCount}
 postsCount: ${profile.postsCount}
+highlightReelCount: ${profile.highlightReelCount || 0}
 isBusinessAccount: ${profile.isBusinessAccount}
 followerRatio: ${(profile.followersCount / Math.max(profile.followsCount, 1)).toFixed(2)}
 
-[Recent Posts]
+[Recent Posts (${posts.length}개)]
 ${postSummaries}
 
 위 데이터를 기반으로:
@@ -113,6 +100,67 @@ ${postSummaries}
 - 게시물 캡션과 해시태그에서 이 사람의 관심사, 감성, 자기표현 방식을 분석하세요
 - 좋아요/댓글 수에서 engagement 패턴과 인기도를 파악하세요
 - 이 모든 것을 종합하여 어떤 남자가 이 사람에게 끌리는지 분석하세요`;
+}
+
+function extractInstagramData(rawData: any[]) {
+  if (!rawData || rawData.length === 0) return null;
+
+  const firstItem = rawData[0];
+
+  const profile = {
+    fullName: firstItem.fullName || firstItem.ownerFullName || "",
+    biography: firstItem.biography || firstItem.metaData?.biography || "",
+    followersCount: firstItem.followersCount || firstItem.metaData?.followersCount || 0,
+    followsCount: firstItem.followsCount || firstItem.metaData?.followsCount || 0,
+    postsCount: firstItem.metaData?.postsCount || firstItem.postsCount || rawData.length,
+    highlightReelCount: firstItem.highlightReelCount || firstItem.metaData?.highlightReelCount || 0,
+    isBusinessAccount: firstItem.isBusinessAccount || firstItem.metaData?.isBusinessAccount || false,
+    profilePicUrl: firstItem.profilePicUrl || firstItem.metaData?.profilePicUrl || "",
+  };
+
+  const posts = rawData.map((item: any) => ({
+    caption: item.caption || "",
+    likesCount: item.likesCount || 0,
+    commentsCount: item.commentsCount || 0,
+    hashtags: item.hashtags || [],
+    alt: item.alt || "",
+    timestamp: item.timestamp || "",
+    type: item.type || "Image",
+  }));
+
+  // Compute derived stats
+  const totalLikes = posts.reduce((s: number, p: any) => s + p.likesCount, 0);
+  const totalComments = posts.reduce((s: number, p: any) => s + p.commentsCount, 0);
+  const avgLikes = posts.length > 0 ? Math.round(totalLikes / posts.length) : 0;
+  const avgComments = posts.length > 0 ? Math.round(totalComments / posts.length) : 0;
+  const engagementRate = profile.followersCount > 0
+    ? parseFloat(((avgLikes + avgComments) / profile.followersCount * 100).toFixed(1))
+    : 0;
+
+  // Extract top hashtags
+  const hashtagCounts: Record<string, number> = {};
+  posts.forEach((p: any) => {
+    (p.hashtags || []).forEach((h: string) => {
+      hashtagCounts[h] = (hashtagCounts[h] || 0) + 1;
+    });
+  });
+  const topHashtags = Object.entries(hashtagCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([tag]) => tag);
+
+  return {
+    profile,
+    posts,
+    stats: {
+      avgLikes,
+      avgComments,
+      engagementRate,
+      totalLikes,
+      totalComments,
+      topHashtags,
+    },
+  };
 }
 
 Deno.serve(async (req) => {
@@ -138,39 +186,57 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Fetch real Instagram data from Apify
-    console.log("Fetching Instagram data from Apify for:", userId);
-    let instagramData: any = { profile: {}, posts: [] };
-
-    try {
-      const apifyRes = await fetch(APIFY_DATASET_URL);
-      if (apifyRes.ok) {
-        const rawData = await apifyRes.json();
-        if (Array.isArray(rawData) && rawData.length > 0) {
-          const firstItem = rawData[0];
-          instagramData.profile = {
-            fullName: firstItem.fullName || firstItem.ownerFullName || "",
-            biography: firstItem.biography || "",
-            followersCount: firstItem.followersCount || 0,
-            followsCount: firstItem.followsCount || 0,
-            postsCount: firstItem.metaData?.postsCount || rawData.length,
-            isBusinessAccount: firstItem.isBusinessAccount || false,
-          };
-          instagramData.posts = rawData.map((item: any) => ({
-            caption: item.caption || "",
-            likesCount: item.likesCount || 0,
-            commentsCount: item.commentsCount || 0,
-            hashtags: item.hashtags || [],
-          }));
-        }
-      } else {
-        console.warn("Apify fetch failed, status:", apifyRes.status);
-      }
-    } catch (apifyErr) {
-      console.warn("Apify fetch error:", apifyErr);
+    const APIFY_TOKEN = Deno.env.get("APIFY_TOKEN");
+    if (!APIFY_TOKEN) {
+      return new Response(
+        JSON.stringify({ error: "APIFY_TOKEN is not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    const userPrompt = buildUserPrompt(userId, instagramData);
+    // Fetch real Instagram data dynamically via Apify actor
+    console.log("Calling Apify actor for:", userId);
+    let instagramData: any = null;
+
+    try {
+      const apifyRes = await fetch(`${APIFY_ACTOR_URL}?token=${APIFY_TOKEN}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          directUrls: [`https://www.instagram.com/${userId}/`],
+          resultsType: "posts",
+          resultsLimit: 6,
+          addParentData: true,
+        }),
+      });
+
+      if (!apifyRes.ok) {
+        const errText = await apifyRes.text();
+        console.error("Apify API error:", apifyRes.status, errText);
+        return new Response(
+          JSON.stringify({ error: "계정 데이터를 가져오지 못했어요. 아이디를 다시 확인해주세요." }),
+          { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const rawData = await apifyRes.json();
+      instagramData = extractInstagramData(rawData);
+
+      if (!instagramData) {
+        return new Response(
+          JSON.stringify({ error: "계정 데이터를 가져오지 못했어요. 아이디를 다시 확인해주세요." }),
+          { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } catch (apifyErr) {
+      console.error("Apify fetch error:", apifyErr);
+      return new Response(
+        JSON.stringify({ error: "계정 데이터를 가져오지 못했어요. 아이디를 다시 확인해주세요." }),
+        { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userPrompt = buildUserPrompt(userId, instagramData.profile, instagramData.posts);
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -293,7 +359,15 @@ Deno.serve(async (req) => {
 
     const analysis = JSON.parse(toolCall.function.arguments);
 
-    return new Response(JSON.stringify(analysis), {
+    // Return both analysis and real Instagram data
+    return new Response(JSON.stringify({
+      ...analysis,
+      instagramData: {
+        profile: instagramData.profile,
+        stats: instagramData.stats,
+        posts: instagramData.posts.slice(0, 6),
+      },
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
