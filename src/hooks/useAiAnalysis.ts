@@ -157,10 +157,18 @@ export function useAiAnalysis(userId: string) {
         if (cancelled) return;
 
         if (result.error) {
-          throw new Error(result.error.message || "Analysis failed");
+          // Check response body for specific error codes
+          const bodyError = result.data?.error || result.error.message;
+          if (bodyError === "PRIVATE_ACCOUNT") {
+            throw new Error("PRIVATE_ACCOUNT");
+          }
+          throw new Error(bodyError || "Analysis failed");
         }
 
         if (result.data?.error) {
+          if (result.data.error === "PRIVATE_ACCOUNT") {
+            throw new Error("PRIVATE_ACCOUNT");
+          }
           throw new Error(result.data.error);
         }
 

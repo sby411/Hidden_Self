@@ -323,24 +323,38 @@ const ResultPage = () => {
   }
 
   // Error state
+  const isPrivateAccount = aiError === "PRIVATE_ACCOUNT";
+
   if (aiError || !ai) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-5">
         <div className="text-center max-w-sm">
-          <AlertTriangle className="w-10 h-10 text-destructive mx-auto mb-4" />
-          <h2 className="text-lg font-bold text-foreground mb-2">분석에 실패했어요</h2>
-          <p className="text-sm text-muted-foreground mb-6">{aiError || "다시 시도해주세요"}</p>
+          {isPrivateAccount ? (
+            <>
+              <Lock className="w-10 h-10 text-yellow-500 mx-auto mb-4" />
+              <h2 className="text-lg font-bold text-foreground mb-2">🔒 비공개 계정이에요</h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                비공개 계정은 분석이 불가능해요.<br />
+                인스타그램에서 계정을 <span className="text-foreground font-semibold">공개</span>로 전환한 후 다시 시도해주세요.
+              </p>
+            </>
+          ) : (
+            <>
+              <AlertTriangle className="w-10 h-10 text-destructive mx-auto mb-4" />
+              <h2 className="text-lg font-bold text-foreground mb-2">분석에 실패했어요</h2>
+              <p className="text-sm text-muted-foreground mb-6">{aiError || "다시 시도해주세요"}</p>
+            </>
+          )}
           <div className="flex flex-col gap-3">
             <button
               onClick={() => {
-                // Clear cache and reload to retry
                 sessionStorage.removeItem("instai_submission_id");
                 navigate(`/loading?id=${encodeURIComponent(id)}`, { replace: true });
               }}
               className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium flex items-center justify-center gap-2 mx-auto"
             >
               <RotateCcw className="w-4 h-4" />
-              다시 시도
+              {isPrivateAccount ? "공개 전환 후 다시 시도" : "다시 시도"}
             </button>
             <button
               onClick={() => navigate("/")}
