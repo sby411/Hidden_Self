@@ -322,31 +322,6 @@ const ResultPage = () => {
     );
   }
 
-  // Private account error state
-  const isPrivateAccount = aiError === "PRIVATE_ACCOUNT";
-
-  if (isPrivateAccount) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-5">
-        <div className="text-center max-w-sm">
-          <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-6">
-            <Lock className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h2 className="text-xl font-bold text-foreground mb-3">비공개 계정은 분석할 수 없어요 🔒</h2>
-          <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-            잠시 공개로 전환 후 다시 시도해주세요
-          </p>
-          <button
-            onClick={() => navigate("/")}
-            className="h-11 px-8 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 mx-auto hover:bg-primary/90 transition-colors"
-          >
-            처음으로
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   // Error state
   if (aiError || !ai) {
     return (
@@ -358,6 +333,7 @@ const ResultPage = () => {
           <div className="flex flex-col gap-3">
             <button
               onClick={() => {
+                // Clear cache and reload to retry
                 sessionStorage.removeItem("instai_submission_id");
                 navigate(`/loading?id=${encodeURIComponent(id)}`, { replace: true });
               }}

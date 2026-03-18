@@ -323,25 +323,6 @@ Deno.serve(async (req) => {
       }
 
       const rawData = await apifyRes.json();
-
-      // Detect private account: Apify returns empty array or profile with isPrivate flag
-      if (!rawData || rawData.length === 0) {
-        return new Response(
-          JSON.stringify({ error: "PRIVATE_ACCOUNT" }),
-          { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      // Check if profile indicates private account (no posts returned but profile exists)
-      const firstItem = rawData[0];
-      if (firstItem?.isPrivate || firstItem?.metaData?.isPrivate || 
-          (firstItem?.followersCount > 0 && rawData.length === 1 && !firstItem?.caption && !firstItem?.likesCount)) {
-        return new Response(
-          JSON.stringify({ error: "PRIVATE_ACCOUNT" }),
-          { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
       instagramData = extractInstagramData(rawData);
 
       if (!instagramData) {
