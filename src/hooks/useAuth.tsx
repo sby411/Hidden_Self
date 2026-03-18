@@ -19,53 +19,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const checkAdmin = async (userId: string) => {
+  const checkAdmin = async (userId: string): Promise<boolean> => {
     try {
       const { data, error } = await supabase.rpc("has_role", {
         _user_id: userId,
         _role: "admin",
       });
+
       if (error) {
         console.error("checkAdmin error:", error);
-        setIsAdmin(false);
-      } else {
-        setIsAdmin(!!data);
+        return false;
       }
+
+      return !!data;
     } catch (err) {
       console.error("checkAdmin exception:", err);
-      setIsAdmin(false);
+      return false;
     }
   };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await checkAdmin(session.user.id);
-        } else {
+      (_event, nextSession) => {
+        setSession(nextSession);
+        setUser(nextSession?.user ?? null);
+
+        if (!nextSession?.user) {
           setIsAdmin(false);
+          setLoading(false);
+          return;
         }
-        setLoading(false);
+
+        setLoading(true);
+        void checkAdmin(nextSession.user.id)
+          .then((admin) => setIsAdmin(admin))
+          .finally(() => setLoading(false));
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        checkAdmin(session.user.id);
-      }
-      setLoading(false);
-    });
+    void supabase.auth.getSession()
+      .then(async ({ data: { session: currentSession } }) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (!currentSession?.user) {
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
+
+        const admin = await checkAdmin(currentSession.user.id);
+        setIsAdmin(admin);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("getSession error:", err);
+        setIsAdmin(false);
+        setLoading(false);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error ? new Error(error.message) : null };
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      return { error: error ? new Error(error.message) : null };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "로그인 중 예기치 못한 오류가 발생했습니다.";
+      return { error: new Error(message) };
+    }
   };
 
   const signOut = async () => {
