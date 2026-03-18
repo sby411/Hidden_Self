@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { getVibeAnalysis, getUserVibeType } from "@/data/sampleData";
-import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, Sparkles, HeartHandshake, Crown, ShieldCheck, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2, BookOpen } from "lucide-react";
+import { Share2, RotateCcw, Download, LinkIcon, Lock, Heart, Camera, Palette, Waves, MessageCircle, AlertTriangle, Sparkles, HeartHandshake, Crown, ShieldCheck, Shield, Flame, TrendingUp, Eye, Clock, Users, UserPlus, Activity, Image, Hash, Zap, Brain, Target, Siren, Loader2, BookOpen, X } from "lucide-react";
 import { toast } from "sonner";
 import React, { useRef, useCallback, useMemo, useState, useEffect } from "react";
 import { toPng } from "html-to-image";
@@ -719,13 +719,57 @@ const ResultPage = () => {
                     <Users className="w-4 h-4 text-[hsl(45,70%,55%)]" />
                     잘 맞는 남자 vs 자주 꼬이지만 힘든 남자
                   </h3>
+
+                  {/* 💚 잘 맞는 남자 */}
                   <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 border-l-4 border-l-[hsl(160,45%,40%)]">
-                    <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">💚 잘 맞는 남자</h4>
-                    <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
+                    <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+                      💚 잘 맞는 남자
+                      {typeof ai.goodMatch === 'object' && <span className="text-xs font-medium text-[hsl(160,50%,50%)] bg-[hsl(160,50%,50%)]/10 px-2 py-0.5 rounded-full">{ai.goodMatch.type}</span>}
+                    </h4>
+                    {typeof ai.goodMatch === 'object' ? (
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-[10px] font-bold text-[hsl(160,50%,50%)] uppercase tracking-wider mb-1">어떤 성향인지</p>
+                          <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch.personality}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-[hsl(160,50%,50%)] uppercase tracking-wider mb-1">왜 잘 맞는지</p>
+                          <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch.whyGoodFit}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-[hsl(160,50%,50%)] uppercase tracking-wider mb-1">이 남자가 하는 행동</p>
+                          <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch.behaviors}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
+                    )}
                   </div>
+
+                  {/* 💔 자주 꼬이지만 힘든 남자 */}
                   <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(0,20%,12%)] to-card border border-[hsl(0,20%,20%)]/30 border-l-4 border-l-destructive/50">
-                    <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">💔 자주 꼬이지만 힘든 남자</h4>
-                    <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch}</p>
+                    <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+                      💔 자주 꼬이지만 힘든 남자
+                      {typeof ai.badMatch === 'object' && <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">{ai.badMatch.type}</span>}
+                    </h4>
+                    {typeof ai.badMatch === 'object' ? (
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-[10px] font-bold text-destructive uppercase tracking-wider mb-1">어떤 성향인지</p>
+                          <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch.personality}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-destructive uppercase tracking-wider mb-1">왜 반복적으로 끌리는지</p>
+                          <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch.whyRepeated}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold text-destructive uppercase tracking-wider mb-1">실제 연애에서 생기는 문제</p>
+                          <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch.problems}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch}</p>
+                    )}
                   </div>
                 </div>
 
@@ -736,18 +780,158 @@ const ResultPage = () => {
                     절대 조심해야 할 Red Flag
                   </h3>
                   <div className="space-y-3">
-                    {(ai.redFlags ?? []).map((flag, i) => (
-                      <div key={i} className="rounded-2xl p-4 border-2 border-destructive/20 bg-destructive/5 relative overflow-hidden">
-                        <div className="flex items-start gap-3">
-                          <div className="w-6 h-6 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
-                            <span className="text-xs">🚩</span>
+                    {(ai.redFlags ?? []).map((flag, i) => {
+                      const isObj = typeof flag === 'object' && flag !== null;
+                      return (
+                        <div key={i} className="rounded-2xl p-4 border-2 border-destructive/20 bg-destructive/5 relative overflow-hidden">
+                          <div className="flex items-start gap-3">
+                            <div className="w-7 h-7 rounded-full bg-destructive/10 flex items-center justify-center shrink-0 mt-0.5">
+                              <span className="text-sm">{isObj ? (flag as any).emoji : '🚩'}</span>
+                            </div>
+                            <div className="flex-1">
+                              {isObj && (
+                                <p className="text-xs font-bold text-destructive mb-1">{(flag as any).label}</p>
+                              )}
+                              <p className="text-sm text-foreground/85 leading-[1.8]">
+                                {isObj ? (flag as any).description : String(flag)}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-sm text-foreground/85 leading-[1.8]">{flag}</p>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
+
+                {/* P-7: 잘 맞는 남자를 끌어들이는 행동 가이드 */}
+                {ai.actionGuide && (
+                  <div className="mb-5">
+                    <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-[hsl(45,70%,55%)]" />
+                      잘 맞는 남자를 끌어들이는 행동 가이드
+                    </h3>
+                    <div className="space-y-4">
+                      {/* 스타일링 변화 */}
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30">
+                        <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-full bg-[hsl(45,50%,30%)]/15 flex items-center justify-center">
+                            <span className="text-[10px]">👗</span>
+                          </div>
+                          스타일링 변화
+                        </h4>
+                        <div className="space-y-2">
+                          {ai.actionGuide.styling.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
+                              <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
+                              <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 남자가 접근했을 때 반응 */}
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30">
+                        <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-full bg-[hsl(45,50%,30%)]/15 flex items-center justify-center">
+                            <span className="text-[10px]">💬</span>
+                          </div>
+                          남자가 접근했을 때 반응
+                        </h4>
+                        <div className="space-y-2">
+                          {ai.actionGuide.responseStyle.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
+                              <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
+                              <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 데이트 행동 전략 */}
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30">
+                        <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-full bg-[hsl(45,50%,30%)]/15 flex items-center justify-center">
+                            <span className="text-[10px]">💡</span>
+                          </div>
+                          데이트 행동 전략
+                        </h4>
+                        <div className="space-y-2">
+                          {ai.actionGuide.datingBehavior.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
+                              <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
+                              <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* P-8: 자주 꼬이지만 힘든 남자를 피하는 방법 */}
+                {ai.avoidGuide && (
+                  <div className="mb-5">
+                    <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
+                      <Shield className="w-4 h-4 text-destructive" />
+                      힘든 남자를 피하는 방법
+                    </h3>
+                    <div className="space-y-4">
+                      {/* 첫 만남에서 하지 말아야 할 행동 */}
+                      <div className="rounded-2xl p-4 border border-destructive/15 bg-destructive/5">
+                        <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-full bg-destructive/10 flex items-center justify-center">
+                            <span className="text-[10px]">🚫</span>
+                          </div>
+                          첫 만남에서 하지 말아야 할 행동
+                        </h4>
+                        <div className="space-y-2">
+                          {ai.avoidGuide.firstMeeting.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
+                              <X className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
+                              <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 관계 초반에서 경계해야 할 신호 */}
+                      <div className="rounded-2xl p-4 border border-destructive/15 bg-destructive/5">
+                        <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-full bg-destructive/10 flex items-center justify-center">
+                            <span className="text-[10px]">⚠️</span>
+                          </div>
+                          관계 초반에서 경계해야 할 신호
+                        </h4>
+                        <div className="space-y-2">
+                          {ai.avoidGuide.earlyWarnings.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
+                              <AlertTriangle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
+                              <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 인스타에서 바꾸면 좋은 습관 */}
+                      <div className="rounded-2xl p-4 border border-[hsl(45,30%,20%)]/30 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card">
+                        <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
+                          <div className="w-5 h-5 rounded-full bg-[hsl(45,50%,30%)]/15 flex items-center justify-center">
+                            <span className="text-[10px]">📱</span>
+                          </div>
+                          인스타에서 바꾸면 좋은 습관
+                        </h4>
+                        <div className="space-y-2">
+                          {ai.avoidGuide.instaHabits.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
+                              <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">✓</span>
+                              <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* End of Premium */}
                 <div className="flex items-center justify-center gap-2 mb-6 text-[10px] text-muted-foreground">
@@ -809,6 +993,8 @@ const ResultPage = () => {
                       { icon: <Siren className="w-4 h-4 text-destructive" />, title: "관계에서 발생할 수 있는 리스크", idx: 3 },
                       { icon: <Users className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자", idx: 4 },
                       { icon: <AlertTriangle className="w-4 h-4 text-destructive" />, title: "절대 조심해야 할 Red Flag", idx: 5 },
+                      { icon: <Sparkles className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "잘 맞는 남자를 끌어들이는 행동 가이드", idx: 6 },
+                      { icon: <Shield className="w-4 h-4 text-destructive" />, title: "힘든 남자를 피하는 방법", idx: 7 },
                     ].map((section) => (
                       <div key={section.idx} className="rounded-2xl overflow-hidden border border-[hsl(45,30%,20%)]/30 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card">
                         <div className="p-4 pb-2">
@@ -887,8 +1073,10 @@ const ResultPage = () => {
                         <li>• 반복되는 연애 패턴 분석</li>
                         <li>• 당신에게 끌리는 남자 유형</li>
                         <li>• 관계에서 발생할 수 있는 리스크</li>
-                        <li>• 잘 맞는 남자 vs 힘든 남자 분석</li>
+                        <li>• 잘 맞는 남자 vs 힘든 남자 심층 비교</li>
                         <li>• 반드시 조심해야 할 red flag</li>
+                        <li>• 잘 맞는 남자를 끌어들이는 행동 가이드</li>
+                        <li>• 힘든 남자를 피하는 구체적 방법</li>
                         <li>• 약 12,000자 분량의 심층 분석 결과</li>
                       </ul>
                     </div>

@@ -64,9 +64,31 @@ export interface AiAnalysis {
     turningPoint: string;
   };
   risks: string[];
-  goodMatch: string;
-  badMatch: string;
-  redFlags: string[];
+  goodMatch: {
+    type: string;
+    emoji: string;
+    personality: string;
+    whyGoodFit: string;
+    behaviors: string;
+  } | string;
+  badMatch: {
+    type: string;
+    emoji: string;
+    personality: string;
+    whyRepeated: string;
+    problems: string;
+  } | string;
+  redFlags: Array<{ label: string; description: string; emoji: string }> | string[];
+  actionGuide?: {
+    styling: string[];
+    responseStyle: string[];
+    datingBehavior: string[];
+  };
+  avoidGuide?: {
+    firstMeeting: string[];
+    earlyWarnings: string[];
+    instaHabits: string[];
+  };
   harshTruth: string;
   premiumTeasers: string[];
   confidence: number;
