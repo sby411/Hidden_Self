@@ -784,6 +784,41 @@ const ResultPage = () => {
                   </div>
                 </div>
 
+                {/* 상품 정보 */}
+                <div className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm p-5 mb-4 text-left">
+                  <h4 className="text-xs font-bold text-muted-foreground tracking-widest mb-3">[상품 정보]</h4>
+                  <div className="space-y-2.5 text-sm text-foreground/90">
+                    <div>
+                      <span className="text-[11px] font-bold text-muted-foreground">상품명</span>
+                      <p className="text-sm font-semibold mt-0.5">인스타 연애 패턴 심층 분석 리포트</p>
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-muted-foreground">상품 설명</span>
+                      <p className="text-xs leading-relaxed mt-0.5 text-foreground/80">
+                        AI가 실제 인스타그램 활동 데이터를 기반으로<br />
+                        당신의 연애 패턴, 끌리는 남자 유형, 관계 리스크를 분석한<br />
+                        프리미엄 디지털 리포트를 제공합니다.
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-muted-foreground">포함 내용</span>
+                      <ul className="text-xs mt-1 space-y-0.5 text-foreground/80 list-none">
+                        <li>• 당신이 유발하는 심리 트리거 분석</li>
+                        <li>• 반복되는 연애 패턴 분석</li>
+                        <li>• 당신에게 끌리는 남자 유형</li>
+                        <li>• 관계에서 발생할 수 있는 리스크</li>
+                        <li>• 잘 맞는 남자 vs 힘든 남자 분석</li>
+                        <li>• 반드시 조심해야 할 red flag</li>
+                        <li>• 약 12,000자 분량의 심층 분석 결과</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-muted-foreground">상품 형태</span>
+                      <p className="text-xs mt-0.5 text-foreground/80">디지털 콘텐츠 (결제 후 즉시 열람 가능)</p>
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   onClick={handleUnlockPremium}
                   className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group"
@@ -796,7 +831,8 @@ const ResultPage = () => {
                     <span className="text-base font-black">4,900원</span>
                   </span>
                 </button>
-                <p className="text-center text-[10px] text-destructive font-bold mt-2 animate-pulse">🔥 지금만 50% 할인 중!</p>
+                <p className="text-center text-[10px] text-muted-foreground mt-2">결제 후 즉시 프리미엄 분석 결과를 확인할 수 있습니다.</p>
+                <p className="text-center text-[10px] text-destructive font-bold mt-1 animate-pulse">🔥 지금만 50% 할인 중!</p>
               </div>
             ) : (
               <div ref={premiumRef}>
