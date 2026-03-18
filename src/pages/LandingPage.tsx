@@ -64,6 +64,21 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* DEBUG DB TEST BUTTON — remove after debugging */}
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+        <button
+          onClick={handleDbTest}
+          disabled={dbLoading}
+          className="px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-xs font-bold shadow-lg"
+        >
+          {dbLoading ? "Testing..." : "DB TEST"}
+        </button>
+        {dbResult && (
+          <div className="max-w-xs p-3 rounded-lg bg-card border border-border text-xs font-mono shadow-lg whitespace-pre-wrap">
+            {dbResult}
+          </div>
+        )}
+      </div>
       {/* Header */}
       <header className="px-5 py-4 border-b border-border/40 backdrop-blur-sm bg-card/60">
         <div className="flex items-center gap-2">
