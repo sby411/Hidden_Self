@@ -130,6 +130,21 @@ const ResultPage = () => {
 
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingStepIdx, setLoadingStepIdx] = useState(0);
+  const [showComplete, setShowComplete] = useState(false);
+  const wasLoading = React.useRef(false);
+
+  // Show "분석 완료" message for 1 second before revealing results
+  useEffect(() => {
+    if (aiLoading) {
+      wasLoading.current = true;
+      setShowComplete(false);
+    } else if (wasLoading.current && ai) {
+      wasLoading.current = false;
+      setShowComplete(true);
+      const t = setTimeout(() => setShowComplete(false), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [aiLoading, ai]);
 
   useEffect(() => {
     if (!aiLoading) return;
