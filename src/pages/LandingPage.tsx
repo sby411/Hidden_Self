@@ -194,28 +194,105 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Sample Result */}
+        {/* Sample Result - Provocative with blur teaser */}
         <section className="w-full px-5 pb-10">
           <div className="w-full max-w-md mx-auto">
             <h2 className="text-lg font-bold text-foreground mb-1 text-center">📊 실제 분석 결과 예시</h2>
             <p className="text-xs text-muted-foreground text-center mb-5">이 정도로 <span className="font-semibold text-foreground">적나라하게</span> 나와요</p>
+            
+            {/* Result card 1 - fully visible */}
+            <div className="glass-card rounded-2xl p-5 relative overflow-hidden border-destructive/10 mb-3">
+              <div className="absolute inset-0 pixel-grid opacity-30" />
+              <div className="relative z-10">
+                <p className="text-[11px] text-muted-foreground mb-2">@s_yeon*** 분석 결과</p>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">⚡</span>
+                  <div>
+                    <p className="text-base font-extrabold text-foreground">도파민 회피형 인기남</p>
+                    <p className="text-[11px] text-destructive font-semibold">집착 확률 62% · 관계 지속력 낮음</p>
+                  </div>
+                </div>
+                <p className="text-sm text-secondary-foreground leading-relaxed">
+                  너의 피드에서 반복되는 <span className="font-semibold text-danger-highlight">감성적이고 몽환적인 색감</span>이 감정적 자극을 찾는 남자들을 끌어당기고 있어.
+                </p>
+                <p className="text-sm text-secondary-foreground leading-relaxed mt-2">
+                  특히 스토리에 올리는 <span className="font-semibold text-danger-highlight">새벽 감성 포스팅</span>이 "이 여자 외로운가?" 라는 신호로 읽히고 있음.
+                </p>
+              </div>
+            </div>
+
+            {/* Result card 2 - partially blurred */}
+            <div className="glass-card rounded-2xl p-5 relative overflow-hidden border-destructive/10 mb-3">
+              <div className="absolute inset-0 pixel-grid opacity-30" />
+              <div className="relative z-10">
+                <p className="text-[11px] text-muted-foreground mb-2">@min.j*** 분석 결과</p>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">🧊</span>
+                  <div>
+                    <p className="text-base font-extrabold text-foreground">감정차단 회피형 냉미남</p>
+                    <p className="text-[11px] text-destructive font-semibold">집착 확률 70% · 푸시풀 위험도 높음</p>
+                  </div>
+                </div>
+                <p className="text-sm text-secondary-foreground leading-relaxed">
+                  프로필 사진 없이 하이라이트만 6개 — 이건 <span className="font-semibold text-danger-highlight">"나한테 관심 가져봐"</span> 시그널이야.
+                </p>
+                <div className="mt-3 relative">
+                  <div className="blur-[6px] select-none pointer-events-none">
+                    <p className="text-sm text-secondary-foreground leading-relaxed">
+                      너의 캡션 패턴에서 감지된 핵심 심리 트리거는 "무심한 듯 시크한 말투"인데, 이게 회피형 남자의 정복욕을 자극하는 핵심 요소로...
+                    </p>
+                    <p className="text-sm text-secondary-foreground leading-relaxed mt-2">
+                      팔로워 대비 팔로잉 비율이 만들어내는 "쉽게 안 넘어오는 여자" 이미지가 냉미남에게는...
+                    </p>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xs font-bold text-destructive bg-background/80 px-3 py-1.5 rounded-full border border-destructive/30">
+                      🔒 전체 분석은 테스트 후 확인
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Result card 3 - heavily blurred with CTA */}
             <div className="glass-card rounded-2xl p-5 relative overflow-hidden border-destructive/10">
               <div className="absolute inset-0 pixel-grid opacity-30" />
               <div className="relative z-10">
-                <p className="text-xs text-muted-foreground mb-1">@username 분석 결과</p>
+                <p className="text-[11px] text-muted-foreground mb-2">@hyun_a*** 분석 결과</p>
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl">🔥</span>
-                  <p className="text-base font-extrabold text-foreground">도파민 회피형 인기남</p>
+                  <span className="text-2xl">👑</span>
+                  <div>
+                    <p className="text-base font-extrabold text-foreground">자기애 과잉 인기남</p>
+                    <p className="text-[11px] text-destructive font-semibold">위험도 ???</p>
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  당신의 인스타 vibe는 감성적인 사진과 신비로운 분위기가 강합니다.
-                </p>
-                <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-                  이런 vibe는 <span className="font-semibold text-danger-highlight">자극적인 매력을 가진 남자들에게 특히 강하게 어필</span>합니다.
-                </p>
-                <div className="flex items-center gap-1 mt-4 text-destructive text-xs font-semibold">
-                  <span>⚠️ 자세한 분석 보기</span>
-                  <ArrowRight className="w-3 h-3" />
+                <div className="relative">
+                  <div className="blur-[8px] select-none pointer-events-none">
+                    <p className="text-sm text-secondary-foreground leading-relaxed">
+                      당신의 피드에서 가장 많은 좋아요를 받는 사진 유형이 "얼굴 클로즈업"인데, 이 패턴은 자기애형 남자에게...
+                    </p>
+                    <p className="text-sm text-secondary-foreground leading-relaxed mt-2">
+                      해시태그 사용 빈도와 셀피 비율로 계산한 "픽미 지수"가 상위 12%로 측정되었으며...
+                    </p>
+                    <div className="flex gap-2 mt-3">
+                      <div className="bg-destructive/10 rounded-lg px-3 py-2 flex-1">
+                        <p className="text-xs text-muted-foreground">연상 끌림도</p>
+                        <p className="text-lg font-bold text-foreground">87%</p>
+                      </div>
+                      <div className="bg-destructive/10 rounded-lg px-3 py-2 flex-1">
+                        <p className="text-xs text-muted-foreground">테토력</p>
+                        <p className="text-lg font-bold text-foreground">91%</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button
+                      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                      className="text-sm font-bold text-white bg-destructive/90 hover:bg-destructive px-5 py-2.5 rounded-full border border-destructive/50 shadow-lg transition-all active:scale-95"
+                    >
+                      🔥 내 결과 확인하기
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
