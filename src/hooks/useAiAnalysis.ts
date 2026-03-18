@@ -75,6 +75,8 @@ export interface AiAnalysis {
 // Simple in-memory cache
 const cache = new Map<string, AiAnalysis>();
 
+const TIMEOUT_MS = 90_000; // 90 seconds
+
 export function useAiAnalysis(userId: string) {
   const [data, setData] = useState<AiAnalysis | null>(cache.get(userId) || null);
   const [loading, setLoading] = useState(!cache.has(userId));
@@ -88,32 +90,43 @@ export function useAiAnalysis(userId: string) {
     }
 
     let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     async function fetchAnalysis() {
       setLoading(true);
       setError(null);
 
+      // Create a timeout promise
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          reject(new Error("분석 시간이 초과되었어요. 다시 시도해주세요."));
+        }, TIMEOUT_MS);
+      });
+
       try {
-        const { data: result, error: fnError } = await supabase.functions.invoke(
-          "analyze-profile",
-          { body: { userId } }
-        );
+        const result = await Promise.race([
+          supabase.functions.invoke("analyze-profile", { body: { userId } }),
+          timeoutPromise,
+        ]);
+
+        clearTimeout(timeoutId!);
 
         if (cancelled) return;
 
-        if (fnError) {
-          throw new Error(fnError.message || "Analysis failed");
+        if (result.error) {
+          throw new Error(result.error.message || "Analysis failed");
         }
 
-        if (result?.error) {
-          throw new Error(result.error);
+        if (result.data?.error) {
+          throw new Error(result.data.error);
         }
 
-        cache.set(userId, result);
-        setData(result);
+        cache.set(userId, result.data);
+        setData(result.data);
       } catch (e) {
+        clearTimeout(timeoutId!);
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : "Unknown error");
+          setError(e instanceof Error ? e.message : "알 수 없는 오류가 발생했어요");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -121,7 +134,10 @@ export function useAiAnalysis(userId: string) {
     }
 
     fetchAnalysis();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      clearTimeout(timeoutId!);
+    };
   }, [userId]);
 
   return { data, loading, error };

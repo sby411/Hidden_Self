@@ -43,6 +43,7 @@ export type Database = {
           payment_status: string
           result_type: string | null
           session_id: string | null
+          status: string
           user_agent: string | null
         }
         Insert: {
@@ -55,6 +56,7 @@ export type Database = {
           payment_status?: string
           result_type?: string | null
           session_id?: string | null
+          status?: string
           user_agent?: string | null
         }
         Update: {
@@ -67,6 +69,7 @@ export type Database = {
           payment_status?: string
           result_type?: string | null
           session_id?: string | null
+          status?: string
           user_agent?: string | null
         }
         Relationships: []
