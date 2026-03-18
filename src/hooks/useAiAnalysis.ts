@@ -76,7 +76,7 @@ export interface AiAnalysis {
 // Simple in-memory cache
 const cache = new Map<string, AiAnalysis>();
 
-const TIMEOUT_MS = 15_000; // 15 seconds
+const TIMEOUT_MS = 40_000; // 40 seconds
 
 export function useAiAnalysis(userId: string) {
   const [data, setData] = useState<AiAnalysis | null>(cache.get(userId) || null);
