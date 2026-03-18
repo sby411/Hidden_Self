@@ -19,15 +19,7 @@ const LoadingPage = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id") || "";
 
-  // Insert tracking row on mount (fire-and-forget, doesn't block navigation)
-  useEffect(() => {
-    if (!id) return;
-    trackSubmissionStart(id).then((rowId) => {
-      if (rowId) {
-        sessionStorage.setItem("instai_submission_id", rowId);
-      }
-    });
-  }, [id]);
+  // Tracking is now handled by useAiAnalysis hook on ResultPage
 
   useEffect(() => {
     const stepInterval = setInterval(() => {
