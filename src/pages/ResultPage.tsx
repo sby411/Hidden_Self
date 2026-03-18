@@ -456,6 +456,17 @@ const ResultPage = () => {
                 <p className="text-sm text-foreground/90 leading-[1.9]">{ai.instaImpression}</p>
               </div>
 
+              {/* Perceived Accessibility */}
+              {ai.perceivedAccessibility && (
+                <div className="relative glass-card rounded-2xl p-5 mb-5 border-l-4 border-l-accent">
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <Target className="w-4 h-4 text-accent-foreground" />
+                    남자들이 느끼는 접근 난이도
+                  </h3>
+                  <p className="text-sm text-foreground/90 leading-[1.9]">{ai.perceivedAccessibility}</p>
+                </div>
+              )}
+
               {/* Vibe Keywords */}
               <div className="flex flex-wrap gap-2 mb-5">
                 {ai.vibeKeywords.map((kw) => (
