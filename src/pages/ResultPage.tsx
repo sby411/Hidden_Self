@@ -1213,8 +1213,8 @@ const ResultPage = () => {
               </div>
               <button
                 onClick={() => {
-                  const premiumSection = document.getElementById('premium-section');
-                  premiumSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  const unlockBtn = document.getElementById('unlock-premium-btn');
+                  unlockBtn?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }}
                 className="shrink-0 h-9 px-4 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-[11px] flex items-center gap-1.5 active:scale-[0.96] transition-all shadow-md"
               >
