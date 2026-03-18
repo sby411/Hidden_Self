@@ -144,7 +144,7 @@ const ResultPage = () => {
   }, [downloadNodeAsImage, ai, id]);
 
   const handleDownloadPremiumReport = useCallback(async () => {
-    await downloadNodeAsImage(premiumReportRef.current, `프리미엄리포트-${ai?.attractedType.name || id}.png`, "프리미엄 리포트가 저장되었어요! 📸");
+    await downloadNodeAsImage(fullReportRef.current, `프리미엄리포트-${ai?.attractedType.name || id}.png`, "전체 리포트가 저장되었어요! 📸");
   }, [downloadNodeAsImage, ai, id]);
 
   // Derive Instagram display data from AI response
