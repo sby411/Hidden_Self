@@ -291,12 +291,25 @@ const ResultPage = () => {
           <AlertTriangle className="w-10 h-10 text-destructive mx-auto mb-4" />
           <h2 className="text-lg font-bold text-foreground mb-2">분석에 실패했어요</h2>
           <p className="text-sm text-muted-foreground mb-6">{aiError || "다시 시도해주세요"}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium"
-          >
-            다시 시도
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => {
+                // Clear cache and reload to retry
+                sessionStorage.removeItem("instai_submission_id");
+                navigate(`/loading?id=${encodeURIComponent(id)}`, { replace: true });
+              }}
+              className="h-11 px-6 rounded-xl bg-primary text-primary-foreground text-sm font-medium flex items-center justify-center gap-2 mx-auto"
+            >
+              <RotateCcw className="w-4 h-4" />
+              다시 시도
+            </button>
+            <button
+              onClick={() => navigate("/")}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              처음으로 돌아가기
+            </button>
+          </div>
         </div>
       </div>
     );
