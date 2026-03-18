@@ -574,7 +574,7 @@ const ResultPage = () => {
                   </h3>
                   <div className="space-y-3">
                     {(ai.psychTriggers ?? []).map((trigger, i) => (
-                      <div key={i} className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                      <div key={i} className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(45,60%,45%)]">
                         <div className="flex items-start gap-3">
                           <div className="w-6 h-6 rounded-full bg-[hsl(45,50%,30%)]/15 flex items-center justify-center shrink-0 mt-0.5">
                             <Zap className="w-3 h-3 text-[hsl(45,70%,55%)]" />
@@ -587,7 +587,7 @@ const ResultPage = () => {
                 </div>
 
                 {/* P-2: 결정적 순간 */}
-                <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(45,60%,45%)]">
                   <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
                     <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,55%)]" />
                     이 남자가 당신에게 빠지는 결정적 순간
@@ -602,7 +602,7 @@ const ResultPage = () => {
                     당신의 연애 패턴
                   </h3>
                   <div className="space-y-3">
-                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(160,45%,40%)]">
                       <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌅 시작</h4>
                       <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern?.beginning}</p>
                     </div>
@@ -667,7 +667,7 @@ const ResultPage = () => {
                     <Users className="w-4 h-4 text-[hsl(45,70%,55%)]" />
                     잘 맞는 남자 vs 자주 꼬이지만 힘든 남자
                   </h3>
-                  <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
+                  <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 border-l-4 border-l-[hsl(160,45%,40%)]">
                     <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">💚 잘 맞는 남자</h4>
                     <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
                   </div>
