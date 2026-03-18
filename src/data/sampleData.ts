@@ -25,14 +25,14 @@ export interface UserVibeType {
 }
 
 export const userVibeTypes: UserVibeType[] = [
-  { id: "mystery", title: "신비로운 감성 미스터리형", emoji: "🔮", description: "당신의 인스타는 감성적인 색감과 차분한 분위기의 이미지가 많습니다.\n이런 vibe는 신비롭고 쉽게 읽히지 않는 매력을 만듭니다.", gradientClass: "from-[hsl(270,25%,92%)] to-[hsl(290,20%,87%)]" },
-  { id: "urban", title: "세련된 도시 aesthetic형", emoji: "🏙️", description: "당신의 피드에서는 세련된 도시 감성과 트렌디한 라이프스타일이 돋보입니다.\n깔끔하고 정돈된 aesthetic이 도시적 매력을 만들어냅니다.", gradientClass: "from-[hsl(220,18%,92%)] to-[hsl(210,15%,87%)]" },
-  { id: "warm", title: "따뜻한 청순 안정형", emoji: "🌸", description: "당신의 인스타에서는 따뜻하고 포근한 에너지가 가득합니다.\n자연스럽고 꾸밈없는 매력이 안정적이고 순수한 분위기를 만듭니다.", gradientClass: "from-[hsl(350,35%,93%)] to-[hsl(340,30%,88%)]" },
-  { id: "hip", title: "힙한 자유 감성형", emoji: "🎧", description: "당신의 피드는 트렌디하면서도 자유로운 감성이 핵심입니다.\n남들과 다른 독특한 취향이 힙하고 개성 있는 매력을 만들어냅니다.", gradientClass: "from-[hsl(40,40%,92%)] to-[hsl(30,35%,87%)]" },
-  { id: "dreamy", title: "몽환 감성 아티스트형", emoji: "🌙", description: "당신의 인스타는 몽환적이고 예술적인 감성으로 가득 차 있습니다.\n부드러운 색감과 감성적인 이미지가 꿈같은 분위기를 연출합니다.", gradientClass: "from-[hsl(280,22%,93%)] to-[hsl(300,18%,88%)]" },
-  { id: "intellectual", title: "차분한 지성형", emoji: "📚", description: "당신의 피드에서는 지적이고 차분한 에너지가 느껴집니다.\n깊이 있는 콘텐츠와 절제된 표현이 지적인 매력을 만들어냅니다.", gradientClass: "from-[hsl(200,20%,92%)] to-[hsl(210,18%,87%)]" },
-  { id: "vivid", title: "밝은 에너지 인싸형", emoji: "✨", description: "당신의 인스타는 밝고 활기찬 에너지로 넘칩니다.\n긍정적이고 사교적인 분위기가 주변을 환하게 만드는 매력이 있습니다.", gradientClass: "from-[hsl(45,45%,92%)] to-[hsl(35,40%,87%)]" },
-  { id: "romantic", title: "로맨틱 감성 순수형", emoji: "💕", description: "당신의 피드에서는 로맨틱하고 순수한 감성이 물씬 풍깁니다.\n사랑스러운 일상과 감성적인 순간들이 따뜻한 매력을 만들어냅니다.", gradientClass: "from-[hsl(340,35%,93%)] to-[hsl(350,30%,88%)]" },
+  { id: "mystery", title: "신비로운 감성 미스터리형", emoji: "🔮", description: "당신의 인스타는 감성적인 색감과 차분한 분위기의 이미지가 많습니다.\n이런 vibe는 신비롭고 쉽게 읽히지 않는 매력을 만듭니다.", gradientClass: "from-[hsl(270,20%,12%)] to-[hsl(290,15%,8%)]" },
+  { id: "urban", title: "세련된 도시 aesthetic형", emoji: "🏙️", description: "당신의 피드에서는 세련된 도시 감성과 트렌디한 라이프스타일이 돋보입니다.\n깔끔하고 정돈된 aesthetic이 도시적 매력을 만들어냅니다.", gradientClass: "from-[hsl(220,12%,12%)] to-[hsl(210,10%,8%)]" },
+  { id: "warm", title: "따뜻한 청순 안정형", emoji: "🌸", description: "당신의 인스타에서는 따뜻하고 포근한 에너지가 가득합니다.\n자연스럽고 꾸밈없는 매력이 안정적이고 순수한 분위기를 만듭니다.", gradientClass: "from-[hsl(350,20%,12%)] to-[hsl(340,15%,8%)]" },
+  { id: "hip", title: "힙한 자유 감성형", emoji: "🎧", description: "당신의 피드는 트렌디하면서도 자유로운 감성이 핵심입니다.\n남들과 다른 독특한 취향이 힙하고 개성 있는 매력을 만들어냅니다.", gradientClass: "from-[hsl(40,20%,12%)] to-[hsl(30,15%,8%)]" },
+  { id: "dreamy", title: "몽환 감성 아티스트형", emoji: "🌙", description: "당신의 인스타는 몽환적이고 예술적인 감성으로 가득 차 있습니다.\n부드러운 색감과 감성적인 이미지가 꿈같은 분위기를 연출합니다.", gradientClass: "from-[hsl(280,15%,12%)] to-[hsl(300,12%,8%)]" },
+  { id: "intellectual", title: "차분한 지성형", emoji: "📚", description: "당신의 피드에서는 지적이고 차분한 에너지가 느껴집니다.\n깊이 있는 콘텐츠와 절제된 표현이 지적인 매력을 만들어냅니다.", gradientClass: "from-[hsl(200,12%,12%)] to-[hsl(210,10%,8%)]" },
+  { id: "vivid", title: "밝은 에너지 인싸형", emoji: "✨", description: "당신의 인스타는 밝고 활기찬 에너지로 넘칩니다.\n긍정적이고 사교적인 분위기가 주변을 환하게 만드는 매력이 있습니다.", gradientClass: "from-[hsl(45,20%,12%)] to-[hsl(35,15%,8%)]" },
+  { id: "romantic", title: "로맨틱 감성 순수형", emoji: "💕", description: "당신의 피드에서는 로맨틱하고 순수한 감성이 물씬 풍깁니다.\n사랑스러운 일상과 감성적인 순간들이 따뜻한 매력을 만들어냅니다.", gradientClass: "from-[hsl(340,20%,12%)] to-[hsl(350,15%,8%)]" },
 ];
 
 export const maleTypes: MaleType[] = [
