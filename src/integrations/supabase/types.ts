@@ -104,6 +104,23 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_test_submission: {
+        Args: {
+          p_browser?: string
+          p_device_type?: string
+          p_instagram_id: string
+          p_os?: string
+          p_payment_status?: string
+          p_session_id?: string
+          p_status?: string
+          p_user_agent?: string
+        }
+        Returns: string
+      }
+      update_test_submission_status: {
+        Args: { p_id: string; p_result_type?: string; p_status: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
