@@ -32,16 +32,38 @@ function getSessionId(): string {
   return sid;
 }
 
-export async function trackSubmission(instagramId: string, resultType?: string) {
-  const { device_type, browser, os } = detectDevice();
-  
-  await supabase.from("test_submissions").insert({
-    instagram_id: instagramId,
-    result_type: resultType || null,
-    device_type,
-    browser,
-    os,
-    user_agent: navigator.userAgent,
-    session_id: getSessionId(),
-  });
+/** Insert a 'processing' row when analysis starts. Returns the row id. */
+export async function trackSubmissionStart(instagramId: string): Promise<string | null> {
+  try {
+    const { device_type, browser, os } = detectDevice();
+    const { data } = await supabase.from("test_submissions").insert({
+      instagram_id: instagramId,
+      device_type,
+      browser,
+      os,
+      user_agent: navigator.userAgent,
+      session_id: getSessionId(),
+      payment_status: "free",
+      status: "processing",
+    }).select("id").single();
+    return data?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Update row to 'success' with result_type. Fire-and-forget. */
+export function trackSubmissionSuccess(rowId: string, resultType: string) {
+  supabase.from("test_submissions")
+    .update({ status: "success", result_type: resultType } as any)
+    .eq("id", rowId)
+    .then(() => {});
+}
+
+/** Update row to 'failed'. Fire-and-forget. */
+export function trackSubmissionFailed(rowId: string) {
+  supabase.from("test_submissions")
+    .update({ status: "failed" } as any)
+    .eq("id", rowId)
+    .then(() => {});
 }
