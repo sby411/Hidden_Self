@@ -100,7 +100,7 @@ export interface AiAnalysis {
 // Simple in-memory cache
 const cache = new Map<string, AiAnalysis>();
 
-const TIMEOUT_MS = 40_000; // 40 seconds
+const TIMEOUT_MS = 60_000; // 60 seconds
 
 export function useAiAnalysis(userId: string) {
   const [data, setData] = useState<AiAnalysis | null>(cache.get(userId) || null);
@@ -140,7 +140,7 @@ export function useAiAnalysis(userId: string) {
       // Step 2: Call AI analysis with timeout
       const timeoutPromise = new Promise<never>((_, reject) => {
         timeoutId = setTimeout(() => {
-          reject(new Error("분석 시간이 초과되었어요 (15초). 다시 시도해주세요."));
+          reject(new Error("분석 시간이 초과되었어요 (60초). 다시 시도해주세요."));
         }, TIMEOUT_MS);
       });
 
