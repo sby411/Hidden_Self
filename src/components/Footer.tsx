@@ -27,7 +27,7 @@ const Footer = () => (
     <LegalLinks />
     <div className="text-[10px] text-muted-foreground space-y-0.5">
       <p>상호명: 퍼즐리 · 대표자: 양세빈</p>
-      <p>사업자등록번호: 174-06-03144</p>
+      <p>사업자등록번호: 174-06-03144 · 통신판매업신고번호: 2025-서울서초-0842</p>
       <p>주소: 서울특별시 서초구 서초대로19길 11, 501호</p>
       <p>이메일: sby411@naver.com · 고객센터: 010-2870-7943</p>
     </div>
