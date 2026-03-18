@@ -101,14 +101,31 @@ const ResultPage = () => {
       if (!node) return;
       try {
         toast.info("리포트 이미지를 생성 중이에요...");
-        const captureWidth = Math.max(node.offsetWidth, node.scrollWidth);
-        const dataUrl = await toPng(node, {
+
+        // Add padding wrapper for capture
+        const wrapper = document.createElement("div");
+        wrapper.style.cssText = `
+          background-color: #0d0d0d;
+          padding: 24px 20px;
+          display: inline-block;
+          width: ${node.scrollWidth + 40}px;
+        `;
+        
+        // Clone the node into the wrapper
+        const clone = node.cloneNode(true) as HTMLDivElement;
+        clone.style.width = `${node.scrollWidth}px`;
+        wrapper.appendChild(clone);
+        document.body.appendChild(wrapper);
+
+        const dataUrl = await toPng(wrapper, {
           cacheBust: true,
           pixelRatio: 2,
-          backgroundColor: "#faf9f7",
-          width: captureWidth,
-          style: { width: `${captureWidth}px`, minWidth: `${captureWidth}px`, maxWidth: `${captureWidth}px`, overflow: "visible", boxSizing: "border-box" },
+          backgroundColor: "#0d0d0d",
+          style: { overflow: "visible" },
         });
+
+        document.body.removeChild(wrapper);
+
         const link = document.createElement("a");
         link.download = filename;
         link.href = dataUrl;
