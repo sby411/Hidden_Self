@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Check, Scan } from "lucide-react";
-import { trackSubmissionStart } from "@/lib/trackSubmission";
 
 const loadingSteps = [
   "Scanning profile data...",
