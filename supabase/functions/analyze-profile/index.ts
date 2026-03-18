@@ -109,9 +109,37 @@ Section 8: 프리미엄 미리보기 티저 (premiumTeasers) - 각 프리미엄 
     "turningPoint": "관계가 틀어지는 순간 (2-3문장)"
   },
   "risks": ["반복될 관계 리스크 1", "리스크 2", "리스크 3"],
-  "goodMatch": "진짜 잘 맞는 남자 유형. 구체적 행동 패턴까지. (2-3문장)",
-  "badMatch": "자주 꼬이지만 결국 힘든 남자 유형. 왜 힘든지까지. (2-3문장)",
-  "redFlags": ["구체적 red flag 1", "red flag 2", "red flag 3"],
+  "goodMatch": {
+    "type": "기억에 남는 유형명 (예: '조용한 서포터형')",
+    "emoji": "💚",
+    "personality": "어떤 성향인지 (2문장)",
+    "whyGoodFit": "왜 잘 맞는지, 구체적으로 (2문장)",
+    "behaviors": "이 남자가 실제로 하는 행동들 (2-3문장)"
+  },
+  "badMatch": {
+    "type": "기억에 남는 유형명 (예: '감정 소비형 남자')",
+    "emoji": "💔",
+    "personality": "어떤 성향인지 (2문장)",
+    "whyRepeated": "왜 반복적으로 끌리는지 (2문장)",
+    "problems": "실제 연애에서 어떤 문제가 생기는지 (2-3문장)"
+  },
+  "redFlags": [
+    {
+      "label": "Red Flag 이름 (예: 감정 의존, 검증 욕구)",
+      "description": "계정 특징과 연결된 구체적 설명 (2-3문장)",
+      "emoji": "🚩"
+    }
+  ],
+  "actionGuide": {
+    "styling": ["스타일링 변화 조언 1", "조언 2"],
+    "responseStyle": ["남자가 접근했을 때 반응 가이드 1", "가이드 2"],
+    "datingBehavior": ["데이트 행동 전략 1", "전략 2"]
+  },
+  "avoidGuide": {
+    "firstMeeting": ["첫 만남에서 하지 말아야 할 행동 1", "행동 2"],
+    "earlyWarnings": ["관계 초반에서 경계해야 할 신호 1", "신호 2"],
+    "instaHabits": ["인스타에서 바꾸면 좋은 습관 1", "습관 2"]
+  },
   "harshTruth": "이 사람이 제일 듣기 싫지만 맞을 가능성이 높은 한 문장. 저장/공유하고 싶을 정도로 강렬해야 함.",
   "premiumTeasers": [
     "심리 트리거 티저 (1문장)",
