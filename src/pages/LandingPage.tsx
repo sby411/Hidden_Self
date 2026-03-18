@@ -29,14 +29,7 @@ const typePreviewCards = [
 
 const LandingPage = () => {
   const [inputId, setInputId] = useState("");
-  const [dbResult, setDbResult] = useState<string | null>(null);
-  const [dbLoading, setDbLoading] = useState(false);
-  const [rpcResult, setRpcResult] = useState<string | null>(null);
-  const [rpcLoading, setRpcLoading] = useState(false);
   const navigate = useNavigate();
-
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-  const supabaseRef = supabaseUrl ? new URL(supabaseUrl).hostname.split(".")[0] : "N/A";
 
   const handleAnalyze = () => {
     const cleanId = inputId.replace("@", "").trim();
@@ -44,82 +37,8 @@ const LandingPage = () => {
     navigate(`/loading?id=${encodeURIComponent(cleanId)}`);
   };
 
-  const handleDbTest = async () => {
-    setDbLoading(true);
-    setDbResult(null);
-    try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      console.log("[DB TEST] Direct insert...");
-      const res = await supabase.from("test_submissions").insert([
-        { instagram_id: "debug_test", payment_status: "free", status: "success" } as any,
-      ]);
-      console.log("[DB TEST] Full response:", JSON.stringify(res));
-      if (res.error) {
-        setDbResult(`❌ ${res.error.message} (code: ${res.error.code})`);
-      } else {
-        setDbResult("✅ INSERT SUCCESS (direct)");
-      }
-    } catch (e: any) {
-      console.error("[DB TEST] Exception:", e);
-      setDbResult(`❌ EXCEPTION: ${e.message}`);
-    } finally {
-      setDbLoading(false);
-    }
-  };
-
-  const handleRpcTest = async () => {
-    setRpcLoading(true);
-    setRpcResult(null);
-    try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      console.log("[RPC TEST] Calling insert_test_submission...");
-      const res = await supabase.rpc("insert_test_submission" as any, {
-        p_instagram_id: "debug_rpc_test",
-        p_payment_status: "free",
-        p_status: "success",
-      });
-      console.log("[RPC TEST] Full response:", JSON.stringify(res));
-      if (res.error) {
-        setRpcResult(`❌ ${res.error.message} (code: ${res.error.code})`);
-      } else {
-        setRpcResult(`✅ RPC SUCCESS — id: ${res.data}`);
-      }
-    } catch (e: any) {
-      console.error("[RPC TEST] Exception:", e);
-      setRpcResult(`❌ EXCEPTION: ${e.message}`);
-    } finally {
-      setRpcLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
-      {/* DEBUG PANEL — remove after debugging */}
-      <div className="fixed bottom-4 right-4 z-50 w-80 p-4 rounded-xl bg-card border-2 border-destructive/50 shadow-2xl text-xs font-mono space-y-3">
-        <div className="font-bold text-sm text-destructive">🔧 Supabase Debug Panel</div>
-        <div className="space-y-1">
-          <div>Client: <span className="text-primary font-bold">{supabaseUrl ? "✅ Initialized" : "❌ Not initialized"}</span></div>
-          <div>URL: <span className="text-muted-foreground break-all">{supabaseUrl || "N/A"}</span></div>
-          <div>Ref: <span className="text-muted-foreground">{supabaseRef}</span></div>
-        </div>
-        <div className="border-t border-border pt-2 space-y-2">
-          <div className="font-bold">Direct .insert()</div>
-          <button onClick={handleDbTest} disabled={dbLoading}
-            className="w-full px-3 py-1.5 rounded-lg bg-destructive text-destructive-foreground font-bold">
-            {dbLoading ? "Inserting..." : "DB TEST INSERT (direct)"}
-          </button>
-          {dbResult && <div className="p-2 rounded bg-secondary whitespace-pre-wrap">{dbResult}</div>}
-        </div>
-        <div className="border-t border-border pt-2 space-y-2">
-          <div className="font-bold">RPC insert_test_submission()</div>
-          <button onClick={handleRpcTest} disabled={rpcLoading}
-            className="w-full px-3 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold">
-            {rpcLoading ? "Inserting..." : "DB TEST INSERT (RPC)"}
-          </button>
-          {rpcResult && <div className="p-2 rounded bg-secondary whitespace-pre-wrap">{rpcResult}</div>}
-        </div>
-      </div>
-      {/* Header */}
       <header className="px-5 py-4 border-b border-border/40 backdrop-blur-sm bg-card/60">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
