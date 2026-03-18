@@ -13,6 +13,12 @@ const AdminLogin = () => {
   const { signIn, user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (!authLoading && user && isAdmin) {
+      navigate("/admin", { replace: true });
+    }
+  }, [authLoading, user, isAdmin, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
