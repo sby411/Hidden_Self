@@ -384,6 +384,7 @@ const ResultPage = () => {
 
       <main className={`flex-1 flex flex-col items-center px-5 pt-6 ${!premiumUnlocked ? 'pb-24' : 'pb-10'}`}>
         <div className="w-full max-w-md">
+          <div ref={fullReportRef}>
           <div ref={basicReportRef}>
             {/* Report Header */}
             <div className="text-center mb-6">
