@@ -191,18 +191,22 @@ const ResultPage = () => {
     return () => clearInterval(interval);
   }, [aiLoading, teaserInsights]);
 
-  if (aiLoading) {
-    const currentStep = loadingSteps[loadingStepIdx];
-    const progressPct = Math.min(Math.round(loadingProgress), 96);
+  if (aiLoading || showComplete) {
+    const currentStep = showComplete ? { text: "결과를 정리 중입니다..." } : loadingSteps[loadingStepIdx];
+    const progressPct = showComplete ? 100 : Math.min(Math.round(loadingProgress), 96);
 
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-5">
         <div className="text-center max-w-sm w-full">
-          <div className="w-16 h-16 rounded-2xl gradient-ai flex items-center justify-center mx-auto mb-6 animate-pulse">
+          <div className={`w-16 h-16 rounded-2xl gradient-ai flex items-center justify-center mx-auto mb-6 ${showComplete ? '' : 'animate-pulse'}`}>
             <Brain className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-lg font-bold text-foreground mb-1">AI가 분석 중이에요...</h2>
-          <p className="text-sm text-muted-foreground mb-5">@{id}의 매력 패턴을 해석하고 있어요</p>
+          <h2 className="text-lg font-bold text-foreground mb-1">
+            {showComplete ? "✅ 분석 완료되었습니다" : "AI가 분석 중이에요..."}
+          </h2>
+          <p className="text-sm text-muted-foreground mb-5">
+            {showComplete ? "결과를 정리 중입니다..." : `@${id}의 매력 패턴을 해석하고 있어요`}
+          </p>
 
           {/* Progress bar */}
           <div className="w-full mb-2">
@@ -219,29 +223,35 @@ const ResultPage = () => {
           </div>
 
           {/* Step indicators */}
-          <div className="space-y-2.5 mb-8">
-            {loadingSteps.slice(0, 5).map((step, i) => (
-              <div
-                key={step.text}
-                className={`flex items-center gap-2.5 text-xs transition-all duration-300 ${
-                  i < loadingStepIdx ? 'text-primary font-medium' :
-                  i === loadingStepIdx ? 'text-foreground font-semibold' :
-                  'text-muted-foreground/50'
-                }`}
-              >
-                <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  i < loadingStepIdx ? 'bg-primary scale-100' :
-                  i === loadingStepIdx ? 'bg-primary animate-pulse scale-125' :
-                  'bg-muted-foreground/30'
-                }`} />
-                {step.text.replace('...', '')}
-                {i < loadingStepIdx && <span className="text-primary">✓</span>}
-              </div>
-            ))}
-          </div>
+          {!showComplete ? (
+            <div className="space-y-2.5 mb-8">
+              {loadingSteps.slice(0, 5).map((step, i) => (
+                <div
+                  key={step.text}
+                  className={`flex items-center gap-2.5 text-xs transition-all duration-300 ${
+                    i < loadingStepIdx ? 'text-primary font-medium' :
+                    i === loadingStepIdx ? 'text-foreground font-semibold' :
+                    'text-muted-foreground/50'
+                  }`}
+                >
+                  <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    i < loadingStepIdx ? 'bg-primary scale-100' :
+                    i === loadingStepIdx ? 'bg-primary animate-pulse scale-125' :
+                    'bg-muted-foreground/30'
+                  }`} />
+                  {step.text.replace('...', '')}
+                  {i < loadingStepIdx && <span className="text-primary">✓</span>}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mb-8 text-sm text-primary font-medium animate-pulse">
+              잠시만 기다려주세요...
+            </div>
+          )}
 
           {/* Teaser insight */}
-          {loadingStepIdx >= 2 && (
+          {!showComplete && loadingStepIdx >= 2 && (
             <div className="rounded-2xl p-4 bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/15 animate-in fade-in duration-500">
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="w-3.5 h-3.5 text-primary" />
