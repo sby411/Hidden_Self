@@ -115,6 +115,16 @@ export function useAiAnalysis(userId: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // DEBUG: return mock data immediately
+    if (DEBUG_MOCK) {
+      const timer = setTimeout(() => {
+        cache.set(userId, MOCK_RESULT);
+        setData(MOCK_RESULT);
+        setLoading(false);
+      }, 500); // small delay to simulate loading
+      return () => clearTimeout(timer);
+    }
+
     if (cache.has(userId)) {
       setData(cache.get(userId)!);
       setLoading(false);
