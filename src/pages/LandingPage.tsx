@@ -68,9 +68,9 @@ const LandingPage = () => {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-foreground mb-4">
-              왜 너는 항상
+              왜 나한테는 항상
               <br />
-              <span className="text-danger-highlight">똑같은 남자만 반복될까?</span>
+              <span className="text-danger-highlight">똥차만 꼬일까?</span>
             </h1>
 
             {/* Provocative sub-hooks */}
