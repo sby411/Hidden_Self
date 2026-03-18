@@ -700,6 +700,7 @@ const ResultPage = () => {
           </div> {/* end basicReportRef */}
 
           {/* ====== PREMIUM CONTENT (shared for locked/unlocked) ====== */}
+          <div id="premium-section">
           {(() => {
             const premiumContent = (
               <>
