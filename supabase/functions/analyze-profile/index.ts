@@ -331,15 +331,6 @@ Deno.serve(async (req) => {
           { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-
-      // Detect private/empty accounts (0 followers + 0 following = likely private)
-      const { profile: igProfile } = instagramData;
-      if (igProfile.followersCount === 0 && igProfile.followsCount === 0) {
-        return new Response(
-          JSON.stringify({ error: "PRIVATE_ACCOUNT" }),
-          { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
     } catch (apifyErr) {
       console.error("Apify fetch error:", apifyErr);
       return new Response(
