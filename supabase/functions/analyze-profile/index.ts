@@ -454,7 +454,7 @@ Deno.serve(async (req) => {
                       required: ["firstMeeting", "earlyWarnings", "instaHabits"],
                     },
                     harshTruth: { type: "string", description: "잔인하지만 핵심인 한 줄 요약" },
-                    premiumTeasers: { type: "array", items: { type: "string" }, description: "6 curiosity-inducing teaser sentences for each premium subsection" },
+                    premiumTeasers: { type: "array", items: { type: "string" }, description: "8 curiosity-inducing teaser sentences for each premium subsection" },
                     confidence: { type: "number" },
                     obsessionRate: { type: "number" },
                     relationshipScore: { type: "number" },
