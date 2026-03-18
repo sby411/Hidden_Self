@@ -1141,9 +1141,7 @@ const ResultPage = () => {
                     <span className="text-base font-black">4,900원</span>
                   </span>
                 </button>
-                <p className="text-center text-[10px] text-muted-foreground mt-2">
-                  ✅ 이미 <span className="font-semibold text-foreground">6,832명</span>이 프리미엄 리포트를 받아봤습니다
-                </p>
+                <p className="text-center text-[10px] text-muted-foreground mt-2">결제 후 즉시 프리미엄 분석 결과를 확인할 수 있습니다.</p>
                 <p className="text-center text-[10px] text-destructive font-bold mt-1 animate-pulse">🔥 지금만 50% 할인 중!</p>
               </div>
             ) : (
