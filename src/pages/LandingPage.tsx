@@ -1,30 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, Camera, Palette, MessageCircle, Waves, Users, UserPlus, Clock, Activity, Hash, Image, Eye, BarChart3, Scan, Heart, ArrowRight } from "lucide-react";
+import { Sparkles, Camera, Palette, MessageCircle, Waves, Users, UserPlus, Clock, Activity, Hash, Image, Eye, BarChart3, Scan, Heart, ArrowRight, AlertTriangle, Flame, ShieldAlert, Target } from "lucide-react";
 import Footer from "@/components/Footer";
 
 const analysisElements = [
-  { icon: Camera, label: "사진 스타일", desc: "당신이 보여주는 분위기 매력" },
-  { icon: Palette, label: "색감 팔레트", desc: "당신의 감성 vibe" },
-  { icon: Waves, label: "인스타 vibe", desc: "전체 피드에서 풍기는 연애 에너지" },
-  { icon: MessageCircle, label: "캡션 감성", desc: "당신의 감정 표현 스타일" },
-  { icon: Users, label: "팔로워 구성", desc: "어떤 사람들이 끌리는지" },
-  { icon: UserPlus, label: "팔로잉 관심사", desc: "당신의 연애 취향 단서" },
-  { icon: Clock, label: "활동 시간대", desc: "당신의 라이프스타일 패턴" },
-  { icon: Activity, label: "참여율 분석", desc: "당신의 인기도와 반응" },
-  { icon: Image, label: "게시물 빈도", desc: "당신의 관심도와 에너지" },
-  { icon: Hash, label: "해시태그 분석", desc: "당신의 취향과 관심사" },
-  { icon: Eye, label: "스토리 패턴", desc: "당신의 일상 매력" },
-  { icon: BarChart3, label: "종합 매력 지수", desc: "당신의 인스타 매력도" },
+  { icon: Camera, label: "당신이 풍기는 위험한 분위기", desc: "사진에서 읽히는 당신의 무의식적 신호", danger: true },
+  { icon: Palette, label: "당신의 감성이 유발하는 착각", desc: "색감과 필터가 만드는 거짓 인상" },
+  { icon: Waves, label: "피드에서 새어나오는 연애 에너지", desc: "당신도 모르게 흘리는 연애 시그널" },
+  { icon: MessageCircle, label: "남자들이 오해하는 신호", desc: "캡션 속에 숨겨진 감정 패턴", danger: true },
+  { icon: Users, label: "어떤 남자들이 당신을 노리는지", desc: "팔로워 구성이 말해주는 불편한 진실" },
+  { icon: UserPlus, label: "당신의 취향이 만든 함정", desc: "팔로잉 패턴으로 보이는 연애 블라인드 스팟" },
+  { icon: Clock, label: "활동 시간이 드러내는 외로움", desc: "접속 패턴이 말해주는 감정 상태" },
+  { icon: Activity, label: "당신이 얼마나 쉽게 읽히는지", desc: "참여율이 보여주는 당신의 취약점", danger: true },
+  { icon: Image, label: "게시물 빈도가 말하는 결핍", desc: "올리는 빈도에 숨겨진 심리 상태" },
+  { icon: Hash, label: "해시태그가 폭로하는 욕망", desc: "무의식적으로 드러내는 관심사" },
+  { icon: Eye, label: "스토리에서 읽히는 본심", desc: "24시간 안에 드러나는 진짜 감정" },
+  { icon: BarChart3, label: "종합 위험도 지수", desc: "당신의 연애 패턴 리스크 종합 분석", danger: true },
 ];
 
 const typePreviewCards = [
-  { emoji: "⚡", title: "도파민 회피형 인기남", desc: "강렬한 설렘을 주지만 쉽게 잡히지 않는 도파민 타입", gradient: "from-[hsl(280,25%,92%)] to-[hsl(300,20%,87%)]" },
-  { emoji: "💼", title: "능력있는 불안형 연상남", desc: "능력은 있지만 내면에 불안을 가진 연상 타입", gradient: "from-[hsl(45,45%,91%)] to-[hsl(35,40%,86%)]" },
-  { emoji: "🐶", title: "집착형 연하 인싸남", desc: "한번 빠지면 끝까지 직진하는 에너지 넘치는 연하", gradient: "from-[hsl(30,50%,92%)] to-[hsl(20,45%,87%)]" },
-  { emoji: "🧊", title: "감정차단 회피형 냉미남", desc: "겉은 차갑지만 내면에 깊은 감정을 숨긴 타입", gradient: "from-[hsl(210,18%,92%)] to-[hsl(220,15%,87%)]" },
-  { emoji: "🎨", title: "감성 과몰입 예술남", desc: "감성에 깊이 빠져드는 예술적 영혼의 타입", gradient: "from-[hsl(340,30%,92%)] to-[hsl(320,25%,87%)]" },
-  { emoji: "🧠", title: "똑똑한 아싸 안정남", desc: "지적 매력과 안정감을 가진 조용한 타입", gradient: "from-[hsl(160,20%,92%)] to-[hsl(180,18%,87%)]" },
+  { emoji: "⚡", title: "도파민 회피형 인기남", desc: "강렬한 설렘을 주지만 쉽게 잡히지 않는 도파민 타입. 너 이런 남자한테 약하잖아.", gradient: "from-[hsl(280,25%,92%)] to-[hsl(300,20%,87%)]" },
+  { emoji: "💼", title: "능력있는 불안형 연상남", desc: "능력은 있지만 내면에 불안을 가진 연상 타입. 안정감인 줄 알았지? 착각이야.", gradient: "from-[hsl(45,45%,91%)] to-[hsl(35,40%,86%)]" },
+  { emoji: "🐶", title: "집착형 연하 인싸남", desc: "한번 빠지면 끝까지 직진하는 타입. 이게 사랑인지 집착인지 구분 돼?", gradient: "from-[hsl(30,50%,92%)] to-[hsl(20,45%,87%)]" },
+  { emoji: "🧊", title: "감정차단 회피형 냉미남", desc: "겉은 차갑지만 내면에 깊은 감정을 숨긴 타입. 너만 매번 벽 앞에서 기다리잖아.", gradient: "from-[hsl(210,18%,92%)] to-[hsl(220,15%,87%)]" },
+  { emoji: "🎨", title: "감성 과몰입 예술남", desc: "감성에 깊이 빠져드는 예술적 영혼. 근데 그 감성, 너한테만 향하는 거 아니야.", gradient: "from-[hsl(340,30%,92%)] to-[hsl(320,25%,87%)]" },
+  { emoji: "🧠", title: "똑똑한 아싸 안정남", desc: "지적 매력과 안정감을 가진 조용한 타입. 안전하다고? 그것도 패턴이야.", gradient: "from-[hsl(160,20%,92%)] to-[hsl(180,18%,87%)]" },
 ];
 
 const LandingPage = () => {
@@ -56,26 +56,37 @@ const LandingPage = () => {
 
       <main className="flex-1 flex flex-col items-center">
         {/* Hero */}
-        <section className="w-full flex flex-col items-center px-5 pt-14 pb-10 relative">
+        <section className="w-full flex flex-col items-center px-5 pt-14 pb-10 relative overflow-hidden">
           <div className="absolute inset-0 pixel-grid opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[hsl(0_70%_50%/0.03)]" />
 
           <div className="w-full max-w-md text-center relative z-10">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-ai-highlight/10 border border-ai-highlight/20 px-3.5 py-1.5 text-xs font-semibold text-ai-highlight mb-6">
-              <Heart className="w-3 h-3" />
-              AI 연애 유형 분석
+            {/* Warning badge */}
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 border border-destructive/20 px-3.5 py-1.5 text-xs font-semibold text-destructive mb-6">
+              <AlertTriangle className="w-3 h-3" />
+              ⚠️ 불편할 수 있는 결과가 포함됩니다
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-foreground mb-3">
-              내 인스타그램으로 분석하는
+
+            <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-foreground mb-4">
+              왜 너는 항상
               <br />
-              <span className="bg-gradient-to-r from-ai-highlight to-accent bg-clip-text text-transparent">나에게 꼬이는 남자 유형</span>
+              <span className="text-danger-highlight">똑같은 남자만 반복될까?</span>
             </h1>
-            <p className="text-base font-bold text-foreground mb-2">
-              왜 항상 이런 남자만 꼬일까? 🤔
-            </p>
+
+            {/* Provocative sub-hooks */}
+            <div className="space-y-1.5 mb-5">
+              <p className="text-sm font-bold text-foreground">
+                이건 운이 아니라 <span className="text-danger-highlight">패턴</span>이야.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                남자가 이상한 게 아니라, <span className="font-semibold text-foreground">너의 특정한 요소</span>가 그런 남자들을 끌어당기는 거야.
+              </p>
+            </div>
+
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-              AI가 당신의 인스타그램의 여러 요소들을 분석해
+              인스타그램 분석을 통해, 당신이 어떤 남자를 끌어들이는지
               <br />
-              어떤 남자 유형이 당신에게 끌리는지 알려드립니다.
+              <span className="font-semibold text-foreground">생각보다 적나라하게</span> 보여드립니다.
             </p>
 
             {/* Input area */}
@@ -87,7 +98,7 @@ const LandingPage = () => {
                   onChange={(e) => setInputId(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAnalyze()}
                   placeholder="내 인스타 아이디 입력 (@username)"
-                  className="w-full h-12 rounded-xl bg-card border border-border px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ai-highlight/40 focus:border-ai-highlight/30 transition-all"
+                  className="w-full h-12 rounded-xl bg-card border border-border px-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-destructive/40 focus:border-destructive/30 transition-all"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <Scan className="w-4 h-4 text-muted-foreground" />
@@ -99,14 +110,43 @@ const LandingPage = () => {
               <button
                 onClick={handleAnalyze}
                 disabled={!inputId.trim()}
-                className="w-full h-12 rounded-xl gradient-ai text-white font-bold text-sm shadow-md hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] glow-accent relative overflow-hidden group"
+                className="w-full h-12 rounded-xl gradient-danger text-white font-bold text-sm shadow-md hover:shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] glow-danger relative overflow-hidden group"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
                 <span className="relative flex items-center justify-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  내 인스타 분석 시작하기
+                  <Flame className="w-4 h-4" />
+                  내 연애 패턴 까발리기
                 </span>
               </button>
+            </div>
+
+            {/* Aggressive hook text */}
+            <div className="mt-6 space-y-1">
+              <p className="text-[11px] text-muted-foreground italic">
+                "너 문제 없는 거 맞아?"
+              </p>
+              <p className="text-[11px] text-muted-foreground italic">
+                "이번에도 또 같은 유형 만날 가능성 높음"
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Warning Banner */}
+        <section className="w-full px-5 pb-6">
+          <div className="w-full max-w-md mx-auto">
+            <div className="rounded-2xl p-4 bg-destructive/5 border border-destructive/15 glow-danger-subtle">
+              <div className="flex items-start gap-3">
+                <ShieldAlert className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-foreground mb-1">⚠️ 너 연애, 생각보다 읽히고 있음</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    왜 항상 결말이 똑같은지 생각해본 적 있어?
+                    <br />
+                    끌리는 게 아니라, <span className="font-semibold text-foreground">끌어당기고 있는 거야.</span>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -114,16 +154,16 @@ const LandingPage = () => {
         {/* Analysis Elements */}
         <section className="w-full px-5 pb-10">
           <div className="w-full max-w-md mx-auto">
-            <h2 className="text-lg font-bold text-foreground mb-1 text-center">AI가 당신의 인스타에서 읽어내는 연애 vibe</h2>
-            <p className="text-xs text-muted-foreground text-center mb-5">AI가 12개 항목을 다각도로 분석합니다</p>
+            <h2 className="text-lg font-bold text-foreground mb-1 text-center">🔍 AI가 당신의 인스타에서 <span className="text-danger-highlight">읽어내는 것들</span></h2>
+            <p className="text-xs text-muted-foreground text-center mb-5">당신이 모르는 사이, 이미 다 보이고 있어요</p>
             <div className="grid grid-cols-2 gap-2.5">
               {analysisElements.map((el) => (
-                <div key={el.label} className="glass-card rounded-2xl p-3.5 flex items-center gap-3 card-hover relative">
-                  <div className="w-9 h-9 rounded-xl bg-ai-highlight/10 flex items-center justify-center shrink-0">
-                    <el.icon className="w-4 h-4 text-ai-highlight" />
+                <div key={el.label} className={`glass-card rounded-2xl p-3.5 flex items-center gap-3 card-hover relative ${el.danger ? 'border-destructive/20 glow-danger-subtle' : ''}`}>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${el.danger ? 'bg-destructive/10' : 'bg-ai-highlight/10'}`}>
+                    <el.icon className={`w-4 h-4 ${el.danger ? 'text-destructive' : 'text-ai-highlight'}`} />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-foreground">{el.label}</p>
+                    <p className={`text-xs font-semibold ${el.danger ? 'text-danger-highlight' : 'text-foreground'}`}>{el.label}</p>
                     <p className="text-[10px] text-muted-foreground leading-snug">{el.desc}</p>
                   </div>
                 </div>
@@ -135,8 +175,8 @@ const LandingPage = () => {
         {/* Type Preview */}
         <section className="w-full px-5 pb-10">
           <div className="w-full max-w-md mx-auto">
-            <h2 className="text-lg font-bold text-foreground mb-1 text-center">어떤 남자 유형이 나올까? 💘</h2>
-            <p className="text-xs text-muted-foreground text-center mb-5">AI가 당신의 인스타 vibe를 분석해 당신에게 끌리는 남자 유형을 알려드립니다.</p>
+            <h2 className="text-lg font-bold text-foreground mb-1 text-center">🔥 너한테만 꼬이는 유형, 이미 정해져 있어</h2>
+            <p className="text-xs text-muted-foreground text-center mb-5">너한테만 하남자가 몰리는 이유, 이미 보입니다.</p>
             <div className="flex flex-col gap-2.5">
               {typePreviewCards.map((t) => (
                 <div
@@ -157,9 +197,9 @@ const LandingPage = () => {
         {/* Sample Result */}
         <section className="w-full px-5 pb-10">
           <div className="w-full max-w-md mx-auto">
-            <h2 className="text-lg font-bold text-foreground mb-1 text-center">실제 분석 결과 예시 🔍</h2>
-            <p className="text-xs text-muted-foreground text-center mb-5">이런 식으로 분석 결과가 나와요</p>
-            <div className="glass-card rounded-2xl p-5 relative overflow-hidden">
+            <h2 className="text-lg font-bold text-foreground mb-1 text-center">📊 실제 분석 결과 예시</h2>
+            <p className="text-xs text-muted-foreground text-center mb-5">이 정도로 <span className="font-semibold text-foreground">적나라하게</span> 나와요</p>
+            <div className="glass-card rounded-2xl p-5 relative overflow-hidden border-destructive/10">
               <div className="absolute inset-0 pixel-grid opacity-30" />
               <div className="relative z-10">
                 <p className="text-xs text-muted-foreground mb-1">@username 분석 결과</p>
@@ -171,10 +211,10 @@ const LandingPage = () => {
                   당신의 인스타 vibe는 감성적인 사진과 신비로운 분위기가 강합니다.
                 </p>
                 <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-                  이런 vibe는 자극적인 매력을 가진 남자들에게 특히 강하게 어필합니다.
+                  이런 vibe는 <span className="font-semibold text-danger-highlight">자극적인 매력을 가진 남자들에게 특히 강하게 어필</span>합니다.
                 </p>
-                <div className="flex items-center gap-1 mt-4 text-ai-highlight text-xs font-semibold">
-                  <span>자세한 분석 보기</span>
+                <div className="flex items-center gap-1 mt-4 text-destructive text-xs font-semibold">
+                  <span>⚠️ 자세한 분석 보기</span>
                   <ArrowRight className="w-3 h-3" />
                 </div>
               </div>
@@ -185,16 +225,17 @@ const LandingPage = () => {
         {/* Bottom CTA */}
         <section className="w-full px-5 pb-14">
           <div className="w-full max-w-md mx-auto text-center">
-            <div className="glass-card rounded-3xl p-6 relative overflow-hidden">
+            <div className="glass-card rounded-3xl p-6 relative overflow-hidden border-destructive/15 glow-danger-subtle">
               <div className="absolute inset-0 pixel-grid opacity-40" />
               <div className="relative z-10">
-                <p className="text-lg font-bold text-foreground mb-2">나에게 꼬이는 남자는? 💕</p>
-                <p className="text-xs text-muted-foreground mb-5">지금 바로 확인해보세요</p>
+                <p className="text-lg font-bold text-foreground mb-1">아직도 모르겠어? 🔥</p>
+                <p className="text-xs text-muted-foreground mb-1">왜 항상 결말이 똑같은지</p>
+                <p className="text-xs font-semibold text-danger-highlight mb-5">지금 확인 안 하면, 또 반복될걸.</p>
                 <button
                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="w-full h-12 rounded-xl gradient-ai text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.98] glow-accent"
+                  className="w-full h-12 rounded-xl gradient-danger text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-[0.98] glow-danger"
                 >
-                  지금 내 인스타 연애 분석하기
+                  🔥 내 연애 패턴 분석하기
                 </button>
               </div>
             </div>
