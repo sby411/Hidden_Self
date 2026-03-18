@@ -301,44 +301,80 @@ const LandingPage = () => {
         {/* ====== 실제 후기 섹션 ====== */}
         <section className="w-full px-5 pb-10">
           <div className="w-full max-w-md mx-auto">
-            <h2 className="text-xl font-extrabold text-foreground mb-1">실제 사용 후기</h2>
-            <p className="text-xs text-muted-foreground mb-6">분석 받은 사람들의 솔직한 반응</p>
+            <div className="text-center mb-8">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-destructive mb-2">Real Reviews</p>
+              <h2 className="text-xl font-extrabold text-foreground mb-1">실제 사용 후기</h2>
+              <p className="text-xs text-muted-foreground">분석 받은 사람들의 솔직한 반응</p>
+              <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-destructive/60 to-transparent mx-auto mt-3" />
+            </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               {[
                 {
                   emoji: "👍",
                   title: "생각보다 내 상황이랑 너무 맞아서 놀람",
                   body: "처음엔 그냥 심심해서 해봤는데 읽다 보니까 약간 소름이었어요.\n제가 왜 항상 비슷한 스타일의 남자만 만나는지 설명해주는데…\n지금까지 연애했던 사람들 하나씩 떠오르더라고요.\n특히 \"접근 방식\" 부분이 제 경험이랑 거의 똑같아서 좀 놀랐습니다.",
+                  align: "left" as const,
                 },
                 {
                   emoji: "😳",
                   title: "이거 읽다가 잠깐 멈춤",
                   body: "왜 항상 애매하게 밀당하는 남자만 꼬이는지 궁금했는데\n여기서 \"관찰형 남자들이 접근할 확률이 높다\" 이런 식으로 분석해주더라고요.\n진짜 맞는말이라 순간 벙쩌서 멈췄어요.",
+                  align: "right" as const,
                 },
                 {
                   emoji: "🤯",
                   title: "내 연애 패턴 그대로 적혀있음",
                   body: "연애할 때마다 초반엔 되게 관심 보이다가\n나중에 갑자기 거리 두는 사람들만 만나서 늘 이유가 궁금했는데\n\"이런 유형의 계정은 도전 욕구 있는 남자를 끌어들인다\"는 설명 보고\n약간 납득돼서 웃겼어요.\n팩폭인데 이상하게 기분 나쁘진 않네요.",
+                  align: "left" as const,
                 },
                 {
                   emoji: "👀",
                   title: "친구랑 같이 해봤는데",
                   body: "제가 먼저 해보고 친구한테도 링크 보내서 같이 했는데\n둘 다 결과가 완전 다르게 나와서 신기했어요.\n친구는 DM 많이 받는 타입으로 나오고 저는 \"접근 난이도 높은 타입\"이라는데\n실제로도 그런 편이라서 AI가 이런 걸 어떻게 보지 싶긴 했어요.",
+                  align: "right" as const,
                 },
                 {
                   emoji: "🙂",
                   title: "이런 거 보통 재미로만 하는데",
                   body: "생각보다 현실적인 얘기가 많아서 좀 신기했어요.\n특히 \"어떤 남자가 끌리는지\"보다\n\"왜 그런 남자가 접근하는지\" 설명해주는 부분이 괜찮았어요.\n연애 고민 있을 때 한 번쯤 읽어볼 만한 느낌.",
+                  align: "left" as const,
                 },
               ].map((review, i) => (
-                <div key={i} className="glass-card rounded-2xl p-4 border-border/30">
-                  <p className="text-sm font-bold text-foreground mb-2">
-                    {review.emoji} {review.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
-                    {review.body}
-                  </p>
+                <div
+                  key={i}
+                  className={`flex ${review.align === "right" ? "justify-end" : "justify-start"}`}
+                >
+                  <div className={`max-w-[88%] relative ${review.align === "right" ? "items-end" : "items-start"}`}>
+                    {/* Bubble */}
+                    <div
+                      className={`relative rounded-2xl px-4 py-3 ${
+                        review.align === "right"
+                          ? "bg-destructive/15 rounded-tr-sm border border-destructive/20"
+                          : "bg-secondary/60 rounded-tl-sm border border-border/40"
+                      }`}
+                    >
+                      <p className="text-[13px] font-bold text-foreground mb-1.5">
+                        {review.emoji} {review.title}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed whitespace-pre-line">
+                        {review.body}
+                      </p>
+                    </div>
+                    {/* Tail */}
+                    <div
+                      className={`absolute top-0 w-2.5 h-2.5 ${
+                        review.align === "right"
+                          ? "right-[-5px] bg-destructive/15 border-r border-t border-destructive/20"
+                          : "left-[-5px] bg-secondary/60 border-l border-t border-border/40"
+                      }`}
+                      style={{
+                        clipPath: review.align === "right"
+                          ? "polygon(0 0, 100% 0, 0 100%)"
+                          : "polygon(100% 0, 0 0, 100% 100%)",
+                      }}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
