@@ -117,6 +117,9 @@ const LandingPage = () => {
                   내 연애 패턴 까발리기
                 </span>
               </button>
+              <p className="text-[11px] text-muted-foreground text-center mt-1">
+                ✅ 이미 <span className="font-bold text-foreground">20,284명</span>이 자신의 연애 패턴을 확인했습니다
+              </p>
             </div>
 
             {/* Aggressive hook text */}
