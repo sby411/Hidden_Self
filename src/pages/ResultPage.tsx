@@ -1170,6 +1170,7 @@ const ResultPage = () => {
             );
           })()}
           </div> {/* end premium-section */}
+          </div> {/* end fullReportRef */}
 
           {/* ====== SHARE & ACTIONS ====== */}
           <div
