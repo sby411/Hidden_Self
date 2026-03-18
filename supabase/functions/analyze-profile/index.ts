@@ -147,7 +147,7 @@ function buildUserPrompt(userId: string, profile: any, posts: any[]) {
     )
     .join('\n');
 
-  return `이 사용자의 실제 인스타그램 데이터를 기반으로 심리적 매력 분석 리포트를 생성해주세요.
+  return `이 사용자의 실제 인스타그램 데이터를 기반으로 연애 패턴 분석 리포트를 생성해주세요.
 반드시 아래 실제 데이터를 분석의 핵심 근거로 활용하세요. 랜덤 데이터를 생성하지 마세요.
 
 [Input Data]
@@ -164,11 +164,13 @@ followerRatio: ${(profile.followersCount / Math.max(profile.followsCount, 1)).to
 [Recent Posts (${posts.length}개)]
 ${postSummaries}
 
-위 데이터를 기반으로:
-- 팔로워/팔로잉 비율에서 이 사람의 소셜 포지션을 읽어내세요
-- 게시물 캡션과 해시태그에서 이 사람의 관심사, 감성, 자기표현 방식을 분석하세요
-- 좋아요/댓글 수에서 engagement 패턴과 인기도를 파악하세요
-- 이 모든 것을 종합하여 어떤 남자가 이 사람에게 끌리는지 분석하세요`;
+위 데이터를 기반으로 분석하라:
+1. 팔로워/팔로잉 비율 → 이 사람의 소셜 포지션과 남자들이 느끼는 접근 난이도
+2. 게시물 캡션, 해시태그, alt 텍스트 → 관심사, 감성, 자기표현 방식, 사진 스타일
+3. 좋아요/댓글 수 → engagement 패턴, 인기도, 남자들의 관심 수준
+4. 이 모든 것을 종합 → 어떤 남자가 왜 반복적으로 이 계정에 끌리는지
+5. 남자들이 이 계정을 어떻게 "읽고" "소비"하는지에 초점
+6. 마지막에 harshTruth로 듣기 싫지만 핵심인 한 줄을 반드시 포함할 것`;
 }
 
 function extractInstagramData(rawData: any[]) {
