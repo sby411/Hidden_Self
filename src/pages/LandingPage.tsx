@@ -29,14 +29,7 @@ const typePreviewCards = [
 
 const LandingPage = () => {
   const [inputId, setInputId] = useState("");
-  const [dbResult, setDbResult] = useState<string | null>(null);
-  const [dbLoading, setDbLoading] = useState(false);
-  const [rpcResult, setRpcResult] = useState<string | null>(null);
-  const [rpcLoading, setRpcLoading] = useState(false);
   const navigate = useNavigate();
-
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-  const supabaseRef = supabaseUrl ? new URL(supabaseUrl).hostname.split(".")[0] : "N/A";
 
   const handleAnalyze = () => {
     const cleanId = inputId.replace("@", "").trim();
@@ -44,6 +37,8 @@ const LandingPage = () => {
     navigate(`/loading?id=${encodeURIComponent(cleanId)}`);
   };
 
+  return (
+    <div className="min-h-screen flex flex-col">
   const handleDbTest = async () => {
     setDbLoading(true);
     setDbResult(null);
