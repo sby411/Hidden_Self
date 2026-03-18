@@ -456,6 +456,17 @@ const ResultPage = () => {
                 <p className="text-sm text-foreground/90 leading-[1.9]">{ai.instaImpression}</p>
               </div>
 
+              {/* Perceived Accessibility */}
+              {ai.perceivedAccessibility && (
+                <div className="relative glass-card rounded-2xl p-5 mb-5 border-l-4 border-l-accent">
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <Target className="w-4 h-4 text-accent-foreground" />
+                    남자들이 느끼는 접근 난이도
+                  </h3>
+                  <p className="text-sm text-foreground/90 leading-[1.9]">{ai.perceivedAccessibility}</p>
+                </div>
+              )}
+
               {/* Vibe Keywords */}
               <div className="flex flex-wrap gap-2 mb-5">
                 {ai.vibeKeywords.map((kw) => (
@@ -557,6 +568,21 @@ const ResultPage = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Harsh Truth - 잔인한 한줄 요약 */}
+              {ai.harshTruth && (
+                <div className="relative mb-8">
+                  <div className="rounded-2xl p-6 text-center bg-gradient-to-br from-destructive/10 via-card to-destructive/5 border border-destructive/20 shadow-lg">
+                    <div className="inline-flex items-center gap-1.5 bg-destructive/10 rounded-full px-3 py-1 mb-4">
+                      <Flame className="w-3 h-3 text-destructive" />
+                      <span className="text-[10px] font-bold text-destructive uppercase tracking-wider">잔인하지만 핵심인 한 줄</span>
+                    </div>
+                    <p className="text-base font-bold text-foreground leading-[1.8] italic">
+                      "{ai.harshTruth}"
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>

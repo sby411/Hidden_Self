@@ -41,6 +41,7 @@ export interface InstagramData {
 export interface AiAnalysis {
   instaImpression: string;
   vibeKeywords: string[];
+  perceivedAccessibility: string;
   attractedType: {
     name: string;
     emoji: string;
@@ -66,6 +67,7 @@ export interface AiAnalysis {
   goodMatch: string;
   badMatch: string;
   redFlags: string[];
+  harshTruth: string;
   premiumTeasers: string[];
   confidence: number;
   obsessionRate: number;
