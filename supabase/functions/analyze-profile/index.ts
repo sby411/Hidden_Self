@@ -332,6 +332,7 @@ Deno.serve(async (req) => {
                   properties: {
                     instaImpression: { type: "string" },
                     vibeKeywords: { type: "array", items: { type: "string" } },
+                    perceivedAccessibility: { type: "string", description: "접근 난이도 분석: 쉬워보임/어려워보임/애매함 + 이유" },
                     attractedType: {
                       type: "object",
                       properties: {
@@ -369,16 +370,17 @@ Deno.serve(async (req) => {
                     goodMatch: { type: "string" },
                     badMatch: { type: "string" },
                     redFlags: { type: "array", items: { type: "string" } },
+                    harshTruth: { type: "string", description: "잔인하지만 핵심인 한 줄 요약" },
                     premiumTeasers: { type: "array", items: { type: "string" }, description: "6 curiosity-inducing teaser sentences for each premium subsection" },
                     confidence: { type: "number" },
                     obsessionRate: { type: "number" },
                     relationshipScore: { type: "number" },
                   },
                   required: [
-                    "instaImpression", "vibeKeywords", "attractedType",
+                    "instaImpression", "vibeKeywords", "perceivedAccessibility", "attractedType",
                     "attractionStats", "psychTriggers", "decisiveMoment",
                     "datingPattern", "risks", "goodMatch", "badMatch",
-                    "redFlags", "premiumTeasers", "confidence", "obsessionRate", "relationshipScore",
+                    "redFlags", "harshTruth", "premiumTeasers", "confidence", "obsessionRate", "relationshipScore",
                   ],
                 },
               },
