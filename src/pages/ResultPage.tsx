@@ -1222,6 +1222,7 @@ const ResultPage = () => {
               </div>
             );
           })()}
+          </div> {/* end premium-section */}
 
           {/* ====== SHARE & ACTIONS ====== */}
           <div
