@@ -459,52 +459,6 @@ const ResultPage = () => {
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
 
-            {/* ====== EARLY PREMIUM TEASER (after Chapter 1) ====== */}
-            {!premiumUnlocked && (
-              <div className="relative mb-8 rounded-2xl overflow-hidden border border-[hsl(45,40%,25%)]/40 bg-gradient-to-br from-[hsl(45,20%,8%)] to-[hsl(35,15%,6%)] shadow-lg">
-                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(45,70%,55%)]/5 to-transparent pointer-events-none" />
-                <div className="relative p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center">
-                      <Crown className="w-3 h-3 text-white" />
-                    </div>
-                    <span className="text-xs font-bold text-[hsl(45,70%,55%)]">프리미엄 분석</span>
-                  </div>
-                  <p className="text-sm font-medium text-foreground mb-1">AI가 발견한 더 깊은 연애 패턴이 있습니다</p>
-                  <p className="text-[10px] text-muted-foreground mb-3">이미 {socialProofCount.toLocaleString()}명이 자신의 연애 패턴을 확인했습니다</p>
-                  
-                  {/* Blurred preview insights */}
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 rounded-xl bg-[hsl(45,15%,12%)]/60 px-3 py-2.5 border border-[hsl(45,30%,20%)]/20">
-                      <ShieldCheck className="w-4 h-4 text-[hsl(45,70%,55%)] shrink-0" />
-                      <span className="text-[11px] text-foreground/70">AI 분석 신뢰도</span>
-                      <span className="ml-auto text-sm font-black text-foreground/20 blur-[5px] select-none">93%</span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-xl bg-[hsl(45,15%,12%)]/60 px-3 py-2.5 border border-[hsl(45,30%,20%)]/20">
-                      <Zap className="w-4 h-4 text-[hsl(45,70%,55%)] shrink-0" />
-                      <span className="text-[11px] text-foreground/70">당신이 유발하는 심리 트리거</span>
-                      <Lock className="w-3 h-3 text-muted-foreground ml-auto" />
-                    </div>
-                    <div className="flex items-center gap-2 rounded-xl bg-[hsl(45,15%,12%)]/60 px-3 py-2.5 border border-[hsl(45,30%,20%)]/20">
-                      <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,55%)] shrink-0" />
-                      <span className="text-[11px] text-foreground/70">남자들이 당신에게 빠지는 결정적 순간</span>
-                      <Lock className="w-3 h-3 text-muted-foreground ml-auto" />
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      const premiumSection = document.getElementById('premium-section');
-                      premiumSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }}
-                    className="w-full h-11 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.97] transition-all shadow-md"
-                  >
-                    <Crown className="w-3.5 h-3.5" />
-                    프리미엄 분석 보기
-                  </button>
-                </div>
-              </div>
-            )}
 
             {/* ====== CHAPTER 2: 인스타 Vibe 유형 ====== */}
             <div className="relative mb-8">
