@@ -142,10 +142,12 @@ const ResultPage = () => {
     } else if (wasLoading.current && ai) {
       wasLoading.current = false;
       setShowComplete(true);
+      // Track submission when analysis completes
+      trackSubmission(id, ai.attractedType?.name);
       const t = setTimeout(() => setShowComplete(false), 1200);
       return () => clearTimeout(t);
     }
-  }, [aiLoading, ai]);
+  }, [aiLoading, ai, id]);
 
   useEffect(() => {
     if (!aiLoading) return;
