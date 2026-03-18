@@ -397,9 +397,58 @@ Deno.serve(async (req) => {
                       required: ["beginning", "middle", "turningPoint"],
                     },
                     risks: { type: "array", items: { type: "string" } },
-                    goodMatch: { type: "string" },
-                    badMatch: { type: "string" },
-                    redFlags: { type: "array", items: { type: "string" } },
+                    goodMatch: {
+                      type: "object",
+                      properties: {
+                        type: { type: "string" },
+                        emoji: { type: "string" },
+                        personality: { type: "string" },
+                        whyGoodFit: { type: "string" },
+                        behaviors: { type: "string" },
+                      },
+                      required: ["type", "emoji", "personality", "whyGoodFit", "behaviors"],
+                    },
+                    badMatch: {
+                      type: "object",
+                      properties: {
+                        type: { type: "string" },
+                        emoji: { type: "string" },
+                        personality: { type: "string" },
+                        whyRepeated: { type: "string" },
+                        problems: { type: "string" },
+                      },
+                      required: ["type", "emoji", "personality", "whyRepeated", "problems"],
+                    },
+                    redFlags: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          label: { type: "string" },
+                          description: { type: "string" },
+                          emoji: { type: "string" },
+                        },
+                        required: ["label", "description", "emoji"],
+                      },
+                    },
+                    actionGuide: {
+                      type: "object",
+                      properties: {
+                        styling: { type: "array", items: { type: "string" } },
+                        responseStyle: { type: "array", items: { type: "string" } },
+                        datingBehavior: { type: "array", items: { type: "string" } },
+                      },
+                      required: ["styling", "responseStyle", "datingBehavior"],
+                    },
+                    avoidGuide: {
+                      type: "object",
+                      properties: {
+                        firstMeeting: { type: "array", items: { type: "string" } },
+                        earlyWarnings: { type: "array", items: { type: "string" } },
+                        instaHabits: { type: "array", items: { type: "string" } },
+                      },
+                      required: ["firstMeeting", "earlyWarnings", "instaHabits"],
+                    },
                     harshTruth: { type: "string", description: "잔인하지만 핵심인 한 줄 요약" },
                     premiumTeasers: { type: "array", items: { type: "string" }, description: "6 curiosity-inducing teaser sentences for each premium subsection" },
                     confidence: { type: "number" },
