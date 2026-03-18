@@ -993,6 +993,8 @@ const ResultPage = () => {
                       { icon: <Siren className="w-4 h-4 text-destructive" />, title: "관계에서 발생할 수 있는 리스크", idx: 3 },
                       { icon: <Users className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자", idx: 4 },
                       { icon: <AlertTriangle className="w-4 h-4 text-destructive" />, title: "절대 조심해야 할 Red Flag", idx: 5 },
+                      { icon: <Sparkles className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "잘 맞는 남자를 끌어들이는 행동 가이드", idx: 6 },
+                      { icon: <Shield className="w-4 h-4 text-destructive" />, title: "힘든 남자를 피하는 방법", idx: 7 },
                     ].map((section) => (
                       <div key={section.idx} className="rounded-2xl overflow-hidden border border-[hsl(45,30%,20%)]/30 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card">
                         <div className="p-4 pb-2">
