@@ -23,6 +23,7 @@ const ResultPage = () => {
 
   const shareCardRef = useRef<HTMLDivElement>(null);
   const basicReportRef = useRef<HTMLDivElement>(null);
+  const fullReportRef = useRef<HTMLDivElement>(null);
   const premiumRef = useRef<HTMLDivElement>(null);
   const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
