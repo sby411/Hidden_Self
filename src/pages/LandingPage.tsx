@@ -29,12 +29,37 @@ const typePreviewCards = [
 
 const LandingPage = () => {
   const [inputId, setInputId] = useState("");
+  const [dbResult, setDbResult] = useState<string | null>(null);
+  const [dbLoading, setDbLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleAnalyze = () => {
     const cleanId = inputId.replace("@", "").trim();
     if (!cleanId) return;
     navigate(`/loading?id=${encodeURIComponent(cleanId)}`);
+  };
+
+  const handleDbTest = async () => {
+    setDbLoading(true);
+    setDbResult(null);
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      console.log("[DB TEST] Inserting...");
+      const res = await supabase.from("test_submissions").insert([
+        { instagram_id: "debug_test", payment_status: "free", status: "success" } as any,
+      ]);
+      console.log("[DB TEST] Full response:", JSON.stringify(res));
+      if (res.error) {
+        setDbResult(`❌ ERROR: ${res.error.message} (code: ${res.error.code})`);
+      } else {
+        setDbResult("✅ INSERT SUCCESS");
+      }
+    } catch (e: any) {
+      console.error("[DB TEST] Exception:", e);
+      setDbResult(`❌ EXCEPTION: ${e.message}`);
+    } finally {
+      setDbLoading(false);
+    }
   };
 
   return (
