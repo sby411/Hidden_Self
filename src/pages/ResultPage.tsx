@@ -555,12 +555,12 @@ const ResultPage = () => {
                 </div>
 
                 {/* AI Confidence */}
-                <div className="rounded-2xl p-4 mb-5 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,60%,92%)] to-[hsl(35,50%,90%)] border border-[hsl(45,60%,80%)]/40">
-                  <ShieldCheck className="w-8 h-8 text-[hsl(45,70%,50%)] shrink-0" />
+                <div className="rounded-2xl p-4 mb-5 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,30%,12%)] to-[hsl(35,20%,8%)] border border-[hsl(45,30%,20%)]/40">
+                  <ShieldCheck className="w-8 h-8 text-[hsl(45,70%,55%)] shrink-0" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-semibold text-foreground">AI 분석 신뢰도</span>
-                      <span className="text-sm font-black text-[hsl(45,70%,45%)]">{ai.confidence}%</span>
+                      <span className="text-sm font-black text-[hsl(45,70%,55%)]">{ai.confidence}%</span>
                     </div>
                     <Progress value={ai.confidence} className="h-2 rounded-full" />
                   </div>
@@ -569,15 +569,15 @@ const ResultPage = () => {
                 {/* P-1: 심리 트리거 */}
                 <div className="mb-5">
                   <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-                    <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                    <Target className="w-4 h-4 text-[hsl(45,70%,55%)]" />
                     당신이 유발하는 심리 트리거
                   </h3>
                   <div className="space-y-3">
                     {(ai.psychTriggers ?? []).map((trigger, i) => (
-                      <div key={i} className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                      <div key={i} className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(45,60%,45%)]">
                         <div className="flex items-start gap-3">
-                          <div className="w-6 h-6 rounded-full bg-[hsl(45,70%,50%)]/10 flex items-center justify-center shrink-0 mt-0.5">
-                            <Zap className="w-3 h-3 text-[hsl(45,70%,50%)]" />
+                          <div className="w-6 h-6 rounded-full bg-[hsl(45,50%,30%)]/15 flex items-center justify-center shrink-0 mt-0.5">
+                            <Zap className="w-3 h-3 text-[hsl(45,70%,55%)]" />
                           </div>
                           <p className="text-sm text-foreground/85 leading-[1.8]">{trigger}</p>
                         </div>
@@ -587,9 +587,9 @@ const ResultPage = () => {
                 </div>
 
                 {/* P-2: 결정적 순간 */}
-                <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,55%)]">
+                <div className="rounded-2xl p-5 mb-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(45,60%,45%)]">
                   <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-                    <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                    <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,55%)]" />
                     이 남자가 당신에게 빠지는 결정적 순간
                   </h3>
                   <p className="text-sm text-foreground/80 leading-[1.9]">{ai.decisiveMoment}</p>
@@ -598,19 +598,19 @@ const ResultPage = () => {
                 {/* P-3: 연애 패턴 */}
                 <div className="mb-5">
                   <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-                    <Clock className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                    <Clock className="w-4 h-4 text-[hsl(45,70%,55%)]" />
                     당신의 연애 패턴
                   </h3>
                   <div className="space-y-3">
-                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(160,45%,40%)]">
                       <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌅 시작</h4>
                       <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern?.beginning}</p>
                     </div>
-                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-[hsl(45,70%,50%)]">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-[hsl(45,70%,50%)]">
                       <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">🌤️ 중반</h4>
                       <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern?.middle}</p>
                     </div>
-                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card border border-[hsl(45,60%,80%)]/30 border-l-4 border-l-destructive/60">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card border border-[hsl(45,30%,20%)]/30 border-l-4 border-l-destructive/60">
                       <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">⚡ 전환점</h4>
                       <p className="text-sm text-foreground/85 leading-[1.9]">{ai.datingPattern?.turningPoint}</p>
                     </div>
@@ -639,7 +639,7 @@ const ResultPage = () => {
 
                 {/* Obsession & Relationship Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                  <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,60%,95%)] to-card border border-[hsl(0,40%,85%)]/30 text-center">
+                  <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,30%,12%)] to-card border border-[hsl(0,30%,20%)]/30 text-center">
                     <Flame className="w-5 h-5 text-destructive mx-auto mb-2" />
                     <p className="text-[10px] text-muted-foreground font-medium mb-1">집착 확률</p>
                     <p className="text-3xl font-black text-destructive">{ai.obsessionRate}%</p>
@@ -649,13 +649,13 @@ const ResultPage = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 text-center">
-                    <TrendingUp className="w-5 h-5 text-[hsl(160,50%,40%)] mx-auto mb-2" />
+                  <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 text-center">
+                    <TrendingUp className="w-5 h-5 text-[hsl(160,50%,50%)] mx-auto mb-2" />
                     <p className="text-[10px] text-muted-foreground font-medium mb-1">지속 가능성</p>
-                    <p className="text-3xl font-black text-[hsl(160,50%,40%)]">{ai.relationshipScore}%</p>
+                    <p className="text-3xl font-black text-[hsl(160,50%,50%)]">{ai.relationshipScore}%</p>
                     <div className="mt-2">
-                      <div className="h-1.5 bg-[hsl(160,30%,90%)] rounded-full overflow-hidden">
-                        <div className="h-full rounded-full bg-[hsl(160,50%,45%)]" style={{ width: `${ai.relationshipScore}%` }} />
+                      <div className="h-1.5 bg-[hsl(160,15%,15%)] rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-[hsl(160,50%,40%)]" style={{ width: `${ai.relationshipScore}%` }} />
                       </div>
                     </div>
                   </div>
@@ -664,14 +664,14 @@ const ResultPage = () => {
                 {/* P-5: 잘 맞는 남자 vs 힘든 남자 */}
                 <div className="mb-5">
                   <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-1.5">
-                    <Users className="w-4 h-4 text-[hsl(45,70%,50%)]" />
+                    <Users className="w-4 h-4 text-[hsl(45,70%,55%)]" />
                     잘 맞는 남자 vs 자주 꼬이지만 힘든 남자
                   </h3>
-                  <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 border-l-4 border-l-[hsl(160,50%,45%)]">
+                  <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 border-l-4 border-l-[hsl(160,45%,40%)]">
                     <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">💚 잘 맞는 남자</h4>
                     <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
                   </div>
-                  <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(0,30%,95%)] to-card border border-[hsl(0,30%,85%)]/30 border-l-4 border-l-destructive/50">
+                  <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(0,20%,12%)] to-card border border-[hsl(0,20%,20%)]/30 border-l-4 border-l-destructive/50">
                     <h4 className="text-xs font-bold text-foreground mb-2 flex items-center gap-1.5">💔 자주 꼬이지만 힘든 남자</h4>
                     <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch}</p>
                   </div>
@@ -738,8 +738,8 @@ const ResultPage = () => {
                   </div>
 
                   {/* AI Confidence - title visible, value blurred */}
-                  <div className="rounded-2xl p-4 mb-4 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,60%,92%)] to-[hsl(35,50%,90%)] border border-[hsl(45,60%,80%)]/40">
-                    <ShieldCheck className="w-8 h-8 text-[hsl(45,70%,50%)] shrink-0" />
+                  <div className="rounded-2xl p-4 mb-4 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,30%,12%)] to-[hsl(35,20%,8%)] border border-[hsl(45,30%,20%)]/40">
+                    <ShieldCheck className="w-8 h-8 text-[hsl(45,70%,55%)] shrink-0" />
                     <div className="flex-1">
                       <span className="text-xs font-semibold text-foreground">AI 분석 신뢰도</span>
                       <div className="blur-[6px] select-none pointer-events-none mt-1">
@@ -751,14 +751,14 @@ const ResultPage = () => {
                   {/* Section teasers - titles visible, AI teaser sentence + blurred rest */}
                   <div className="space-y-4">
                     {[
-                      { icon: <Target className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신이 유발하는 심리 트리거", idx: 0 },
-                      { icon: <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "이 남자가 당신에게 빠지는 결정적 순간", idx: 1 },
-                      { icon: <Clock className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "당신의 연애 패턴", idx: 2 },
+                      { icon: <Target className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "당신이 유발하는 심리 트리거", idx: 0 },
+                      { icon: <HeartHandshake className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "이 남자가 당신에게 빠지는 결정적 순간", idx: 1 },
+                      { icon: <Clock className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "당신의 연애 패턴", idx: 2 },
                       { icon: <Siren className="w-4 h-4 text-destructive" />, title: "관계에서 발생할 수 있는 리스크", idx: 3 },
-                      { icon: <Users className="w-4 h-4 text-[hsl(45,70%,50%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자", idx: 4 },
+                      { icon: <Users className="w-4 h-4 text-[hsl(45,70%,55%)]" />, title: "잘 맞는 남자 vs 자주 꼬이지만 힘든 남자", idx: 4 },
                       { icon: <AlertTriangle className="w-4 h-4 text-destructive" />, title: "절대 조심해야 할 Red Flag", idx: 5 },
                     ].map((section) => (
-                      <div key={section.idx} className="rounded-2xl overflow-hidden border border-[hsl(45,60%,80%)]/30 bg-gradient-to-br from-[hsl(45,50%,95%)] to-card">
+                      <div key={section.idx} className="rounded-2xl overflow-hidden border border-[hsl(45,30%,20%)]/30 bg-gradient-to-br from-[hsl(45,15%,10%)] to-card">
                         <div className="p-4 pb-2">
                           <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                             {section.icon}
@@ -782,18 +782,18 @@ const ResultPage = () => {
 
                     {/* Stats teaser - titles visible, numbers blurred */}
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,60%,95%)] to-card border border-[hsl(0,40%,85%)]/30 text-center">
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(0,30%,12%)] to-card border border-[hsl(0,30%,20%)]/30 text-center">
                         <Flame className="w-5 h-5 text-destructive mx-auto mb-2" />
                         <p className="text-[10px] text-muted-foreground font-medium mb-1">집착 확률</p>
                         <div className="blur-[7px] select-none pointer-events-none">
                           <p className="text-3xl font-black text-destructive">??%</p>
                         </div>
                       </div>
-                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(160,30%,95%)] to-card border border-[hsl(160,30%,85%)]/30 text-center">
-                        <TrendingUp className="w-5 h-5 text-[hsl(160,50%,40%)] mx-auto mb-2" />
+                      <div className="rounded-2xl p-4 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 text-center">
+                        <TrendingUp className="w-5 h-5 text-[hsl(160,50%,50%)] mx-auto mb-2" />
                         <p className="text-[10px] text-muted-foreground font-medium mb-1">지속 가능성</p>
                         <div className="blur-[7px] select-none pointer-events-none">
-                          <p className="text-3xl font-black text-[hsl(160,50%,40%)]">??%</p>
+                          <p className="text-3xl font-black text-[hsl(160,50%,50%)]">??%</p>
                         </div>
                       </div>
                     </div>
@@ -801,8 +801,8 @@ const ResultPage = () => {
 
                   {/* Lock message */}
                   <div className="flex justify-center mt-5">
-                    <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,60%,80%)]/50 shadow-xl">
-                      <Lock className="w-6 h-6 text-[hsl(45,70%,50%)] mx-auto mb-2" />
+                    <div className="text-center bg-card/80 backdrop-blur-md rounded-2xl p-5 border border-[hsl(45,30%,20%)]/50 shadow-xl">
+                      <Lock className="w-6 h-6 text-[hsl(45,70%,55%)] mx-auto mb-2" />
                       <p className="text-xs font-bold text-foreground mb-1">{premiumCharCount.toLocaleString()}자 분량의 심층 분석이 잠겨 있습니다.</p>
                       <p className="text-[10px] text-muted-foreground leading-relaxed mt-1">
                         당신이 왜 특정 남자를 반복해서 끌어들이는지,<br />
@@ -877,9 +877,9 @@ const ResultPage = () => {
             className="rounded-3xl p-6 text-center mb-5 bg-gradient-to-br from-primary/10 via-card to-accent/10 border border-border/30"
           >
             {premiumUnlocked && (
-              <div className="inline-flex items-center gap-1.5 bg-[hsl(45,80%,60%)]/20 rounded-full px-3 py-1 mb-3">
-                <Crown className="w-3 h-3 text-[hsl(45,80%,45%)]" />
-                <span className="text-[10px] font-bold text-[hsl(45,80%,35%)]">PREMIUM</span>
+              <div className="inline-flex items-center gap-1.5 bg-[hsl(45,60%,50%)]/15 rounded-full px-3 py-1 mb-3">
+                <Crown className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                <span className="text-[10px] font-bold text-[hsl(45,70%,55%)]">PREMIUM</span>
               </div>
             )}
             <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium mb-1">내 인스타로 본</p>
