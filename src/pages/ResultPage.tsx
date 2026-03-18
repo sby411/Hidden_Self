@@ -564,6 +564,48 @@ const ResultPage = () => {
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
 
+            {/* ====== MID-PAGE PREMIUM TEASER (after Chapter 2) ====== */}
+            {!premiumUnlocked && (
+              <div className="relative mb-8 rounded-2xl overflow-hidden border border-[hsl(45,40%,25%)]/30 bg-gradient-to-br from-[hsl(45,15%,8%)] to-card">
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="inline-flex items-center gap-1 bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                      <Crown className="w-2.5 h-2.5" /> PREMIUM
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">심층 분석</span>
+                  </div>
+                  <p className="text-sm font-bold text-foreground mb-1">왜 이런 남자만 반복되는지 궁금하지 않나요?</p>
+                  <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                    AI가 당신의 인스타 데이터에서 발견한 숨겨진 연애 패턴을 확인하세요.
+                  </p>
+
+                  {/* Blurred teaser content */}
+                  <div className="space-y-2 mb-4">
+                    {(ai.premiumTeasers ?? []).slice(0, 2).map((teaser, i) => (
+                      <div key={i} className="rounded-xl bg-[hsl(45,15%,12%)]/60 px-3 py-2.5 border border-[hsl(45,30%,20%)]/20 relative overflow-hidden">
+                        <p className="text-[11px] text-foreground/70 italic leading-relaxed">"{teaser}"</p>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80 pointer-events-none" />
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const premiumSection = document.getElementById('premium-section');
+                      premiumSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className="w-full h-10 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.97] transition-all"
+                  >
+                    <Lock className="w-3 h-3" />
+                    프리미엄 분석 열기 · <span className="line-through text-white/60 text-[10px]">9,900원</span> <span className="font-black">4,900원</span>
+                  </button>
+                  <p className="text-center text-[10px] text-muted-foreground mt-1.5">
+                    🔥 이미 {socialProofCount.toLocaleString()}명이 확인했습니다
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* ====== CHAPTER 3: 꼬이는 남자 유형 (CORE) ====== */}
             <div className="relative mb-8">
               <div className="flex items-center gap-3 mb-5">
