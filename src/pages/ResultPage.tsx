@@ -7,6 +7,7 @@ import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 import Footer from "@/components/Footer";
 import { useAiAnalysis } from "@/hooks/useAiAnalysis";
+import { trackSubmission } from "@/lib/trackSubmission";
 
 const ResultPage = () => {
   const [searchParams] = useSearchParams();
@@ -141,10 +142,12 @@ const ResultPage = () => {
     } else if (wasLoading.current && ai) {
       wasLoading.current = false;
       setShowComplete(true);
+      // Track submission when analysis completes
+      trackSubmission(id, ai.attractedType?.name);
       const t = setTimeout(() => setShowComplete(false), 1200);
       return () => clearTimeout(t);
     }
-  }, [aiLoading, ai]);
+  }, [aiLoading, ai, id]);
 
   useEffect(() => {
     if (!aiLoading) return;
