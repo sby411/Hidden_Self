@@ -7,6 +7,7 @@ import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 import Footer from "@/components/Footer";
 import { useAiAnalysis } from "@/hooks/useAiAnalysis";
+import { trackSubmission } from "@/lib/trackSubmission";
 
 const ResultPage = () => {
   const [searchParams] = useSearchParams();
