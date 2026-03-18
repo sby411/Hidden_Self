@@ -1270,6 +1270,30 @@ const ResultPage = () => {
           <Footer />
         </div>
       </main>
+
+      {/* ====== STICKY BOTTOM BAR ====== */}
+      {showStickyBar && !premiumUnlocked && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom duration-300">
+          <div className="max-w-md mx-auto px-4 pb-4">
+            <div className="rounded-2xl bg-gradient-to-r from-[hsl(0,0%,8%)] to-[hsl(35,15%,8%)] border border-[hsl(45,40%,25%)]/40 shadow-[0_-4px_30px_rgba(0,0,0,0.5),0_0_20px_hsl(45,70%,55%,0.1)] backdrop-blur-xl p-3.5 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-foreground truncate">AI가 발견한 숨겨진 연애 패턴</p>
+                <p className="text-[10px] text-muted-foreground truncate">더 정확한 연애 패턴 분석을 확인하세요</p>
+              </div>
+              <button
+                onClick={() => {
+                  const premiumSection = document.getElementById('premium-section');
+                  premiumSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="shrink-0 h-9 px-4 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-[11px] flex items-center gap-1.5 active:scale-[0.96] transition-all shadow-md"
+              >
+                <Crown className="w-3 h-3" />
+                4,900원
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
