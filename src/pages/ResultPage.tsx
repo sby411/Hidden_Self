@@ -142,12 +142,22 @@ const ResultPage = () => {
     } else if (wasLoading.current && ai) {
       wasLoading.current = false;
       setShowComplete(true);
-      // Track submission when analysis completes
-      trackSubmission(id, ai.attractedType?.name);
+      // Update submission status to success
+      const submissionId = sessionStorage.getItem("instai_submission_id");
+      if (submissionId) {
+        trackSubmissionSuccess(submissionId, ai.attractedType?.name || "unknown");
+      }
       const t = setTimeout(() => setShowComplete(false), 1200);
       return () => clearTimeout(t);
+    } else if (wasLoading.current && aiError) {
+      wasLoading.current = false;
+      // Update submission status to failed
+      const submissionId = sessionStorage.getItem("instai_submission_id");
+      if (submissionId) {
+        trackSubmissionFailed(submissionId);
+      }
     }
-  }, [aiLoading, ai, id]);
+  }, [aiLoading, ai, aiError, id]);
 
   useEffect(() => {
     if (!aiLoading) return;
