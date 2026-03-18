@@ -569,6 +569,21 @@ const ResultPage = () => {
                 </div>
               </div>
 
+              {/* Harsh Truth - 잔인한 한줄 요약 */}
+              {ai.harshTruth && (
+                <div className="relative mb-8">
+                  <div className="rounded-2xl p-6 text-center bg-gradient-to-br from-destructive/10 via-card to-destructive/5 border border-destructive/20 shadow-lg">
+                    <div className="inline-flex items-center gap-1.5 bg-destructive/10 rounded-full px-3 py-1 mb-4">
+                      <Flame className="w-3 h-3 text-destructive" />
+                      <span className="text-[10px] font-bold text-destructive uppercase tracking-wider">잔인하지만 핵심인 한 줄</span>
+                    </div>
+                    <p className="text-base font-bold text-foreground leading-[1.8] italic">
+                      "{ai.harshTruth}"
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
           </div> {/* end basicReportRef */}
