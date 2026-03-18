@@ -10,14 +10,20 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn, user, isAdmin, loading: authLoading } = useAuth();
+  const [ready, setReady] = useState(false);
+  const { signIn, signOut, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
+  // 로그인 페이지 진입 시 기존 세션 강제 로그아웃
   useEffect(() => {
-    if (!authLoading && user && isAdmin) {
-      navigate("/admin", { replace: true });
+    if (authLoading) return;
+
+    if (user) {
+      signOut().then(() => setReady(true));
+    } else {
+      setReady(true);
     }
-  }, [authLoading, user, isAdmin, navigate]);
+  }, [authLoading, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
