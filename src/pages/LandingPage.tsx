@@ -19,12 +19,12 @@ const analysisElements = [
 ];
 
 const typePreviewCards = [
-  { emoji: "⚡", title: "도파민 회피형 인기남", desc: "강렬한 설렘을 주지만 쉽게 잡히지 않는 도파민 타입. 너 이런 남자한테 약하잖아.", gradient: "from-[hsl(280,25%,92%)] to-[hsl(300,20%,87%)]" },
-  { emoji: "💼", title: "능력있는 불안형 연상남", desc: "능력은 있지만 내면에 불안을 가진 연상 타입. 안정감인 줄 알았지? 착각이야.", gradient: "from-[hsl(45,45%,91%)] to-[hsl(35,40%,86%)]" },
-  { emoji: "🐶", title: "집착형 연하 인싸남", desc: "한번 빠지면 끝까지 직진하는 타입. 이게 사랑인지 집착인지 구분 돼?", gradient: "from-[hsl(30,50%,92%)] to-[hsl(20,45%,87%)]" },
-  { emoji: "🧊", title: "감정차단 회피형 냉미남", desc: "겉은 차갑지만 내면에 깊은 감정을 숨긴 타입. 너만 매번 벽 앞에서 기다리잖아.", gradient: "from-[hsl(210,18%,92%)] to-[hsl(220,15%,87%)]" },
-  { emoji: "🎨", title: "감성 과몰입 예술남", desc: "감성에 깊이 빠져드는 예술적 영혼. 근데 그 감성, 너한테만 향하는 거 아니야.", gradient: "from-[hsl(340,30%,92%)] to-[hsl(320,25%,87%)]" },
-  { emoji: "🧠", title: "똑똑한 아싸 안정남", desc: "지적 매력과 안정감을 가진 조용한 타입. 안전하다고? 그것도 패턴이야.", gradient: "from-[hsl(160,20%,92%)] to-[hsl(180,18%,87%)]" },
+  { emoji: "⚡", title: "도파민 회피형 인기남", desc: "강렬한 설렘을 주지만 쉽게 잡히지 않는 도파민 타입. 너 이런 남자한테 약하잖아.", gradient: "from-[hsl(0,0%,10%)] to-[hsl(355,30%,12%)]" },
+  { emoji: "💼", title: "능력있는 불안형 연상남", desc: "능력은 있지만 내면에 불안을 가진 연상 타입. 안정감인 줄 알았지? 착각이야.", gradient: "from-[hsl(0,0%,10%)] to-[hsl(30,15%,12%)]" },
+  { emoji: "🐶", title: "집착형 연하 인싸남", desc: "한번 빠지면 끝까지 직진하는 타입. 이게 사랑인지 집착인지 구분 돼?", gradient: "from-[hsl(0,0%,10%)] to-[hsl(15,20%,12%)]" },
+  { emoji: "🧊", title: "감정차단 회피형 냉미남", desc: "겉은 차갑지만 내면에 깊은 감정을 숨긴 타입. 너만 매번 벽 앞에서 기다리잖아.", gradient: "from-[hsl(0,0%,10%)] to-[hsl(210,10%,12%)]" },
+  { emoji: "🎨", title: "감성 과몰입 예술남", desc: "감성에 깊이 빠져드는 예술적 영혼. 근데 그 감성, 너한테만 향하는 거 아니야.", gradient: "from-[hsl(0,0%,10%)] to-[hsl(340,15%,12%)]" },
+  { emoji: "🧠", title: "똑똑한 아싸 안정남", desc: "지적 매력과 안정감을 가진 조용한 타입. 안전하다고? 그것도 패턴이야.", gradient: "from-[hsl(0,0%,10%)] to-[hsl(160,10%,12%)]" },
 ];
 
 const LandingPage = () => {
@@ -68,9 +68,9 @@ const LandingPage = () => {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight text-foreground mb-4">
-              왜 너는 항상
+              왜 나한테는 항상
               <br />
-              <span className="text-danger-highlight">똑같은 남자만 반복될까?</span>
+              <span className="text-danger-highlight">똥차만 꼬일까?</span>
             </h1>
 
             {/* Provocative sub-hooks */}
