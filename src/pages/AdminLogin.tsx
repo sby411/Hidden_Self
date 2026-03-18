@@ -16,12 +16,17 @@ const AdminLogin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await signIn(email, password);
-    setLoading(false);
-    if (error) {
-      toast.error("로그인 실패: " + error.message);
-    } else {
-      navigate("/admin");
+    try {
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast.error("로그인 실패: " + error.message);
+      } else {
+        navigate("/admin", { replace: true });
+      }
+    } catch (err: any) {
+      toast.error("로그인 중 오류 발생: " + (err?.message || "알 수 없는 오류"));
+    } finally {
+      setLoading(false);
     }
   };
 
