@@ -26,6 +26,28 @@ const ResultPage = () => {
   const premiumRef = useRef<HTMLDivElement>(null);
   const premiumReportRef = useRef<HTMLDivElement>(null);
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  // Social proof count (deterministic from id)
+  const socialProofCount = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 5000;
+    return 1284 + (Math.abs(h) % 800);
+  }, [id]);
+
+  // Show sticky bar after scrolling past first section
+  useEffect(() => {
+    if (premiumUnlocked) {
+      setShowStickyBar(false);
+      return;
+    }
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setShowStickyBar(scrollY > 600);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [premiumUnlocked]);
 
   const premiumCharCount = useMemo(() => {
     let h = 0;
