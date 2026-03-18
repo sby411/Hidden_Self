@@ -460,6 +460,7 @@ Deno.serve(async (req) => {
                     "attractionStats", "psychTriggers", "decisiveMoment",
                     "datingPattern", "risks", "goodMatch", "badMatch",
                     "redFlags", "harshTruth", "premiumTeasers", "confidence", "obsessionRate", "relationshipScore",
+                    "actionGuide", "avoidGuide",
                   ],
                 },
               },
