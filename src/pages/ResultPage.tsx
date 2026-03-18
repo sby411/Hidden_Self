@@ -350,7 +350,7 @@ const ResultPage = () => {
         <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full">@{id}</span>
       </header>
 
-      <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10">
+      <main className={`flex-1 flex flex-col items-center px-5 pt-6 ${!premiumUnlocked ? 'pb-24' : 'pb-10'}`}>
         <div className="w-full max-w-md">
           <div ref={basicReportRef}>
             {/* Report Header */}
