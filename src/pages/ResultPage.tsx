@@ -544,7 +544,7 @@ const ResultPage = () => {
 
               {/* Vibe Keywords */}
               <div className="flex flex-wrap gap-2 mb-5">
-                {ai.vibeKeywords.map((kw) => (
+                {(ai.vibeKeywords ?? []).map((kw) => (
                   <span key={kw} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20">
                     #{kw}
                   </span>
