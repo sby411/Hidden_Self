@@ -57,11 +57,29 @@ const ResultPage = () => {
     return 12000 + (Math.abs(h) % 3000);
   }, [id]);
 
-  const handleUnlockPremium = () => {
-    setPremiumUnlocked(true);
-    setTimeout(() => {
-      premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const handleUnlockPremium = async () => {
+    if (paymentLoading) return;
+    setPaymentLoading(true);
+
+    try {
+      const result = await requestPayment(id);
+
+      if (result.success) {
+        toast.success("결제가 완료되었습니다! 프리미엄 분석을 확인하세요 🎉");
+        setPremiumUnlocked(true);
+        setTimeout(() => {
+          premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      } else {
+        toast.error(result.error_msg || "결제가 취소되었습니다.");
+      }
+    } catch (err) {
+      toast.error("결제 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setPaymentLoading(false);
+    }
   };
 
   const handleCopyLink = async () => {
