@@ -836,7 +836,7 @@ const ResultPage = () => {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{String(ai.goodMatch ?? "")}</p>
                     )}
                   </div>
 
