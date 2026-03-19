@@ -643,11 +643,11 @@ const ResultPage = () => {
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">💓 매력 지표</h3>
                 <div className="space-y-3.5">
                   {[
-                    { label: "연상 남성이 당신에게 끌릴 확률", value: ai.attractionStats.olderAttraction },
-                    { label: "동갑 남성이 당신에게 끌릴 확률", value: ai.attractionStats.sameAgeAttraction },
-                    { label: "연하 남성이 당신에게 끌릴 확률", value: ai.attractionStats.youngerAttraction },
-                    { label: "당신이 주는 에겐 이미지 강도", value: ai.attractionStats.aegenPower },
-                    { label: "당신이 주는 테토 이미지 강도", value: ai.attractionStats.tetoPower },
+                    { label: "연상 남성이 당신에게 끌릴 확률", value: attractionStats.olderAttraction },
+                    { label: "동갑 남성이 당신에게 끌릴 확률", value: attractionStats.sameAgeAttraction },
+                    { label: "연하 남성이 당신에게 끌릴 확률", value: attractionStats.youngerAttraction },
+                    { label: "당신이 주는 에겐 이미지 강도", value: attractionStats.aegenPower },
+                    { label: "당신이 주는 테토 이미지 강도", value: attractionStats.tetoPower },
                   ].map((stat) => (
                     <div key={stat.label}>
                       <div className="flex justify-between items-center mb-1.5">
