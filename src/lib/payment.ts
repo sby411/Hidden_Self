@@ -45,7 +45,7 @@ export function requestPayment(instagramId: string): Promise<PaymentResult> {
 
     IMP.request_pay(
       {
-        pg: "kcp.AO09C",
+        pg: "kcp.channel-key-9d5808b5-353e-4b35-835d-85d74cbc9e2e",
         pay_method: "card",
         merchant_uid: `order_${instagramId}_${Date.now()}`,
         name: "인스타 연애 패턴 분석",
