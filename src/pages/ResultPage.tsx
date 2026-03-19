@@ -980,7 +980,7 @@ const ResultPage = () => {
                           관계 초반에서 경계해야 할 신호
                         </h4>
                         <div className="space-y-2">
-                          {ai.avoidGuide.earlyWarnings.map((s, i) => (
+                          {(ai.avoidGuide?.earlyWarnings ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
                               <AlertTriangle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
