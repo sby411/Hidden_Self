@@ -998,7 +998,7 @@ const ResultPage = () => {
                           인스타에서 바꾸면 좋은 습관
                         </h4>
                         <div className="space-y-2">
-                          {ai.avoidGuide.instaHabits.map((s, i) => (
+                          {(ai.avoidGuide?.instaHabits ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">✓</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
