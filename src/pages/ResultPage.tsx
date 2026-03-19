@@ -501,7 +501,7 @@ const ResultPage = () => {
                     <Hash className="w-3 h-3" /> 자주 사용하는 해시태그
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {igStats.topHashtags.map((t) => (
+                    {(igStats?.topHashtags ?? []).map((t) => (
                       <span key={t} className="text-[10px] bg-chip text-chip-foreground px-2 py-1 rounded-full font-medium">#{t}</span>
                     ))}
                   </div>
