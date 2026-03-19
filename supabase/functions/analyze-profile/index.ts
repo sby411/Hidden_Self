@@ -556,9 +556,6 @@ Deno.serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    const analysis = JSON.parse(toolCall.function.arguments);
-
     // Return both analysis and real Instagram data
     return new Response(JSON.stringify({
       ...analysis,
