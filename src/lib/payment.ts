@@ -35,7 +35,7 @@ export interface PaymentResult {
 }
 
 const STORE_ID = "store-19320ea7-2a16-4da0-8c3e-56883c5cc551";
-const CHANNEL_KEY = "channel-key-9d5808b5-353e-4b35-835d-85d74cbc9e2e";
+const CHANNEL_KEY = "channel-key-047781f8-40e9-4c20-8f28-e29645ca221c";
 
 export async function requestPayment(instagramId: string): Promise<PaymentResult> {
   const { PortOne } = window;
