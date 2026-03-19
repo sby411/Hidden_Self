@@ -962,7 +962,7 @@ const ResultPage = () => {
                           첫 만남에서 하지 말아야 할 행동
                         </h4>
                         <div className="space-y-2">
-                          {ai.avoidGuide.firstMeeting.map((s, i) => (
+                          {(ai.avoidGuide?.firstMeeting ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
                               <X className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
