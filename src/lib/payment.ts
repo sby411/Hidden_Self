@@ -1,99 +1,86 @@
-// Iamport (PortOne) payment integration
+// PortOne V2 payment integration
 
 declare global {
   interface Window {
-    IMP: {
-      init: (merchantId: string) => void;
-      request_pay: (
-        params: {
-          pg: string;
-          pay_method: string;
-          merchant_uid: string;
-          name: string;
-          amount: number;
-          buyer_email?: string;
-          buyer_name?: string;
-        },
-        callback: (rsp: {
-          success: boolean;
-          imp_uid?: string;
-          merchant_uid?: string;
-          error_code?: string;
-          error_msg?: string;
-        }) => void
-      ) => void;
+    PortOne: {
+      requestPayment: (params: {
+        storeId: string;
+        channelKey: string;
+        paymentId: string;
+        orderName: string;
+        totalAmount: number;
+        currency: string;
+        payMethod: string;
+        customer?: {
+          fullName?: string;
+          email?: string;
+          phoneNumber?: string;
+        };
+      }) => Promise<{
+        code?: string;
+        message?: string;
+        transactionType?: string;
+        txId?: string;
+        paymentId?: string;
+      }>;
     };
   }
 }
 
-interface PaymentResult {
+export interface PaymentResult {
   success: boolean;
-  imp_uid?: string;
-  merchant_uid?: string;
-  error_code?: string;
+  paymentId?: string;
+  txId?: string;
   error_msg?: string;
 }
 
-const PG_CANDIDATES = ["kcp", "kcp.T0000"] as const;
+const STORE_ID = "store-19320ea7-2a16-4da0-8c3e-56883c5cc551";
+const CHANNEL_KEY = "channel-key-9d5808b5-353e-4b35-835d-85d74cbc9e2e";
 
 export async function requestPayment(instagramId: string): Promise<PaymentResult> {
-  const { IMP } = window;
+  const { PortOne } = window;
 
-  if (!IMP) {
+  if (!PortOne) {
     return { success: false, error_msg: "결제 모듈을 불러올 수 없습니다." };
   }
 
-  IMP.init("imp68430821");
+  const paymentId = `payment_${instagramId}_${Date.now()}`;
 
-  const requestWithPg = (pg: string) =>
-    new Promise<PaymentResult>((resolve) => {
-      IMP.request_pay(
-        {
-          pg,
-          pay_method: "card",
-          merchant_uid: `order_${instagramId}_${Date.now()}`,
-          name: "인스타 연애 패턴 분석",
-          amount: 4900,
-        },
-        (rsp) => {
-          console.log("[PortOne] Payment response:", { pg, ...rsp });
-          if (!rsp.success) {
-            console.error("[PortOne] Payment failed:", rsp.error_msg);
-          }
-          resolve(rsp);
-        }
-      );
+  try {
+    const response = await PortOne.requestPayment({
+      storeId: STORE_ID,
+      channelKey: CHANNEL_KEY,
+      paymentId,
+      orderName: "인스타 연애 패턴 분석",
+      totalAmount: 4900,
+      currency: "CURRENCY_KRW",
+      payMethod: "CARD",
     });
 
-  let lastResult: PaymentResult = {
-    success: false,
-    error_msg: "결제 요청에 실패했습니다.",
-  };
+    console.log("[PortOne V2] Payment response:", response);
 
-  for (let i = 0; i < PG_CANDIDATES.length; i += 1) {
-    const pg = PG_CANDIDATES[i];
-    const result = await requestWithPg(pg);
-    lastResult = result;
-
-    if (result.success) {
-      return result;
+    if (response.code) {
+      // Error or user cancellation
+      console.error("[PortOne V2] Payment failed:", response.message);
+      return {
+        success: false,
+        paymentId,
+        error_msg: response.message || "결제가 취소되었습니다.",
+      };
     }
 
-    const isInvalidPgError =
-      result.error_code === "NOT_READY" &&
-      (result.error_msg?.includes("pg 파라미터") ?? false);
-
-    if (!isInvalidPgError || i === PG_CANDIDATES.length - 1) {
-      if (isInvalidPgError) {
-        return {
-          ...result,
-          error_msg:
-            "결제 채널 설정이 아직 연결되지 않았습니다. PortOne 관리자에서 KCP 채널 활성화 후 KCP 사이트코드(MID) 또는 V2 Store ID를 알려주세요.",
-        };
-      }
-      return result;
-    }
+    // Success
+    return {
+      success: true,
+      paymentId,
+      txId: response.txId,
+    };
+  } catch (err: any) {
+    console.error("[PortOne V2] Payment error:", err);
+    return {
+      success: false,
+      paymentId,
+      error_msg: err?.message || "결제 중 오류가 발생했습니다.",
+    };
   }
-
-  return lastResult;
 }
