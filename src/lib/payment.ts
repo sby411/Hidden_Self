@@ -45,13 +45,17 @@ export function requestPayment(instagramId: string): Promise<PaymentResult> {
 
     IMP.request_pay(
       {
-        pg: "kcp",
+        pg: "kcp.T0000",
         pay_method: "card",
         merchant_uid: `order_${instagramId}_${Date.now()}`,
-        name: "인스타 연애 패턴 심층 분석 리포트",
+        name: "인스타 연애 패턴 분석",
         amount: 4900,
       },
       (rsp) => {
+        console.log("[PortOne] Payment response:", rsp);
+        if (!rsp.success) {
+          console.error("[PortOne] Payment failed:", rsp.error_msg);
+        }
         resolve(rsp);
       }
     );
