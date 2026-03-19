@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import Footer from "@/components/Footer";
 import { useAiAnalysis } from "@/hooks/useAiAnalysis";
 import { trackSubmissionSuccess, trackSubmissionFailed } from "@/lib/trackSubmission";
+import { requestPayment } from "@/lib/payment";
 
 const ResultPage = () => {
   const [searchParams] = useSearchParams();
@@ -56,11 +57,29 @@ const ResultPage = () => {
     return 12000 + (Math.abs(h) % 3000);
   }, [id]);
 
-  const handleUnlockPremium = () => {
-    setPremiumUnlocked(true);
-    setTimeout(() => {
-      premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const handleUnlockPremium = async () => {
+    if (paymentLoading) return;
+    setPaymentLoading(true);
+
+    try {
+      const result = await requestPayment(id);
+
+      if (result.success) {
+        toast.success("결제가 완료되었습니다! 프리미엄 분석을 확인하세요 🎉");
+        setPremiumUnlocked(true);
+        setTimeout(() => {
+          premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      } else {
+        toast.error(result.error_msg || "결제가 취소되었습니다.");
+      }
+    } catch (err) {
+      toast.error("결제 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setPaymentLoading(false);
+    }
   };
 
   const handleCopyLink = async () => {
@@ -1148,14 +1167,24 @@ const ResultPage = () => {
                 <button
                   id="unlock-premium-btn"
                   onClick={handleUnlockPremium}
-                  className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group"
+                  disabled={paymentLoading}
+                  className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group disabled:opacity-70"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                   <span className="relative flex items-center justify-center gap-2">
-                    <Crown className="w-4 h-4" />
-                    전체 분석 잠금 해제 ·{" "}
-                    <span className="line-through text-white/60 text-xs">9,900원</span>{" "}
-                    <span className="text-base font-black">4,900원</span>
+                    {paymentLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        결제 진행중...
+                      </>
+                    ) : (
+                      <>
+                        <Crown className="w-4 h-4" />
+                        전체 분석 잠금 해제 ·{" "}
+                        <span className="line-through text-white/60 text-xs">9,900원</span>{" "}
+                        <span className="text-base font-black">4,900원</span>
+                      </>
+                    )}
                   </span>
                 </button>
                 <p className="text-center text-[10px] text-muted-foreground mt-2">결제 후 즉시 프리미엄 분석 결과를 확인할 수 있습니다.</p>
