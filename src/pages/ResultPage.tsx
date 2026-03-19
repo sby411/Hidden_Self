@@ -897,7 +897,7 @@ const ResultPage = () => {
                           스타일링 변화
                         </h4>
                         <div className="space-y-2">
-                          {ai.actionGuide.styling.map((s, i) => (
+                          {(ai.actionGuide?.styling ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
