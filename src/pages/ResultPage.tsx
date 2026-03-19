@@ -501,7 +501,7 @@ const ResultPage = () => {
                     <Hash className="w-3 h-3" /> 자주 사용하는 해시태그
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {igStats.topHashtags.map((t) => (
+                    {(igStats?.topHashtags ?? []).map((t) => (
                       <span key={t} className="text-[10px] bg-chip text-chip-foreground px-2 py-1 rounded-full font-medium">#{t}</span>
                     ))}
                   </div>
@@ -544,7 +544,7 @@ const ResultPage = () => {
 
               {/* Vibe Keywords */}
               <div className="flex flex-wrap gap-2 mb-5">
-                {ai.vibeKeywords.map((kw) => (
+                {(ai.vibeKeywords ?? []).map((kw) => (
                   <span key={kw} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20">
                     #{kw}
                   </span>
@@ -897,7 +897,7 @@ const ResultPage = () => {
                           스타일링 변화
                         </h4>
                         <div className="space-y-2">
-                          {ai.actionGuide.styling.map((s, i) => (
+                          {(ai.actionGuide?.styling ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -915,7 +915,7 @@ const ResultPage = () => {
                           남자가 접근했을 때 반응
                         </h4>
                         <div className="space-y-2">
-                          {ai.actionGuide.responseStyle.map((s, i) => (
+                          {(ai.actionGuide?.responseStyle ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -933,7 +933,7 @@ const ResultPage = () => {
                           데이트 행동 전략
                         </h4>
                         <div className="space-y-2">
-                          {ai.actionGuide.datingBehavior.map((s, i) => (
+                          {(ai.actionGuide?.datingBehavior ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -962,7 +962,7 @@ const ResultPage = () => {
                           첫 만남에서 하지 말아야 할 행동
                         </h4>
                         <div className="space-y-2">
-                          {ai.avoidGuide.firstMeeting.map((s, i) => (
+                          {(ai.avoidGuide?.firstMeeting ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
                               <X className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -980,7 +980,7 @@ const ResultPage = () => {
                           관계 초반에서 경계해야 할 신호
                         </h4>
                         <div className="space-y-2">
-                          {ai.avoidGuide.earlyWarnings.map((s, i) => (
+                          {(ai.avoidGuide?.earlyWarnings ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
                               <AlertTriangle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -998,7 +998,7 @@ const ResultPage = () => {
                           인스타에서 바꾸면 좋은 습관
                         </h4>
                         <div className="space-y-2">
-                          {ai.avoidGuide.instaHabits.map((s, i) => (
+                          {(ai.avoidGuide?.instaHabits ?? []).map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">✓</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
