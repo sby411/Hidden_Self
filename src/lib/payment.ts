@@ -11,6 +11,11 @@ declare global {
         totalAmount: number;
         currency: string;
         payMethod: string;
+        windowType?: {
+          pc?: string;
+          mobile?: string;
+        };
+        redirectUrl?: string;
         customer?: {
           fullName?: string;
           email?: string;
@@ -37,6 +42,15 @@ export interface PaymentResult {
 const STORE_ID = "store-19320ea7-2a16-4da0-8c3e-56883c5cc551";
 const CHANNEL_KEY = "channel-key-047781f8-40e9-4c20-8f28-e29645ca221c";
 
+/**
+ * Build the redirect URL back to the result page after mobile payment.
+ * PortOne appends payment query params automatically.
+ */
+function getRedirectUrl(instagramId: string): string {
+  const origin = window.location.origin;
+  return `${origin}/result?id=${encodeURIComponent(instagramId)}`;
+}
+
 export async function requestPayment(instagramId: string): Promise<PaymentResult> {
   const { PortOne } = window;
 
@@ -55,12 +69,16 @@ export async function requestPayment(instagramId: string): Promise<PaymentResult
       totalAmount: 4900,
       currency: "CURRENCY_KRW",
       payMethod: "CARD",
+      windowType: {
+        pc: "IFRAME",
+        mobile: "REDIRECTION",
+      },
+      redirectUrl: getRedirectUrl(instagramId),
     });
 
     console.log("[PortOne V2] Payment response:", response);
 
     if (response.code) {
-      // Error or user cancellation
       console.error("[PortOne V2] Payment failed:", response.message);
       return {
         success: false,
@@ -69,7 +87,6 @@ export async function requestPayment(instagramId: string): Promise<PaymentResult
       };
     }
 
-    // Success
     return {
       success: true,
       paymentId,
