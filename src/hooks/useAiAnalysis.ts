@@ -108,10 +108,17 @@ export function useAiAnalysis(userId: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (cache.has(userId)) {
-      setData(cache.get(userId)!);
+    const cached = cache.get(userId);
+    const hasStaleExternalShape = !!cached && !!(cached as any).result && !(cached as any).attractedType;
+
+    if (cached && !hasStaleExternalShape) {
+      setData(cached);
       setLoading(false);
       return;
+    }
+
+    if (hasStaleExternalShape) {
+      cache.delete(userId);
     }
 
     let cancelled = false;
