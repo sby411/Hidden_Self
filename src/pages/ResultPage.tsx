@@ -121,7 +121,7 @@ const ResultPage = () => {
       if (navigator.share && isMobile) {
         await navigator.share({
           title: "InstAI | 내 인스타로 보는 꼬이는 남자 유형",
-          text: ai ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${ai.attractedType.name}'이래. 너도 해봐!` : "내 인스타 vibe 분석 결과 확인해봐!",
+          text: ai ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${attractedType.name}'이래. 너도 해봐!` : "내 인스타 vibe 분석 결과 확인해봐!",
           url: window.location.href,
         });
         toast.success("공유창이 열렸어요");
