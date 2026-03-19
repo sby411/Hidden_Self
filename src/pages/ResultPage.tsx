@@ -1167,14 +1167,24 @@ const ResultPage = () => {
                 <button
                   id="unlock-premium-btn"
                   onClick={handleUnlockPremium}
-                  className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group"
+                  disabled={paymentLoading}
+                  className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group disabled:opacity-70"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                   <span className="relative flex items-center justify-center gap-2">
-                    <Crown className="w-4 h-4" />
-                    전체 분석 잠금 해제 ·{" "}
-                    <span className="line-through text-white/60 text-xs">9,900원</span>{" "}
-                    <span className="text-base font-black">4,900원</span>
+                    {paymentLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        결제 진행중...
+                      </>
+                    ) : (
+                      <>
+                        <Crown className="w-4 h-4" />
+                        전체 분석 잠금 해제 ·{" "}
+                        <span className="line-through text-white/60 text-xs">9,900원</span>{" "}
+                        <span className="text-base font-black">4,900원</span>
+                      </>
+                    )}
                   </span>
                 </button>
                 <p className="text-center text-[10px] text-muted-foreground mt-2">결제 후 즉시 프리미엄 분석 결과를 확인할 수 있습니다.</p>
