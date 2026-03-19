@@ -243,10 +243,20 @@ Deno.serve(async (req) => {
     let externalAnalysis: any = null;
 
     try {
+      const externalRequestBody = {
+        instagramId: userId,
+        instagramData: {
+          profile: instagramData.profile,
+          stats: instagramData.stats,
+          posts: instagramData.posts.slice(0, 6),
+        },
+      };
+      console.log("External API request body:", JSON.stringify(externalRequestBody));
+
       const externalRes = await fetch("http://115.68.231.202:3000/analyze-instagram", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ instagramId: userId }),
+        body: JSON.stringify(externalRequestBody),
       });
 
       if (!externalRes.ok) {
