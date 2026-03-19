@@ -17,7 +17,24 @@ const ResultPage = () => {
   
   // AI-generated dynamic analysis (includes real Instagram data)
   const { data: ai, loading: aiLoading, error: aiError } = useAiAnalysis(id);
-  
+
+  // Normalize fields that can be missing from external API responses
+  const attractedType = ai?.attractedType ?? {
+    name: "분석 결과",
+    emoji: "💘",
+    approach: "분석 내용을 불러오는 중이에요.",
+    earlyBehavior: "분석 내용을 불러오는 중이에요.",
+    feelings: "분석 내용을 불러오는 중이에요.",
+  };
+
+  const attractionStats = {
+    olderAttraction: ai?.attractionStats?.olderAttraction ?? 0,
+    sameAgeAttraction: ai?.attractionStats?.sameAgeAttraction ?? 0,
+    youngerAttraction: ai?.attractionStats?.youngerAttraction ?? 0,
+    aegenPower: ai?.attractionStats?.aegenPower ?? 0,
+    tetoPower: ai?.attractionStats?.tetoPower ?? 0,
+  };
+
   // Static data for vibe section (kept as-is)
   const vibe = getVibeAnalysis(id);
   const userVibe = getUserVibeType(id);
