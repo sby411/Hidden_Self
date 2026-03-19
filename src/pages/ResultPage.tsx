@@ -30,6 +30,26 @@ const ResultPage = () => {
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
+  // Handle PortOne redirect callback (mobile REDIRECTION mode)
+  useEffect(() => {
+    const paymentIdParam = searchParams.get("paymentId");
+    const codeParam = searchParams.get("code");
+
+    if (paymentIdParam && !codeParam) {
+      // Payment succeeded via redirect
+      console.log("[PortOne] Redirect payment success:", paymentIdParam);
+      setPremiumUnlocked(true);
+      toast.success("결제가 완료되었습니다! 프리미엄 분석을 확인하세요 🎉");
+      setTimeout(() => {
+        premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 500);
+    } else if (paymentIdParam && codeParam) {
+      // Payment failed or cancelled via redirect
+      console.error("[PortOne] Redirect payment failed:", codeParam);
+      toast.error("결제가 취소되었습니다.");
+    }
+  }, []);
+
   // Social proof count (deterministic from id)
   const socialProofCount = useMemo(() => {
     let h = 0;
