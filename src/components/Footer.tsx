@@ -29,7 +29,7 @@ const Footer = () => (
       <p>상호명: 퍼즐리 · 대표자: 양세빈</p>
       <p>사업자등록번호: 174-06-03144 · 통신판매업신고번호: 2025-서울서초-0842</p>
       <p>주소: 서울특별시 서초구 서초대로19길 11, 501호</p>
-      <p><a href="http://pf.kakao.com/_vfgxhX/chat" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">고객센터</a> · sby411@naver.com</p>
+      <p><a href="http://pf.kakao.com/_vfgxhX/chat" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">고객센터</a> · 010-2870-7943</p>
     </div>
   </footer>
 );
