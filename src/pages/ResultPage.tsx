@@ -844,9 +844,9 @@ const ResultPage = () => {
                   <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(0,20%,12%)] to-card border border-[hsl(0,20%,20%)]/30 border-l-4 border-l-destructive/50">
                     <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                       💔 자주 꼬이지만 힘든 남자
-                      {typeof ai.badMatch === 'object' && <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">{ai.badMatch.type}</span>}
+                      {ai.badMatch && typeof ai.badMatch === 'object' && <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">{ai.badMatch.type}</span>}
                     </h4>
-                    {typeof ai.badMatch === 'object' ? (
+                    {ai.badMatch && typeof ai.badMatch === 'object' ? (
                       <div className="space-y-3">
                         <div>
                           <p className="text-[10px] font-bold text-destructive uppercase tracking-wider mb-1">어떤 성향인지</p>
