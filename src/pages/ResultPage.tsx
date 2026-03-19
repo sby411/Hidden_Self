@@ -818,9 +818,9 @@ const ResultPage = () => {
                   <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 border-l-4 border-l-[hsl(160,45%,40%)]">
                     <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                       💚 잘 맞는 남자
-                      {typeof ai.goodMatch === 'object' && <span className="text-xs font-medium text-[hsl(160,50%,50%)] bg-[hsl(160,50%,50%)]/10 px-2 py-0.5 rounded-full">{ai.goodMatch.type}</span>}
+                      {ai.goodMatch && typeof ai.goodMatch === 'object' && <span className="text-xs font-medium text-[hsl(160,50%,50%)] bg-[hsl(160,50%,50%)]/10 px-2 py-0.5 rounded-full">{ai.goodMatch.type}</span>}
                     </h4>
-                    {typeof ai.goodMatch === 'object' ? (
+                    {ai.goodMatch && typeof ai.goodMatch === 'object' ? (
                       <div className="space-y-3">
                         <div>
                           <p className="text-[10px] font-bold text-[hsl(160,50%,50%)] uppercase tracking-wider mb-1">어떤 성향인지</p>
