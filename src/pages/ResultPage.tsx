@@ -17,24 +17,7 @@ const ResultPage = () => {
   
   // AI-generated dynamic analysis (includes real Instagram data)
   const { data: ai, loading: aiLoading, error: aiError } = useAiAnalysis(id);
-
-  // Normalize fields that can be missing from external API responses
-  const attractedType = ai?.attractedType ?? {
-    name: "분석 결과",
-    emoji: "💘",
-    approach: "분석 내용을 불러오는 중이에요.",
-    earlyBehavior: "분석 내용을 불러오는 중이에요.",
-    feelings: "분석 내용을 불러오는 중이에요.",
-  };
-
-  const attractionStats = {
-    olderAttraction: ai?.attractionStats?.olderAttraction ?? 0,
-    sameAgeAttraction: ai?.attractionStats?.sameAgeAttraction ?? 0,
-    youngerAttraction: ai?.attractionStats?.youngerAttraction ?? 0,
-    aegenPower: ai?.attractionStats?.aegenPower ?? 0,
-    tetoPower: ai?.attractionStats?.tetoPower ?? 0,
-  };
-
+  
   // Static data for vibe section (kept as-is)
   const vibe = getVibeAnalysis(id);
   const userVibe = getUserVibeType(id);
@@ -121,7 +104,7 @@ const ResultPage = () => {
       if (navigator.share && isMobile) {
         await navigator.share({
           title: "InstAI | 내 인스타로 보는 꼬이는 남자 유형",
-          text: ai ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${attractedType.name}'이래. 너도 해봐!` : "내 인스타 vibe 분석 결과 확인해봐!",
+          text: ai ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${ai.attractedType.name}'이래. 너도 해봐!` : "내 인스타 vibe 분석 결과 확인해봐!",
           url: window.location.href,
         });
         toast.success("공유창이 열렸어요");
@@ -518,7 +501,7 @@ const ResultPage = () => {
                     <Hash className="w-3 h-3" /> 자주 사용하는 해시태그
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
-                    {(igStats?.topHashtags ?? []).map((t) => (
+                    {igStats.topHashtags.map((t) => (
                       <span key={t} className="text-[10px] bg-chip text-chip-foreground px-2 py-1 rounded-full font-medium">#{t}</span>
                     ))}
                   </div>
@@ -561,7 +544,7 @@ const ResultPage = () => {
 
               {/* Vibe Keywords */}
               <div className="flex flex-wrap gap-2 mb-5">
-                {(ai.vibeKeywords ?? []).map((kw) => (
+                {ai.vibeKeywords.map((kw) => (
                   <span key={kw} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20">
                     #{kw}
                   </span>
@@ -608,8 +591,8 @@ const ResultPage = () => {
                       <Sparkles className="w-3 h-3 text-primary" />
                       <span className="text-[10px] font-bold text-primary uppercase tracking-wider">AI가 발견한 당신의 매력 패턴</span>
                     </div>
-                    <div className="text-7xl mb-4">{attractedType.emoji}</div>
-                    <h2 className="text-2xl font-black text-foreground mb-3 tracking-tight">{attractedType.name}</h2>
+                    <div className="text-7xl mb-4">{ai.attractedType.emoji}</div>
+                    <h2 className="text-2xl font-black text-foreground mb-3 tracking-tight">{ai.attractedType.name}</h2>
                   </div>
                 </div>
               </div>
@@ -619,7 +602,7 @@ const ResultPage = () => {
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   🎯 접근 방식
                 </h3>
-                <p className="text-sm text-foreground/85 leading-[1.9]">{attractedType.approach}</p>
+                <p className="text-sm text-foreground/85 leading-[1.9]">{ai.attractedType.approach}</p>
               </div>
 
               {/* Early Behavior */}
@@ -627,7 +610,7 @@ const ResultPage = () => {
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   💫 초반 행동 패턴
                 </h3>
-                <p className="text-sm text-foreground/85 leading-[1.9]">{attractedType.earlyBehavior}</p>
+                <p className="text-sm text-foreground/85 leading-[1.9]">{ai.attractedType.earlyBehavior}</p>
               </div>
 
               {/* Feelings */}
@@ -635,7 +618,7 @@ const ResultPage = () => {
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   💭 당신에 대한 감정
                 </h3>
-                <p className="text-sm text-foreground/85 leading-[1.9]">{attractedType.feelings}</p>
+                <p className="text-sm text-foreground/85 leading-[1.9]">{ai.attractedType.feelings}</p>
               </div>
 
               {/* Attraction Stats */}
@@ -643,11 +626,11 @@ const ResultPage = () => {
                 <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">💓 매력 지표</h3>
                 <div className="space-y-3.5">
                   {[
-                    { label: "연상 남성이 당신에게 끌릴 확률", value: attractionStats.olderAttraction },
-                    { label: "동갑 남성이 당신에게 끌릴 확률", value: attractionStats.sameAgeAttraction },
-                    { label: "연하 남성이 당신에게 끌릴 확률", value: attractionStats.youngerAttraction },
-                    { label: "당신이 주는 에겐 이미지 강도", value: attractionStats.aegenPower },
-                    { label: "당신이 주는 테토 이미지 강도", value: attractionStats.tetoPower },
+                    { label: "연상 남성이 당신에게 끌릴 확률", value: ai.attractionStats.olderAttraction },
+                    { label: "동갑 남성이 당신에게 끌릴 확률", value: ai.attractionStats.sameAgeAttraction },
+                    { label: "연하 남성이 당신에게 끌릴 확률", value: ai.attractionStats.youngerAttraction },
+                    { label: "당신이 주는 에겐 이미지 강도", value: ai.attractionStats.aegenPower },
+                    { label: "당신이 주는 테토 이미지 강도", value: ai.attractionStats.tetoPower },
                   ].map((stat) => (
                     <div key={stat.label}>
                       <div className="flex justify-between items-center mb-1.5">
@@ -818,9 +801,9 @@ const ResultPage = () => {
                   <div className="rounded-2xl p-5 mb-3 bg-gradient-to-br from-[hsl(160,15%,12%)] to-card border border-[hsl(160,15%,20%)]/30 border-l-4 border-l-[hsl(160,45%,40%)]">
                     <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                       💚 잘 맞는 남자
-                      {ai.goodMatch && typeof ai.goodMatch === 'object' && <span className="text-xs font-medium text-[hsl(160,50%,50%)] bg-[hsl(160,50%,50%)]/10 px-2 py-0.5 rounded-full">{ai.goodMatch.type}</span>}
+                      {typeof ai.goodMatch === 'object' && <span className="text-xs font-medium text-[hsl(160,50%,50%)] bg-[hsl(160,50%,50%)]/10 px-2 py-0.5 rounded-full">{ai.goodMatch.type}</span>}
                     </h4>
-                    {ai.goodMatch && typeof ai.goodMatch === 'object' ? (
+                    {typeof ai.goodMatch === 'object' ? (
                       <div className="space-y-3">
                         <div>
                           <p className="text-[10px] font-bold text-[hsl(160,50%,50%)] uppercase tracking-wider mb-1">어떤 성향인지</p>
@@ -836,7 +819,7 @@ const ResultPage = () => {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{String(ai.goodMatch ?? "")}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.goodMatch}</p>
                     )}
                   </div>
 
@@ -844,9 +827,9 @@ const ResultPage = () => {
                   <div className="rounded-2xl p-5 bg-gradient-to-br from-[hsl(0,20%,12%)] to-card border border-[hsl(0,20%,20%)]/30 border-l-4 border-l-destructive/50">
                     <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                       💔 자주 꼬이지만 힘든 남자
-                      {ai.badMatch && typeof ai.badMatch === 'object' && <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">{ai.badMatch.type}</span>}
+                      {typeof ai.badMatch === 'object' && <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-0.5 rounded-full">{ai.badMatch.type}</span>}
                     </h4>
-                    {ai.badMatch && typeof ai.badMatch === 'object' ? (
+                    {typeof ai.badMatch === 'object' ? (
                       <div className="space-y-3">
                         <div>
                           <p className="text-[10px] font-bold text-destructive uppercase tracking-wider mb-1">어떤 성향인지</p>
@@ -862,7 +845,7 @@ const ResultPage = () => {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm text-foreground/80 leading-[1.9]">{String(ai.badMatch ?? "")}</p>
+                      <p className="text-sm text-foreground/80 leading-[1.9]">{ai.badMatch}</p>
                     )}
                   </div>
                 </div>
@@ -914,7 +897,7 @@ const ResultPage = () => {
                           스타일링 변화
                         </h4>
                         <div className="space-y-2">
-                          {(ai.actionGuide?.styling ?? []).map((s, i) => (
+                          {ai.actionGuide.styling.map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -932,7 +915,7 @@ const ResultPage = () => {
                           남자가 접근했을 때 반응
                         </h4>
                         <div className="space-y-2">
-                          {(ai.actionGuide?.responseStyle ?? []).map((s, i) => (
+                          {ai.actionGuide.responseStyle.map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -950,7 +933,7 @@ const ResultPage = () => {
                           데이트 행동 전략
                         </h4>
                         <div className="space-y-2">
-                          {(ai.actionGuide?.datingBehavior ?? []).map((s, i) => (
+                          {ai.actionGuide.datingBehavior.map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">→</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -979,7 +962,7 @@ const ResultPage = () => {
                           첫 만남에서 하지 말아야 할 행동
                         </h4>
                         <div className="space-y-2">
-                          {(ai.avoidGuide?.firstMeeting ?? []).map((s, i) => (
+                          {ai.avoidGuide.firstMeeting.map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
                               <X className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -997,7 +980,7 @@ const ResultPage = () => {
                           관계 초반에서 경계해야 할 신호
                         </h4>
                         <div className="space-y-2">
-                          {(ai.avoidGuide?.earlyWarnings ?? []).map((s, i) => (
+                          {ai.avoidGuide.earlyWarnings.map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-destructive/5 rounded-xl px-3 py-2.5">
                               <AlertTriangle className="w-3.5 h-3.5 text-destructive shrink-0 mt-0.5" />
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -1015,7 +998,7 @@ const ResultPage = () => {
                           인스타에서 바꾸면 좋은 습관
                         </h4>
                         <div className="space-y-2">
-                          {(ai.avoidGuide?.instaHabits ?? []).map((s, i) => (
+                          {ai.avoidGuide.instaHabits.map((s, i) => (
                             <div key={i} className="flex items-start gap-2 bg-[hsl(45,30%,15%)]/30 rounded-xl px-3 py-2.5">
                               <span className="text-[hsl(45,70%,55%)] text-xs mt-0.5">✓</span>
                               <span className="text-[11px] text-foreground/80 leading-relaxed">{s}</span>
@@ -1231,8 +1214,8 @@ const ResultPage = () => {
             )}
             <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium mb-1">내 인스타로 본</p>
             <p className="text-[11px] text-muted-foreground mb-4">나에게 꼬이는 남자 유형</p>
-            <div className="text-5xl mb-3">{attractedType.emoji}</div>
-            <h3 className="text-2xl font-bold text-foreground mb-4 tracking-tight">{attractedType.name}</h3>
+            <div className="text-5xl mb-3">{ai.attractedType.emoji}</div>
+            <h3 className="text-2xl font-bold text-foreground mb-4 tracking-tight">{ai.attractedType.name}</h3>
             <div onClick={() => navigate("/")} className="inline-flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30 cursor-pointer hover:bg-card/80 transition-colors">
               <span className="text-xs font-semibold text-foreground">다시 테스트하기 →</span>
             </div>
