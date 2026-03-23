@@ -416,7 +416,7 @@ const ResultPage = () => {
           <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
             <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-sm font-bold tracking-tight text-foreground">InstAI</span>
+          <span className="text-sm font-bold tracking-tight text-foreground">LOVE DNA</span>
         </div>
         <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full">@{id}</span>
       </header>
