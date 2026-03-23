@@ -123,7 +123,7 @@ const ResultPage = () => {
     try {
       if (navigator.share && isMobile) {
         await navigator.share({
-          title: "InstAI | 내 인스타로 보는 꼬이는 남자 유형",
+          title: "LOVE DNA | 내 인스타로 보는 꼬이는 남자 유형",
           text: ai ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${ai.attractedType.name}'이래. 너도 해봐!` : "내 인스타 vibe 분석 결과 확인해봐!",
           url: window.location.href,
         });
@@ -416,7 +416,7 @@ const ResultPage = () => {
           <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
             <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-sm font-bold tracking-tight text-foreground">InstAI</span>
+          <span className="text-sm font-bold tracking-tight text-foreground">LOVE DNA</span>
         </div>
         <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full">@{id}</span>
       </header>
