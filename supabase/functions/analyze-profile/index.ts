@@ -562,7 +562,7 @@ Deno.serve(async (req) => {
       instagramData: {
         profile: instagramData.profile,
         stats: instagramData.stats,
-        posts: instagramData.posts.slice(0, 6),
+        posts: instagramData.posts.slice(0, 4),
       },
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
