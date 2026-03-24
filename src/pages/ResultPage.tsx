@@ -1209,6 +1209,7 @@ const ResultPage = () => {
                 </button>
                 <p className="text-center text-[10px] text-muted-foreground mt-2">결제 후 즉시 프리미엄 분석 결과를 확인할 수 있습니다.</p>
                 <p className="text-center text-[10px] text-destructive font-bold mt-1 animate-pulse">🔥 지금만 50% 할인 중!</p>
+                <p className="text-center text-[10px] text-muted-foreground mt-2 leading-relaxed">⚠️ 일부 카드사(삼성/국민/하나)는 현재 승인 절차 진행 중입니다.<br />다른 카드로는 정상 결제 가능합니다.</p>
               </div>
             ) : (
               <div ref={premiumRef}>
