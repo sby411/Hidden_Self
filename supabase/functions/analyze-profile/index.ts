@@ -173,7 +173,7 @@ Section 10: 피하는 방법 (avoidGuide) - 힘든 남자를 피하기 위한 �
 
 function buildUserPrompt(userId: string, profile: any, posts: any[]) {
   const postSummaries = posts
-    .slice(0, 6)
+    .slice(0, 4)
     .map((p: any, i: number) =>
       `  Post ${i + 1}: caption="${(p.caption || '(없음)').slice(0, 100)}", likes=${p.likesCount}, comments=${p.commentsCount}, hashtags=[${(p.hashtags || []).join(', ')}], alt="${(p.alt || '').slice(0, 80)}"`
     )
@@ -308,7 +308,7 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           directUrls: [`https://www.instagram.com/${userId}/`],
           resultsType: "posts",
-          resultsLimit: 6,
+          resultsLimit: 4,
           addParentData: true,
         }),
       });
@@ -562,7 +562,7 @@ Deno.serve(async (req) => {
       instagramData: {
         profile: instagramData.profile,
         stats: instagramData.stats,
-        posts: instagramData.posts.slice(0, 6),
+        posts: instagramData.posts.slice(0, 4),
       },
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
