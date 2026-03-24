@@ -219,8 +219,15 @@ const LoadingPage = () => {
           </div>
         )}
 
+        {/* Time estimate */}
+        <div className="mt-4 text-center">
+          <p className="text-[11px] text-muted-foreground/70 leading-relaxed">
+            ⏱️ 보통 30초 내 완료 · 분석이 까다로운 계정은 최대 2분 소요
+          </p>
+        </div>
+
         {/* Security badge */}
-        <div className="mt-6 flex items-center gap-1.5 text-[10px] text-muted-foreground/60">
+        <div className="mt-3 flex items-center gap-1.5 text-[10px] text-muted-foreground/60">
           <Shield className="w-3 h-3" />
           데이터는 분석 후 즉시 삭제됩니다
         </div>
