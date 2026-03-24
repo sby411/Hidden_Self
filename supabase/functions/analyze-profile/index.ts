@@ -308,7 +308,7 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           directUrls: [`https://www.instagram.com/${userId}/`],
           resultsType: "posts",
-          resultsLimit: 6,
+          resultsLimit: 4,
           addParentData: true,
         }),
       });
