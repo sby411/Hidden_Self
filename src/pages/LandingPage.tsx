@@ -204,15 +204,15 @@ const LandingPage = () => {
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-2xl">⚡</span>
                   <div>
-                    <p className="text-base font-extrabold text-foreground">도파민 회피형 인기남</p>
-                    <p className="text-[11px] text-destructive font-semibold">집착 확률 62% · 관계 지속력 낮음</p>
+                    <p className="text-base font-extrabold text-foreground">관심 확인형 탐색남</p>
+                    <p className="text-[11px] text-destructive font-semibold">접근 확률 58% · 관계 진전 속도 느린 편</p>
                   </div>
                 </div>
                 <p className="text-sm text-secondary-foreground leading-relaxed">
-                  너의 피드에서 반복되는 <span className="font-semibold text-danger-highlight">감성적이고 몽환적인 색감</span>이 감정적 자극을 찾는 남자들을 끌어당기고 있어.
+                  피드에 <span className="font-semibold text-danger-highlight">혼자 있는 사진 비율이 높고, 장소 태그가 카페·전시 위주</span>로 구성되어 있어서 "쉽게 말 걸기 어려운 분위기"로 읽히는 경향이 있음.
                 </p>
                 <p className="text-sm text-secondary-foreground leading-relaxed mt-2">
-                  특히 스토리에 올리는 <span className="font-semibold text-danger-highlight">새벽 감성 포스팅</span>이 "이 여자 외로운가?" 라는 신호로 읽히고 있음.
+                  이 패턴은 <span className="font-semibold text-danger-highlight">직접 다가오기보다 주변을 맴도는 타입</span>의 남자들이 반복적으로 접근할 가능성을 높임.
                 </p>
               </div>
             </div>
@@ -225,20 +225,20 @@ const LandingPage = () => {
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-2xl">🧊</span>
                   <div>
-                    <p className="text-base font-extrabold text-foreground">감정차단 회피형 냉미남</p>
-                    <p className="text-[11px] text-destructive font-semibold">집착 확률 70% · 푸시풀 위험도 높음</p>
+                    <p className="text-base font-extrabold text-foreground">거리조절 실패형 줄타기남</p>
+                    <p className="text-[11px] text-destructive font-semibold">반복 접근 확률 64% · 감정 소모 높은 편</p>
                   </div>
                 </div>
                 <p className="text-sm text-secondary-foreground leading-relaxed">
-                  프로필 사진 없이 하이라이트만 6개 — 이건 <span className="font-semibold text-danger-highlight">"나한테 관심 가져봐"</span> 시그널이야.
+                  팔로워 대비 팔로잉이 적고, 게시물 캡션이 짧은 편 — <span className="font-semibold text-danger-highlight">"이 사람 뭐 하는 사람이지?"</span> 하는 궁금증을 유발하는 계정 구성.
                 </p>
                 <div className="mt-3 relative">
                   <div className="blur-[6px] select-none pointer-events-none">
                     <p className="text-sm text-secondary-foreground leading-relaxed">
-                      너의 캡션 패턴에서 감지된 핵심 심리 트리거는 "무심한 듯 시크한 말투"인데, 이게 회피형 남자의 정복욕을 자극하는 핵심 요소로...
+                      이런 구성은 본인도 감정 표현이 서툰 남자들에게 "비슷한 사람"이라는 착각을 주는 경향이 있고, 초반에 빠르게 가까워졌다가 갑자기...
                     </p>
                     <p className="text-sm text-secondary-foreground leading-relaxed mt-2">
-                      팔로워 대비 팔로잉 비율이 만들어내는 "쉽게 안 넘어오는 여자" 이미지가 냉미남에게는...
+                      특히 하이라이트에 여행·일상이 섞여 있는 구성이 "이 사람 알면 재밌겠다"는 인상을 줘서...
                     </p>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -258,26 +258,26 @@ const LandingPage = () => {
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-2xl">👑</span>
                   <div>
-                    <p className="text-base font-extrabold text-foreground">자기애 과잉 인기남</p>
+                    <p className="text-base font-extrabold text-foreground">다정함 분배형 인기남</p>
                     <p className="text-[11px] text-destructive font-semibold">위험도 ???</p>
                   </div>
                 </div>
                 <div className="relative">
                   <div className="blur-[8px] select-none pointer-events-none">
                     <p className="text-sm text-secondary-foreground leading-relaxed">
-                      당신의 피드에서 가장 많은 좋아요를 받는 사진 유형이 "얼굴 클로즈업"인데, 이 패턴은 자기애형 남자에게...
+                      좋아요 수 대비 댓글 비율이 높은 게시물이 많고, 답글도 꼼꼼하게 다는 패턴이 감지됨. 이 구성은 "친절한 사람"으로 보이면서도...
                     </p>
                     <p className="text-sm text-secondary-foreground leading-relaxed mt-2">
-                      해시태그 사용 빈도와 셀피 비율로 계산한 "픽미 지수"가 상위 12%로 측정되었으며...
+                      팔로잉 목록에 비슷한 감성의 계정이 다수 포함되어 있어서, 본인의 취향이 특정 유형에게 노출되는 경향이...
                     </p>
                     <div className="flex gap-2 mt-3">
                       <div className="bg-destructive/10 rounded-lg px-3 py-2 flex-1">
-                        <p className="text-xs text-muted-foreground">연상 끌림도</p>
-                        <p className="text-lg font-bold text-foreground">87%</p>
+                        <p className="text-xs text-muted-foreground">접근 빈도</p>
+                        <p className="text-lg font-bold text-foreground">높음</p>
                       </div>
                       <div className="bg-destructive/10 rounded-lg px-3 py-2 flex-1">
-                        <p className="text-xs text-muted-foreground">테토력</p>
-                        <p className="text-lg font-bold text-foreground">91%</p>
+                        <p className="text-xs text-muted-foreground">감정 소모도</p>
+                        <p className="text-lg font-bold text-foreground">중상</p>
                       </div>
                     </div>
                   </div>
