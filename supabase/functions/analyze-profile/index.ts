@@ -281,6 +281,44 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Check cache first (24-hour TTL)
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const cacheRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/analysis_cache?instagram_id=eq.${encodeURIComponent(userId)}&select=result,created_at`,
+          {
+            headers: {
+              apikey: SUPABASE_SERVICE_ROLE_KEY,
+              Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            },
+          }
+        );
+        if (cacheRes.ok) {
+          const cacheRows = await cacheRes.json();
+          if (cacheRows.length > 0) {
+            const cached = cacheRows[0];
+            const cacheAge = Date.now() - new Date(cached.created_at).getTime();
+            const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+            if (cacheAge < CACHE_TTL_MS) {
+              console.log("Cache HIT for:", userId, "age:", Math.round(cacheAge / 60000), "min");
+              return new Response(JSON.stringify(cached.result), {
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+              });
+            } else {
+              console.log("Cache EXPIRED for:", userId);
+            }
+          }
+        }
+      } catch (cacheErr) {
+        console.error("Cache lookup error (non-fatal):", cacheErr);
+      }
+    }
+
+    console.log("Cache MISS for:", userId);
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       return new Response(
