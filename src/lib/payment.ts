@@ -66,7 +66,7 @@ export async function requestPayment(instagramId: string): Promise<PaymentResult
       channelKey: CHANNEL_KEY,
       paymentId,
       orderName: "인스타 연애 패턴 분석",
-      totalAmount: 100,
+      totalAmount: 4900,
       currency: "CURRENCY_KRW",
       payMethod: "CARD",
       windowType: {
