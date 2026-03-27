@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      analysis_cache: {
+        Row: {
+          created_at: string
+          id: string
+          instagram_id: string
+          result: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          instagram_id: string
+          result: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          instagram_id?: string
+          result?: Json
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
