@@ -301,7 +301,7 @@ Deno.serve(async (req) => {
           if (cacheRows.length > 0) {
             const cached = cacheRows[0];
             const cacheAge = Date.now() - new Date(cached.created_at).getTime();
-            const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+            const CACHE_TTL_MS = 72 * 60 * 60 * 1000; // 72 hours
             if (cacheAge < CACHE_TTL_MS) {
               console.log("Cache HIT for:", userId, "age:", Math.round(cacheAge / 60000), "min");
               return new Response(JSON.stringify(cached.result), {
