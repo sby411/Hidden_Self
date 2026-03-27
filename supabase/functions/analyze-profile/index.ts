@@ -594,15 +594,42 @@ Deno.serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-    // Return both analysis and real Instagram data
-    return new Response(JSON.stringify({
+    // Build final result
+    const finalResult = {
       ...analysis,
       instagramData: {
         profile: instagramData.profile,
         stats: instagramData.stats,
         posts: instagramData.posts.slice(0, 4),
       },
-    }), {
+    };
+
+    // Save to cache (fire-and-forget)
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        fetch(`${SUPABASE_URL}/rest/v1/analysis_cache`, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_SERVICE_ROLE_KEY,
+            Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            "Content-Type": "application/json",
+            Prefer: "resolution=merge-duplicates",
+          },
+          body: JSON.stringify({
+            instagram_id: userId,
+            result: finalResult,
+            created_at: new Date().toISOString(),
+          }),
+        }).then(r => {
+          if (r.ok) console.log("Cache SAVED for:", userId);
+          else r.text().then(t => console.error("Cache save error:", t));
+        }).catch(e => console.error("Cache save error:", e));
+      } catch (e) {
+        console.error("Cache save error (non-fatal):", e);
+      }
+    }
+
+    return new Response(JSON.stringify(finalResult), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
