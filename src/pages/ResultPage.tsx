@@ -125,7 +125,7 @@ const ResultPage = () => {
         return;
       }
       if (!Kakao.isInitialized()) {
-        Kakao.init("a]your_kakao_js_key"); // placeholder — will be replaced
+        Kakao.init("fe9cf2f7789f2c96a59feade06f7ae18");
       }
       Kakao.Share.sendDefault({
         objectType: "feed",
