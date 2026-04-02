@@ -1259,20 +1259,51 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className={`grid ${premiumUnlocked ? "grid-cols-2" : "grid-cols-3"} gap-2 mb-3`}>
-            <button onClick={handleCopyLink} className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform">
-              <LinkIcon className="w-4 h-4" />링크 복사
-            </button>
-            <button onClick={handleShare} className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform">
-              <Share2 className="w-4 h-4" />공유
-            </button>
-            {!premiumUnlocked && (
-              <button onClick={handleDownload} className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform">
-                <Download className="w-4 h-4" />이미지 저장
+          {/* Share Section */}
+          <div className="mb-4">
+            <p className="text-center text-sm font-semibold text-foreground mb-3">공유하기 🥰</p>
+            <div className="flex items-center justify-center gap-4">
+              {/* KakaoTalk */}
+              <button
+                onClick={handleKakaoShare}
+                className="flex flex-col items-center gap-1.5 group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-[hsl(52,100%,50%)] flex items-center justify-center shadow-md group-active:scale-[0.93] transition-transform">
+                  <MessageCircle className="w-7 h-7 text-[hsl(30,10%,15%)]" />
+                </div>
+                <span className="text-[10px] text-muted-foreground font-medium">카카오톡</span>
               </button>
-            )}
+
+              {/* Instagram */}
+              <button
+                onClick={handleInstagramShare}
+                className="flex flex-col items-center gap-1.5 group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(37,97%,60%)] via-[hsl(340,82%,52%)] to-[hsl(270,70%,55%)] flex items-center justify-center shadow-md group-active:scale-[0.93] transition-transform">
+                  <Camera className="w-7 h-7 text-white" />
+                </div>
+                <span className="text-[10px] text-muted-foreground font-medium">인스타그램</span>
+              </button>
+
+              {/* URL Copy */}
+              <button
+                onClick={handleCopyLink}
+                className="flex flex-col items-center gap-1.5 group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center shadow-md group-active:scale-[0.93] transition-transform border border-border/30">
+                  <LinkIcon className="w-7 h-7 text-secondary-foreground" />
+                </div>
+                <span className="text-[10px] text-muted-foreground font-medium">URL</span>
+              </button>
+            </div>
           </div>
+
+          {/* Download Buttons */}
+          {!premiumUnlocked && (
+            <button onClick={handleDownload} className="w-full h-12 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-3">
+              <Download className="w-4 h-4" />이미지 저장
+            </button>
+          )}
           {premiumUnlocked && (
             <button onClick={handleDownloadPremiumReport} className="w-full h-12 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-3 shadow-md">
               <Download className="w-4 h-4" />프리미엄 리포트 이미지 저장
