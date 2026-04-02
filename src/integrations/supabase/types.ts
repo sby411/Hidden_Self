@@ -138,6 +138,10 @@ export type Database = {
         }
         Returns: string
       }
+      update_test_submission_payment: {
+        Args: { p_id: string; p_payment_status: string }
+        Returns: undefined
+      }
       update_test_submission_status: {
         Args: { p_id: string; p_result_type?: string; p_status: string }
         Returns: undefined
