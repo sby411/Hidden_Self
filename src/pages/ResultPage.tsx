@@ -124,10 +124,9 @@ const ResultPage = () => {
         toast.error("카카오 SDK를 불러오지 못했어요");
         return;
       }
-      if (Kakao.isInitialized()) {
-        Kakao.cleanup();
+      if (!Kakao.isInitialized()) {
+        Kakao.init("fe9cf2f7789f2c96a59feade06f7ae18");
       }
-      Kakao.init("fe9cf2f7789f2c96a59feade06f7ae18");
       Kakao.Share.sendDefault({
         objectType: "feed",
         content: {
