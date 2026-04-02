@@ -7,7 +7,7 @@ import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 import Footer from "@/components/Footer";
 import { useAiAnalysis } from "@/hooks/useAiAnalysis";
-import { trackSubmissionSuccess, trackSubmissionFailed } from "@/lib/trackSubmission";
+import { trackSubmissionSuccess, trackSubmissionFailed, trackPaymentSuccess } from "@/lib/trackSubmission";
 import { requestPayment } from "@/lib/payment";
 
 const ResultPage = () => {
