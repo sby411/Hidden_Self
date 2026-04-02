@@ -103,10 +103,6 @@ const ResultPage = () => {
   };
 
   const shareUrl = "https://insta-vibe-teller.lovable.app";
-  const shareTitle = "LOVE DNA | 내 인스타로 보는 꼬이는 남자 유형";
-  const shareDescription = ai
-    ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${ai.attractedType.name}'이래. 너도 해봐!`
-    : "내 인스타 vibe 분석 결과 확인해봐!";
 
   const handleCopyLink = async () => {
     try {
@@ -117,40 +113,29 @@ const ResultPage = () => {
     }
   };
 
-  const handleKakaoShare = () => {
-    try {
-      const Kakao = (window as any).Kakao;
-      if (!Kakao) {
-        toast.error("카카오 SDK를 불러오지 못했어요");
-        return;
-      }
-      if (!Kakao.isInitialized()) {
-        Kakao.init("fe9cf2f7789f2c96a59feade06f7ae18");
-      }
-      Kakao.Share.sendDefault({
-        objectType: "feed",
-        content: {
-          title: shareTitle,
-          description: shareDescription,
-          imageUrl: "https://insta-vibe-teller.lovable.app/og-thumbnail-v3.png",
-          link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
-        },
-        buttons: [
-          { title: "나도 분석하기", link: { mobileWebUrl: shareUrl, webUrl: shareUrl } },
-        ],
-      });
-    } catch {
-      toast.error("카카오톡 공유에 실패했어요");
-    }
-  };
+  const isSharing = React.useRef(false);
+  const isMobile = React.useMemo(() => {
+    if (typeof navigator === 'undefined') return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }, []);
 
-  const handleInstagramShare = () => {
-    // Instagram doesn't have a web share API — copy link and guide user
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      toast.success("링크가 복사되었어요! 인스타 스토리에 붙여넣기 해보세요 📋");
-    }).catch(() => {
-      toast.error("링크 복사에 실패했어요");
-    });
+  const handleShare = async () => {
+    if (isSharing.current) return;
+    isSharing.current = true;
+    try {
+      if (navigator.share && isMobile) {
+        await navigator.share({
+          title: "LOVE DNA | 내 인스타로 보는 꼬이는 남자 유형",
+          text: ai ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${ai.attractedType.name}'이래. 너도 해봐!` : "내 인스타 vibe 분석 결과 확인해봐!",
+          url: shareUrl,
+        });
+        toast.success("공유창이 열렸어요");
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("링크가 복사되었어요! 친구에게 공유해보세요 ✨");
+      }
+    } catch { /* user cancelled */ }
+    finally { isSharing.current = false; }
   };
 
   const downloadNodeAsImage = useCallback(
@@ -1259,51 +1244,20 @@ const ResultPage = () => {
             </div>
           </div>
 
-          {/* Share Section */}
-          <div className="mb-4">
-            <p className="text-center text-sm font-semibold text-foreground mb-3">공유하기 🥰</p>
-            <div className="flex items-center justify-center gap-4">
-              {/* KakaoTalk */}
-              <button
-                onClick={handleKakaoShare}
-                className="flex flex-col items-center gap-1.5 group"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-[hsl(52,100%,50%)] flex items-center justify-center shadow-md group-active:scale-[0.93] transition-transform">
-                  <MessageCircle className="w-7 h-7 text-[hsl(30,10%,15%)]" />
-                </div>
-                <span className="text-[10px] text-muted-foreground font-medium">카카오톡</span>
-              </button>
-
-              {/* Instagram */}
-              <button
-                onClick={handleInstagramShare}
-                className="flex flex-col items-center gap-1.5 group"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(37,97%,60%)] via-[hsl(340,82%,52%)] to-[hsl(270,70%,55%)] flex items-center justify-center shadow-md group-active:scale-[0.93] transition-transform">
-                  <Camera className="w-7 h-7 text-white" />
-                </div>
-                <span className="text-[10px] text-muted-foreground font-medium">인스타그램</span>
-              </button>
-
-              {/* URL Copy */}
-              <button
-                onClick={handleCopyLink}
-                className="flex flex-col items-center gap-1.5 group"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center shadow-md group-active:scale-[0.93] transition-transform border border-border/30">
-                  <LinkIcon className="w-7 h-7 text-secondary-foreground" />
-                </div>
-                <span className="text-[10px] text-muted-foreground font-medium">URL</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Download Buttons */}
-          {!premiumUnlocked && (
-            <button onClick={handleDownload} className="w-full h-12 rounded-xl bg-secondary text-secondary-foreground text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-3">
-              <Download className="w-4 h-4" />이미지 저장
+          {/* Action Buttons */}
+          <div className={`grid ${premiumUnlocked ? "grid-cols-2" : "grid-cols-3"} gap-2 mb-3`}>
+            <button onClick={handleCopyLink} className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform">
+              <LinkIcon className="w-4 h-4" />링크 복사
             </button>
-          )}
+            <button onClick={handleShare} className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform">
+              <Share2 className="w-4 h-4" />공유
+            </button>
+            {!premiumUnlocked && (
+              <button onClick={handleDownload} className="h-12 rounded-xl bg-secondary text-secondary-foreground text-xs font-medium flex flex-col items-center justify-center gap-1 active:scale-[0.96] transition-transform">
+                <Download className="w-4 h-4" />이미지 저장
+              </button>
+            )}
+          </div>
           {premiumUnlocked && (
             <button onClick={handleDownloadPremiumReport} className="w-full h-12 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-sm font-bold flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-3 shadow-md">
               <Download className="w-4 h-4" />프리미엄 리포트 이미지 저장
