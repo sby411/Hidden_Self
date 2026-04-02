@@ -7,7 +7,7 @@ import { toPng } from "html-to-image";
 import { Progress } from "@/components/ui/progress";
 import Footer from "@/components/Footer";
 import { useAiAnalysis } from "@/hooks/useAiAnalysis";
-import { trackSubmissionSuccess, trackSubmissionFailed } from "@/lib/trackSubmission";
+import { trackSubmissionSuccess, trackSubmissionFailed, trackPaymentSuccess } from "@/lib/trackSubmission";
 import { requestPayment } from "@/lib/payment";
 
 const ResultPage = () => {
@@ -39,6 +39,8 @@ const ResultPage = () => {
       // Payment succeeded via redirect
       console.log("[PortOne] Redirect payment success:", paymentIdParam);
       setPremiumUnlocked(true);
+      const submissionId = sessionStorage.getItem("instai_submission_id");
+      if (submissionId) trackPaymentSuccess(submissionId);
       toast.success("결제가 완료되었습니다! 프리미엄 분석을 확인하세요 🎉");
       setTimeout(() => {
         premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -89,6 +91,8 @@ const ResultPage = () => {
       if (result.success) {
         toast.success("결제가 완료되었습니다! 프리미엄 분석을 확인하세요 🎉");
         setPremiumUnlocked(true);
+        const submissionId = sessionStorage.getItem("instai_submission_id");
+        if (submissionId) trackPaymentSuccess(submissionId);
         setTimeout(() => {
           premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);

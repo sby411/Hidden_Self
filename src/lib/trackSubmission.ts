@@ -62,3 +62,20 @@ export function trackSubmissionFailed(rowId: string) {
       }
     });
 }
+
+/** Update row payment_status to 'paid' via RPC. */
+export function trackPaymentSuccess(rowId: string) {
+  console.log("[trackSubmission] Updating payment_status to paid, rowId:", rowId);
+  supabase
+    .rpc("update_test_submission_payment" as any, {
+      p_id: rowId,
+      p_payment_status: "paid",
+    })
+    .then(({ error }: any) => {
+      if (error) {
+        console.error("[trackSubmission] ❌ Payment status update FAILED:", JSON.stringify(error));
+      } else {
+        console.log("[trackSubmission] ✅ Payment status update to paid OK");
+      }
+    });
+}
