@@ -102,9 +102,11 @@ const ResultPage = () => {
     }
   };
 
+  const shareUrl = "https://insta-vibe-teller.lovable.app";
+
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(shareUrl);
       toast.success("링크가 복사되었어요! 친구에게 공유해보세요 ✨");
     } catch {
       toast.error("링크 복사에 실패했어요");
@@ -125,11 +127,11 @@ const ResultPage = () => {
         await navigator.share({
           title: "LOVE DNA | 내 인스타로 보는 꼬이는 남자 유형",
           text: ai ? `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${ai.attractedType.name}'이래. 너도 해봐!` : "내 인스타 vibe 분석 결과 확인해봐!",
-          url: window.location.href,
+          url: shareUrl,
         });
         toast.success("공유창이 열렸어요");
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(shareUrl);
         toast.success("링크가 복사되었어요! 친구에게 공유해보세요 ✨");
       }
     } catch { /* user cancelled */ }
