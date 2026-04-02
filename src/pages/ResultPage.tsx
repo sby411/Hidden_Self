@@ -89,6 +89,8 @@ const ResultPage = () => {
       if (result.success) {
         toast.success("결제가 완료되었습니다! 프리미엄 분석을 확인하세요 🎉");
         setPremiumUnlocked(true);
+        const submissionId = sessionStorage.getItem("instai_submission_id");
+        if (submissionId) trackPaymentSuccess(submissionId);
         setTimeout(() => {
           premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
