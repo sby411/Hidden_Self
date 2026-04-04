@@ -749,17 +749,27 @@ const ResultPage = () => {
                   </div>
                 </div>
                 {/* Blurred reason - premium */}
-                <div className="relative mt-4 rounded-xl overflow-hidden">
-                  <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
-                    <p className="text-[11px] text-foreground/70 leading-relaxed">사진 구도와 색감, 셀카 비율에서 읽히는 이미지가 테스토스테론 우위형 남성을 자극하는 구조를 만들고 있습니다. 이 비율이 관계 패턴에 미치는 영향은 심층 분석에서 확인하세요.</p>
+                {premiumUnlocked ? (
+                  <div className="mt-4 rounded-xl p-3 bg-[hsl(45,20%,8%)]/60 border border-[hsl(45,40%,25%)]/30">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Crown className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium Insight</span>
+                    </div>
+                    <p className="text-[11px] text-foreground/80 leading-relaxed">사진 구도와 색감, 셀카 비율에서 읽히는 이미지가 테스토스테론 우위형 남성을 자극하는 구조를 만들고 있습니다. 이 비율이 관계 패턴에 미치는 영향은 심층 분석에서 확인하세요.</p>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
-                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
-                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">이유 분석 — 프리미엄에서 확인</span>
+                ) : (
+                  <div className="relative mt-4 rounded-xl overflow-hidden">
+                    <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
+                      <p className="text-[11px] text-foreground/70 leading-relaxed">사진 구도와 색감, 셀카 비율에서 읽히는 이미지가 테스토스테론 우위형 남성을 자극하는 구조를 만들고 있습니다. 이 비율이 관계 패턴에 미치는 영향은 심층 분석에서 확인하세요.</p>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
+                        <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                        <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">이유 분석 — 프리미엄에서 확인</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* LOCKED: 경제력 / 주도형 / 집착형 */}
