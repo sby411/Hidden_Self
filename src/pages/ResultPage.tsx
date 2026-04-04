@@ -1407,7 +1407,7 @@ const ResultPage = () => {
             <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium mb-1">내 인스타로 본</p>
             <p className="text-[11px] text-muted-foreground mb-4">나에게 꼬이는 남자 유형</p>
             <div className="text-5xl mb-3">{ai.attractedType.emoji}</div>
-            <h3 className="text-2xl font-bold text-foreground mb-4 tracking-tight">{ai.attractedType.name}</h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4 tracking-tight break-keep">{ai.attractedType.name}</h3>
             <div onClick={() => navigate("/")} className="inline-flex items-center gap-1 bg-card/60 backdrop-blur-sm rounded-full px-4 py-2 border border-border/30 cursor-pointer hover:bg-card/80 transition-colors">
               <span className="text-xs font-semibold text-foreground">다시 테스트하기 →</span>
             </div>
