@@ -1340,7 +1340,7 @@ const ResultPage = () => {
               </div>
             ) : (
               // ─── UNLOCKED STATE ───
-              <div ref={premiumRef}>
+              <div ref={premiumRef} className="rounded-3xl border-2 border-[hsl(45,50%,40%)]/50 p-4 bg-gradient-to-br from-[hsl(45,15%,6%)] to-background shadow-[0_0_25px_hsl(45,50%,40%,0.08)]">
                 <div ref={premiumReportRef}>
                   {premiumContent}
                 </div>
