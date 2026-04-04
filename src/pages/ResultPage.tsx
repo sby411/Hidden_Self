@@ -508,16 +508,8 @@ const ResultPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                <div className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-destructive/10 flex items-center justify-center"><Heart className="w-4 h-4 text-destructive" /></div>
-                  <div><p className="text-[10px] text-muted-foreground">평균 좋아요</p><p className="text-base font-black text-foreground">{igStats?.avgLikes ?? 0}</p></div>
-                </div>
-                <div className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center"><Activity className="w-4 h-4 text-accent-foreground" /></div>
-                  <div><p className="text-[10px] text-muted-foreground">참여율</p><p className="text-base font-black text-foreground">{igStats?.engagementRate ?? 0}%</p></div>
-                </div>
-              </div>
+
+
 
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <div className="glass-card rounded-2xl p-3.5 flex items-center gap-3">
