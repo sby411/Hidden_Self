@@ -1,28 +1,22 @@
 /**
  * 재회 리포트 데이터 모델 + 결정적 더미 생성.
- * 실제 분석 연동 시 동일 키에 API/AI 결과를 주입하면 됩니다.
+ * 이별 시점(년·월)과 경과 개월을 해시·문구에 반영해 실제 API에 그대로 매핑 가능하게 둡니다.
  */
 
 export type ReunionScores = {
-  /** 두 계정 종합 재회 가능성 (0–100) */
   reunionPossibility: number;
-  /** 상대의 재회·관계 개방도 (0–100) */
   theirReunionOpenness: number;
-  /** 지금 연락 시도 적합도 (0–100) */
   contactTimingFit: number;
 };
 
-/** 내 계정: 피드·프로필 기반 신호 블록 */
 export type MyProfileSignals = {
-  /** 어떤 표면 신호를 봤는지 (투명성) */
   observedFrom: string;
   emotionalState: string;
-  relationshipOpenness: string;
   lingeringAttachment: string;
+  relationshipOpenness: string;
   contactInitiationTendency: string;
 };
 
-/** 상대 계정: 동일 계열 + 재회·선제연락 */
 export type TheirProfileSignals = {
   observedFrom: string;
   emotionalState: string;
@@ -32,21 +26,49 @@ export type TheirProfileSignals = {
   likelyToReachOutFirst: string;
 };
 
-/** 상대 중심 심화 (가능성/신호 톤) */
+/** 상대 중심 핵심 — 재회 의사결정에 바로 쓰는 4축 */
 export type TheirFocusReport = {
-  genderOrContextSignal: string;
-  currentRelationshipOpenness: string;
-  likelyDatingSomeoneSignals: string;
-  relationshipStyle: string;
+  /** 지금 재회에 얼마나 열려 있는지 (신호 기반, 단정 금지) */
+  openToReunionNow: string;
+  /** 새 인물/만남 가능성 시그널 */
+  newPersonPossibilitySignals: string;
+  /** 무의식적 방어 패턴 */
   unconsciousDefensePattern: string;
-  reunionClosureRead: string;
+  /** 먼저 연락할 타입인지 */
+  willTheyReachOutFirst: string;
+};
+
+/** 무료 구간 마지막 — 한눈에 정리 */
+export type ReunionFreeClosingSummary = {
+  whyThisScore: string;
+  keyVariable: string;
+  contactNowOrWait: string;
+};
+
+/** 프리미엄 직전 CTA + 하단 스티키 바 카피 */
+export type ReunionPremiumGateCta = {
+  title: string;
+  body: string;
+  footnote: string;
+  /** 메인 버튼 한 개 */
+  ctaPrimary: string;
+  /** 메인 버튼 바로 아래 짧은 보조 설명 */
+  ctaAuxiliary: string;
+  /** 스티키 바 제목 (전체 재회 리포트 중심) */
+  stickyHeadline: string;
+  stickySubline: string;
+  /** 취소선 정가 (오픈 이벤트) */
+  stickyListPrice: string;
+  stickyPriceLabel: string;
+  /** 짧은 오픈 특가 설명 */
+  stickySaleNote: string;
 };
 
 export type ReunionSynthesis = {
   whyThisScore: string;
   keyVariable: string;
-  ifClosedWhy: string;
-  ifOpenHow: string;
+  /** 지금 연락/행동이 관계를 닫는 쪽인지, 열릴 여지를 남기는 쪽인지 */
+  contactOpensOrCloses: string;
 };
 
 export type ReunionActionGuide = {
@@ -56,12 +78,45 @@ export type ReunionActionGuide = {
   toneIfContact: string;
 };
 
+/** @deprecated AI 마이그레이션용 — UI는 premiumTeasers 사용 */
 export type ReunionPremiumCard = {
   title: string;
   body: string;
 };
 
-/** API/AI 매핑용 상위 필드 (문단 문자열) */
+/** 무료 전면: 연락 vs 기다림 힌트 (최종 판독은 유료) */
+export type ReunionDecisionHint = {
+  /** 0~100, 높을수록 ‘연락 쪽’ 기울기 */
+  contactLeanPercent: number;
+  headline: string;
+  hintLine: string;
+};
+
+/** 무료 압축: 갈등축 + 나/상대 한 줄 */
+export type ReunionSignalSnapshot = {
+  conflictLine: string;
+  youLine: string;
+  themLine: string;
+};
+
+/** 프리미엄: 제목 + 공개 1요소만 선명, 나머지 본문은 블러 */
+export type ReunionPremiumTeaser = {
+  key: string;
+  title: string;
+  /** 보조 한 줄 (비우면 미표시) */
+  visibleSummary: string;
+  /** 카드1: 연락↔기다림 게이지 % */
+  contactVsWaitPercent?: number;
+  /** 카드2: 기간 범위만 공개 (예: 2~4주) */
+  waitRangeShort?: string;
+  /** 카드3: 예시 문장 일부 */
+  tonePreview?: string;
+  /** 카드4: 가중치·밴드 % (리포트 느낌) */
+  newPersonWeightPercent?: number;
+  lockedBody: string;
+};
+
+/** API/AI 매핑용 (문단) */
 export type ReunionReportPayload = {
   myProfileSignals: MyProfileSignals;
   theirProfileSignals: TheirProfileSignals;
@@ -73,15 +128,54 @@ export type ReunionReportPayload = {
   finalRecommendation: string;
 };
 
+export type ReunionReportMeta = {
+  breakupYear: number;
+  breakupMonth: number;
+  breakupLabel: string;
+  /** 달력 기준 만 개월 수 (0 이상) */
+  monthsSinceBreakup: number;
+  /** UI용 자연어: "한 달 미만" | "약 N개월" 등 */
+  monthsSinceLabel: string;
+};
+
 export type ReunionFullReport = ReunionReportPayload & {
+  meta: ReunionReportMeta;
   summaryTitle: string;
   summaryLine: string;
   scores: ReunionScores;
+  /** 인스타 신호로 읽힌 '이별 축' — 단정 아닌 공명용 */
+  breakupResonance: string;
+  socialProofLine: string;
+  toc: { id: string; label: string }[];
   theirFocus: TheirFocusReport;
   synthesis: ReunionSynthesis;
   actionGuide: ReunionActionGuide;
+  freeClosingSummary: ReunionFreeClosingSummary;
+  premiumGateCta: ReunionPremiumGateCta;
+  /** 부분 공개형 심층 카드 */
+  premiumTeasers: ReunionPremiumTeaser[];
+  decisionHint: ReunionDecisionHint;
+  signalSnapshot: ReunionSignalSnapshot;
+  /** 짧은 무료 요약 (애매한 이유 / 최대 변수) */
+  freeCore: { whyAmbiguous: string; keyVariable: string };
   premiumLocked: ReunionPremiumCard[];
 };
+
+export function getMonthsSinceBreakup(breakupYear: number, breakupMonth: number, now = new Date()): number {
+  const end = now.getFullYear() * 12 + now.getMonth();
+  const start = breakupYear * 12 + (breakupMonth - 1);
+  return Math.max(0, end - start);
+}
+
+export function formatMonthsSinceLabel(months: number): string {
+  if (months <= 0) return "한 달 미만";
+  if (months === 1) return "약 1개월";
+  if (months < 12) return `약 ${months}개월`;
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  if (m === 0) return `약 ${y}년`;
+  return `약 ${y}년 ${m}개월`;
+}
 
 function hashKey(s: string): number {
   let h = 0;
@@ -89,233 +183,396 @@ function hashKey(s: string): number {
   return h;
 }
 
-function pick<T>(h: number, salt: number, arr: readonly T[]): T {
-  return arr[(h ^ salt) % arr.length];
+function pick<T>(seed: number, salt: number, arr: readonly T[]): T {
+  return arr[(seed ^ salt) % arr.length];
 }
 
-function scoreTriplet(h: number): ReunionScores {
-  const base = 36 + (h % 28);
-  const open = 32 + ((h >> 4) % 32);
-  const contact = 28 + ((h >> 8) % 38);
+function scoreTriplet(seed: number, monthsSince: number): ReunionScores {
+  const damp = monthsSince <= 2 ? -4 : monthsSince >= 12 ? 3 : 0;
+  const base = 36 + (seed % 28) + damp;
+  const open = 32 + ((seed >> 4) % 32) + Math.min(4, Math.floor(monthsSince / 6));
+  const contact = 28 + ((seed >> 8) % 38) - (monthsSince <= 1 ? 5 : 0);
   return {
-    reunionPossibility: Math.min(88, Math.max(34, base)),
-    theirReunionOpenness: Math.min(86, Math.max(30, open)),
-    contactTimingFit: Math.min(82, Math.max(26, contact)),
+    reunionPossibility: Math.min(88, Math.max(32, base)),
+    theirReunionOpenness: Math.min(86, Math.max(28, open)),
+    contactTimingFit: Math.min(82, Math.max(24, contact)),
   };
 }
 
 const SUMMARY_LINES = [
-  "지금 상대는 완전히 닫힌 상태는 아니지만, 먼저 다가오는 타입은 아닙니다. 신호상 여지는 있으나 해석의 폭이 남아 있어요.",
-  "두 계정 모두 감정의 잔여물이 완전히 사라진 톤은 아니에요. 다만 그 잔여물이 곧바로 '연락을 반긴다'는 뜻은 아닙니다.",
-  "상대 쪽에서 관계를 다시 여는 문은 살짝 열려 보이는 구간이 있어요. 다만 그 문은 넓게 열린 상태라기보다, 상황에 따라 닫힐 수 있는 폭이 큽니다.",
-  "내 계정 신호는 아직 정리 중인 감정이 겉으로도 읽히는 편이에요. 상대는 겉으로는 단정해 보이나, 세부 톤에서 방어가 남아 있을 가능성이 있습니다.",
+  "다시 들일 만큼 열린 건 아니다. 완전히 정리된 것도 아니다. 지금은 가능성보다 부담이 먼저 읽힌다.",
+  "끝낸 척은 하는데 완전히 끝낼 용기는 없어 보인다. 캡션·간격이 그걸 말한다.",
+  "여지 남기는 사람처럼 보여도, 책임은 피하고 싶은 톤에 가깝다. 첫 문장이 부담이면 창구부터 닫힌다.",
+  "다시 만나고 싶은 마음보다, 다시 휘말리고 싶지 않은 쪽이 더 크게 읽힌다—적어도 상대 피드는 그렇다.",
 ] as const;
 
-function buildReport(h: number): ReunionFullReport {
-  const scores = scoreTriplet(h);
-  const summaryLine = pick(h, 1, SUMMARY_LINES);
+const BREAKUP_RESONANCE = [
+  "확인받고 싶다가 한 줄, 혼자 견딘다가 한 줄—같은 주에 공존한다. 말은 괜찮은데 톤은 냉각.",
+  "이별 직후 과하게 멀쩡하면 감정이 없어진 게 아니라, 다시 흔들리는 상황을 피하는 쪽에 가깝다.",
+  "한쪽은 접점을 늘리고 한쪽은 속도를 늦춘다. 연애 문제라기보다 기대·속도 불일치 축.",
+  "급삭제가 아니다. 말하기 지친 축이다. 트리거 소재에서만 톤이 무너진다.",
+] as const;
 
+const SNAPSHOT_YOU = [
+  "감정이 사라진 게 아니라, 감정이 새는 구멍만 좁혀 둔 상태로 읽힌다.",
+  "스토리로 우회하다 DM은 못 보낸다. 들키기 싫은 욕구가 고백으로 번지기 쉽다.",
+  "‘혼자 잘 산다’가 반복되면 방어다. 무관심이면 굳이 증명할 에너지가 줄어든다.",
+] as const;
+
+const SNAPSHOT_THEM = [
+  "열린 사람인 척은 해도, 실제로는 다시 흔들리기 싫어서 문을 얇게 잠근 톤.",
+  "연애 캡션은 줄이고 경계는 피드에 박아 뒀다. 친절과 개방을 헷갈리면 오판 난다.",
+  "절대 안 돌아간다도, 다시 열자도 아니다. 새 사람 쪽으로 기운지는 따로 봐야 한다.",
+] as const;
+
+const FREE_WHY_AMBIGUOUS = [
+  "끝낸 척은 하는데 잔상은 남았다. 한 신호만 골라 믿으면 ‘될 것 같다’로 오판 난다.",
+  "여지처럼 보이는 것과 방어가 동시에 있다. 점수는 ‘된다’가 아니라 지금 들어가면 방어만 두꺼워질 쪽을 가리킨다.",
+  "완전 종료도 적극 재시작도 약하다. 애매함이 곧 지금의 판정이다.",
+] as const;
+
+const FREE_KEY_VARIABLE = [
+  "연락이 문제라기보다, 지금 들어가면 진심보다 피로로 읽힐 가능성이 크다. 피로·자존심·‘부담인지 대화인지’가 승부를 가른다.",
+  "상대가 새 서사를 쌓았을수록 첫 접점은 가볍지 않으면 문만 닫힌다.",
+  "네 감정 높이와 상대 방어 사이 간격. 좁히기 전엔 말해도 전달이 어긋난다.",
+] as const;
+
+function computeContactLeanPercent(seed: number, scores: ReunionScores): number {
+  return Math.min(78, Math.max(22, Math.round(
+    46 + (scores.contactTimingFit - scores.theirReunionOpenness) * 0.42 + (seed % 11) - 5,
+  )));
+}
+
+function buildDecisionHint(seed: number, contactLeanPercent: number): ReunionDecisionHint {
+  const headline =
+    contactLeanPercent >= 58
+      ? pick(seed, 201, [
+          "지금은 ‘연락하면 먹힐 틈’이 조금 보인다. 그렇다고 지금 당장 손 대도 된다는 뜻은 아니다.",
+          "창구는 있을 수 있다. 첫 문장이 부담이면 틈은 바로 사라진다.",
+          "기다림만이 정답은 아니다. 다만 연락은 짧고 가벼울 때만 관계를 연다.",
+        ])
+      : contactLeanPercent <= 42
+        ? pick(seed, 202, [
+            "지금은 기다리는 쪽에 무게가 실린다. 속도 안 맞춘 연락은 관계를 여는 대신 방어만 두껍게 만든다.",
+            "먼저 들어가면 상대 방어만 더 두꺼워질 가능성이 크다. 자극(연타·간접 압박)부터 줄여라.",
+            "기다림은 멍때림이 아니다. 상대 리듬에 맞출 때까지 손 떼는 쪽이다.",
+          ])
+        : pick(seed, 203, [
+            "열린 것 같다가도 닫힌 것 같다. 애매함이 지금의 판정이다.",
+            "여지처럼 보이는 것과 방어가 겹친다. 승부수보다 온도가 먼저다.",
+            "된다/안 된다보다, 지금 어떤 접근이 문을 닫는지가 본론이다.",
+          ]);
+
+  const hintLine = pick(seed, 204, [
+    "지금 손 내밀면 먹히는지·기다려야 하는지·상대가 진짜 열려 있는지—끝까지는 심층에서 판독한다.",
+    "무료는 방향만 준다. 문장·타이밍·답 올 확률은 잠금.",
+    "‘언제·뭐라고’가 갈린다. 그건 유료 구간이다.",
+  ]);
+
+  return { contactLeanPercent, headline, hintLine };
+}
+
+
+function buildPremiumTeasers(
+  seed: number,
+  monthsSince: number,
+  contactPct: number,
+  synthesis: ReunionSynthesis,
+  theirFocus: TheirFocusReport,
+  actionGuide: ReunionActionGuide,
+): ReunionPremiumTeaser[] {
+  const waitRangeShort = monthsSince <= 2 ? "2~4주" : monthsSince <= 8 ? "3~6주" : "8주+";
+
+  const waitWindowHint =
+    monthsSince <= 2
+      ? "우선 2~4주: 상대 스토리·업로드 리듬이 ‘방어 톤’에서 내려가는지 본다."
+      : monthsSince <= 8
+        ? "3~6주 단위로 체크: 피로·회피 톤이 완화되는 신호가 있을 때만 속도를 올린다."
+        : "단기가 아니다. 새 서사가 얇아지거나 트리거에서만 톤이 흔들릴 때 관망 비중이 커진다.";
+
+  const tonePreview = pick(seed, 91, [
+    "\"요즘 어때? 한 줄만이라도.\"",
+    "\"바쁠 수 있는데, 괜찮을 때만 짧게.\"",
+    "\"그때 부담 준 건 미안해. 길게 안 할게.\"",
+  ]);
+
+  const newPersonWeightPercent = 26 + (seed % 37);
+
+  const locked1 = [
+    `【연락 vs 기다림 · 최종 판독】\n${synthesis.whyThisScore}\n\n${theirFocus.openToReunionNow}\n\n무의식 방어: ${theirFocus.unconsciousDefensePattern}\n\n${synthesis.keyVariable}`,
+    `지금 변수: ${synthesis.contactOpensOrCloses}`,
+  ].join("\n\n");
+
+  const locked2 = [
+    `【기다림이 맞다면 · 언제까지】\n${waitWindowHint}\n\n이후에도 다음이 남아 있으면 연락은 미룬다: 스토리가 회피 톤, 댓글·반응 속도 급락, 야간·주말에만 감정 소재가 튀는 패턴.\n\n2주·4주·8주 체크포인트별로 ‘연락 시도 적합/비적합’ 기준과, 그때 써도 되는 첫 문장 톤(짧음·중립·사과 중심)을 케이스별로 정리한다. 달력이 아니라 계정 신호가 안정·완화되는 패턴을 기준으로 한다.`,
+    monthsSince <= 3
+      ? "이별 직후라면 ‘즉시’보다 상대 피로가 내려가는 구간을 먼저 잡는 편이 역효과가 적다."
+      : "시간이 지난 만큼 새 서사가 단단해졌는지가 변수다. 서사가 두꺼울수록 첫 접점은 더 가볍게.",
+  ].join("\n\n");
+
+  const locked3 = [
+    `【톤 · 문장 · 답장 가능성】\n먹히는 톤: ${actionGuide.toneIfContact}\n\n지금 연락 가이드: ${actionGuide.contactNowGuidance}\n\n기다릴 때: ${actionGuide.waitGuidance}`,
+    `답장 가능성이 올라가는 방식: 한 줄 확인, 부담 낮은 질문, 사과는 핵심만, 요구 대신 선택지.\n\n답 없이 더 멀어지는 방식: ${actionGuide.avoidActions}`,
+    `첫 문장 후보 3개(복붙용 아님—길이·속도 원칙 고정): (1) 안부 한 줄 (2) 사과 한 줄 (3) 공통 관심 한 줄. 방어형 상대에게는 (1)만 먼저.`,
+  ].join("\n\n");
+
+  const locked4 = [
+    `【새 사람 가능성 · 가중치】\n${theirFocus.newPersonPossibilitySignals}\n\n태그 반복, 특정 인물 단독 노출, 야간·주말 스토리 상관, 장소 루프를 가능성 구간으로만 정리한다. 가족·동료·촬영 오탐을 걸러내는 기준과, 확인 질문이 왜 방어를 올리는지(역효과)를 사례별로 쓴다. 14일 관찰 시트·묻지 말 질문 목록 포함.`,
+  ].join("\n");
+
+  return [
+    {
+      key: "contact-wait",
+      title: "지금 연락 vs 기다리기",
+      visibleSummary: "",
+      contactVsWaitPercent: contactPct,
+      lockedBody: locked1,
+    },
+    {
+      key: "wait-until",
+      title: "기다린다면, 언제까지가 맞는지",
+      visibleSummary: "",
+      waitRangeShort,
+      lockedBody: locked2,
+    },
+    {
+      key: "tone-reply",
+      title: "연락한다면: 먹히는 톤 vs 멀어지는 톤",
+      visibleSummary: "",
+      tonePreview,
+      lockedBody: locked3,
+    },
+    {
+      key: "new-person",
+      title: "상대가 새 사람 쪽으로 기운 가능성",
+      visibleSummary: "",
+      newPersonWeightPercent,
+      lockedBody: locked4,
+    },
+  ];
+}
+
+function buildReport(seed: number, monthsSince: number, breakupYear: number, breakupMonth: number): ReunionFullReport {
+  const scores = scoreTriplet(seed, monthsSince);
+  const summaryLine = pick(seed, 1, SUMMARY_LINES);
+  const breakupResonance = pick(seed, 30, BREAKUP_RESONANCE);
   const my: MyProfileSignals = {
-    observedFrom:
-      "프로필 소개 문구, 최근 게시물 캡션의 반복 키워드, 피드 톤(밝음/차분/과장), 스토리 하이라이트 구성, 업로드 간격 등 공개 영역에서 읽히는 패턴을 기준으로 했습니다.",
-    emotionalState: pick(h, 2, [
-      "최근 캡션과 이미지 톤이 '괜찮아 보이려는' 구성이 섞여 있어요. 겉은 가볍게 보이나, 특정 주제에서만 감정 밀도가 올라가는 흔적이 신호로 잡힙니다.",
-      "피드 리듬이 다소 불규칙하고, 감정을 직접 말하기보다 은유·노래 가사·짧은 문장으로 대신하는 패턴이 보입니다. 아직 정리 중인 감정이 옅게 비치는 편이에요.",
-      "전반적으로 안정된 톤을 유지하려 하지만, 예전 대비 '관계'나 '이별'에 닿는 단어 선택이 조심스러운 경향이 있어요.",
+    observedFrom: "공개 바이오·캡션·하이라이트·스토리 간격만. 비공개·삭제는 제외.",
+    emotionalState: pick(seed, 2, [
+      "관계 키워드만 터지면 캡션 밀도가 달라진다. 감정이 없어진 게 아니라 피하는 주제가 있다.",
+      "가사·이모지로 감정 대체. 톤만 무거워지면 ‘말하기 싫다’ 쪽.",
+      "말투·태그만 사라지면 피드에서 관계 서사 지우는 편집일 수 있다.",
     ]),
-    relationshipOpenness: pick(h, 3, [
-      "새로운 관계를 적극적으로 열어두는 톤보다는, 일단 나를 지키는 방향의 서사가 앞에 서 있는 느낌입니다.",
-      "타인과의 경계는 비교적 분명하고, 동시에 외로움이나 그리움을 완전히 지운 상태는 아니라고 읽힙니다.",
-      "관계에 대한 언급은 줄었지만, '혼자 잘 지냄'을 과시하는 쪽에 가깝다면 방어적 자기안정일 수 있어요.",
+    lingeringAttachment: pick(seed, 4, [
+      "장소·계절 반복은 미련일 수도, 흔들리기 싫은 잔류일 수도 있다.",
+      "과거 콘텐츠를 새 서사로 안 덮으면 정리 완료와 거리가 있다.",
+      "활동 리듬이 들쭉날쭉하면 감정이 피드에 박혀 있다.",
     ]),
-    lingeringAttachment: pick(h, 4, [
-      "과거 관계를 직접 언급하진 않아도, 시간·장소·감정을 트리거할 만한 소재가 간헐적으로 반복됩니다. 미련이 '폭발적'이라기보다는 잔류형에 가깝게 읽혀요.",
-      "팔로우·태그·하이라이트에서 특정 시기 콘텐츠가 상대적으로 많이 남아 있는 편이에요. 정리가 끝난 사람의 전형적인 미니멀 피드와는 거리가 있습니다.",
-      "미련이 크게 드러나진 않지만, 갑작스러운 활동 중단이나 반대로 과한 활동 증가 같은 '리듬 변화'가 신호로 포착됩니다.",
+    relationshipOpenness: pick(seed, 3, [
+      "새 사람보다 ‘나 먼저’ 서사가 앞선다. 다시 들일 만큼 문 열린 상태는 아니다.",
+      "경계는 있는데 그리움을 완전히 지운 톤은 아니다. 열림과 방어가 동시다.",
+      "‘혼자 잘 산다’ 반복은 방어일 수 있다. 증명이 많을수록 에너지가 아직 거기 있다.",
     ]),
-    contactInitiationTendency: pick(h, 5, [
-      "스토리 반응이나 가벼운 리액션으로 접점을 테스트하려는 패턴이 있을 수 있어요. 큰 대화보다는 작은 신호로 먼저 온도를 재는 쪽에 가깝습니다.",
-      "감정이 올라오면 먼저 연락하기보다, 캡션이나 노출로 우회적으로 신호를 보낼 가능성이 신호상 더 큽니다.",
-      "이미 한 번 크게 다가갔다가 물러선 경험이 있을 때 흔한 '다시는 안 한다' 선언형 톤과 실제 행동(스토리 확인 등) 사이에 간극이 보일 수 있어요.",
+    contactInitiationTendency: pick(seed, 5, [
+      "스토리 반응으로 온도 재다 고백으로 번지기 쉽다.",
+      "DM보다 피드·스토리 우회가 크면 오해가 커진다.",
+      "연락 안 한다면서 열람·반응 남기면 경계만 올라간다.",
     ]),
   };
 
   const their: TheirProfileSignals = {
-    observedFrom:
-      "상대 공개 프로필의 바이오 톤, 피드의 주제 분산도, 타인과의 태그 빈도, 캡션의 감정 거리감, 하이라이트에 남긴 관계 서사 등을 함께 봤습니다.",
-    emotionalState: pick(h, 6, [
-      "겉으로는 단정하고 일상 중심의 피드를 유지하지만, 특정 시기 게시물의 톤이나 스토리 소재에서 감정의 '잔여물'이 옅게 남아 있을 수 있어요.",
-      "최근 들어 새로운 취미·사람·장소 노출이 늘었다면, 관심사 전환일 수도 있고 회피적 리셋일 수도 있어요. 단정은 피합니다.",
-      "감정 표현이 줄고, 브랜드·풍경·업무 중심으로 피드가 이동한 경우가 많습니다. '정리 완료' 신호일 수도, '말하지 않는 정리 중'일 수도 있어요.",
+    observedFrom: "상대 공개 피드만. 패턴이 겹칠 때만 해석.",
+    emotionalState: pick(seed, 6, [
+      "특정 소재에서만 톤이 바뀐다. 감정 새는 구멍만 막은 느낌.",
+      "새 장소 노출 = 전환이라 단정 금지. 리셋 연출과 구분해야 한다.",
+      "성과·풍경 중심 이동은 정리일 수도 억제일 수도 있다.",
     ]),
-    relationshipOpenness: pick(h, 7, [
-      "새 관계를 열어둔다기보다, 일단 '나만의 영역'을 확보하는 쪽의 서사가 강해 보입니다.",
-      "타인과의 친밀 노출은 있으나, 연애 서사로 읽히는 태그·캡션은 신중한 편이에요.",
-      "관계에 대한 직접 언급은 드물고, 경계를 분명히 하는 이미지 운용이 보입니다.",
+    relationshipOpenness: pick(seed, 7, [
+      "환영보다 통제·회복 모드. 연락 반응으로 드러난다.",
+      "연애 캡션 줄인 건 경계를 피드로 그은 것.",
+      "경계 문장 반복이면 혼란 싫음이 열림보다 앞선다.",
     ]),
-    newPeopleReadiness: pick(h, 8, [
-      "새로운 사람을 받아들일 '공간'이 완전히 비어 보이진 않지만, 깊은 교류까지 열려 있다고 보기엔 신호가 엇갈립니다.",
-      "사교적 노출은 있으나, 감정적 깊이가 필요한 관계로의 전환 신호는 아직 약한 편으로 읽힐 수 있어요.",
-      "외부 자극(모임·여행·소개)에는 열려 있어 보이나, 연인 관계로의 재진입은 별도의 문턱이 있어 보입니다.",
+    newPeopleReadiness: pick(seed, 8, [
+      "0은 아니다. 깊은 교류까지 열렸다고 말하긴 이르다.",
+      "사교 늘어도 로맨틱 개방으로 바로 연결하지 마라.",
+      "예전 관계로 다시 들어가는 건 별도 문턱이다.",
     ]),
-    reunionOpenness: pick(h, 9, [
-      "재회에 '완전 닫힘'이라기보다, 조건부·상황부로 열려 있을 가능성이 신호상 더 큽니다. 다만 그 조건이 말로 명시되지는 않아요.",
-      "과거 관계를 부정하지는 않지만, 다시 열기를 적극 홍보하는 톤도 아닙니다. 중립적 거리에서 관찰할 여지가 남습니다.",
-      "상대 스스로 먼저 재회를 열어젖히기보다는, 부담 낮은 접점에서 반응이 생기면 움직일 수 있는 타입에 가깝게 읽힐 수 있어요.",
+    reunionOpenness: pick(seed, 9, [
+      "절대 안 돌아간다도, 다시 열자도 아니다. 부담 낮을 때만 반응이 달라질 수 있다.",
+      "관망이 곧 여지는 아니다. 피로가 먼저일 수 있다.",
+      "가벼운 접점엔 반응할 수 있어도 기다리면 온다에만 매달리면 방어만 익숙해진다.",
     ]),
-    likelyToReachOutFirst: pick(h, 10, [
-      "먼저 긴 메시지를 보내거나 관계를 정의하려는 스타일은 신호상 낮은 편으로 보입니다. 짧고 가벼운 접점 쪽 가능성이 더 큽니다.",
-      "자존심·경계·피로감 중 무엇이든 '먼저 잡는 것'에 대한 비용을 크게 느끼는 톤이 섞여 있을 수 있어요.",
-      "만약 먼저 연락한다면, 감정 고백보다는 일상·업무·공통 관심사 같은 안전한 빌드업 쪽이 더 자연스러울 수 있습니다.",
+    likelyToReachOutFirst: pick(seed, 10, [
+      "긴 총정리·관계 정의 타입은 낮다. 비용을 크게 느낀다.",
+      "무관심이 방어일 수 있다. 그럼 연락은 늦거나 짧다.",
+      "먼저 오면 고백보다 일상·공통 관심 한 줄이 덜 자극적이다.",
     ]),
   };
 
   const theirFocus: TheirFocusReport = {
-    genderOrContextSignal: pick(h, 11, [
-      "프로필만으로 성별을 단정하지 않습니다. 다만 캡션·태그·하이라이트에서 '이성·친구·관계' 맥락이 어떻게 배치되는지를 중심으로 읽었습니다.",
-      "관계 맥락의 단서는 간접적으로 주로 드러납니다. 직접적인 연애 공개 없이도, 특정 인물과의 반복 노출이나 거리감 조절이 신호가 될 수 있어요.",
-      "이성 관계 서사가 드러나는 방식이 '과시형'인지 '숨김형'인지에 따라 해석이 달라져요. 지금은 후자 쪽 신호가 조금 더 짙게 잡힙니다.",
+    openToReunionNow: pick(seed, 40, [
+      "지금은 환영 모드가 아니라 조건부 관망에 가깝습니다. 완전 차단형(흔적 급삭제·감정 언어 제거)과도 거리가 있어요—그래서 더 애매합니다. 열려 있다는 말이 재회를 원한다는 뜻은 아니고, 부담이 낮을 때만 문이 아주 조금 움직일 수 있는 신호예요.",
+      "가능성 0은 아니지만 적극적으로 다시 열어두는 단계도 아닙니다. 잔여 감정과 방어가 동시에 있어서, 무거운 연락 한 번에 후자가 이기기 쉬운 구간이에요. 지금 필요한 건 확신이 아니라 속도와 자극 조절입니다.",
+      "‘다시 사귀자’보다 ‘일단 숨 고르기’ 신호가 더 큽니다. 숨 고르기 전에 장문·총정리·죄책감이 들어오면 문이 닫히는 쪽으로 기울기 쉽습니다. 가벼운 접점이 쌓이면 해석이 바뀔 여지는 있지만, 그걸 ‘곧 된다’로 바꾸면 오판입니다.",
     ]),
-    currentRelationshipOpenness: pick(h, 12, [
-      "지금 당장 깊은 관계를 열어두기보다는, 감정 에너지를 회복·분산하는 단계로 보이는 흔적이 있습니다.",
-      "새로운 만남 가능성을 완전히 닫지는 않았지만, 우선순위가 높지 않을 수 있어요.",
-      "관계에 대한 언급이 줄고 일상 리듬이 안정된 것처럼 보이나, 그 안정이 '진짜 평온'인지 '억제'인지는 교차 신호가 필요합니다.",
+    newPersonPossibilitySignals: pick(seed, 72, [
+      "같은 인물 반복 태그, 비슷한 시간대·장소 루프가 겹치면 새 만남 가능성을 열어둘 만합니다. 친구·동료·촬영 오탐이 많아 단정은 금지고, 심층에서는 가중치와 제외 규칙을 더 촘촘히 둡니다.",
+      "연애 고백형 캡션은 약한데 사교·외출로 공백을 메우면, 누군가와 깊어졌다기보다 외로움·불안을 분산하는 패턴일 수 있어요. 재회 타이밍 잡을 때 변수로만 넣어야 합니다.",
+      "특정 인물이 단독으로 자주 등장하면 주목할 만합니다. 교제 중이라 단정은 못 해도, ‘지금 내 연락이 어디에 걸릴지’를 현실적으로 좁히는 데 쓰입니다.",
     ]),
-    likelyDatingSomeoneSignals: pick(h, 72, [
-      "특정 인물과의 반복 태그·유사한 장소·시간대 스토리가 겹친다면 가능성을 열어둘 수 있어요. 다만 친구·업무 관계일 수도 있어 단정하지 않습니다.",
-      "연애를 암시하는 직접 증거는 약하고, 오히려 '관계 공백'을 채우는 소소한 사교 활동 신호가 더 두드러질 수 있어요.",
-      "새 인물 단독 노출이 갑자기 늘었다면 주목할 만하지만, 그것만으로 교제 중이라고 말하긴 이릅니다.",
+    unconsciousDefensePattern: pick(seed, 14, [
+      "감정이 올라오면 본인도 모르게 바쁨·친구·일·유머로 화제를 돌립니다. 싫어해서가 아니라 다시 무너지는 느낌을 피하는 무의식 방어에 가깝고, 그때 설득을 밀어붙이면 방어만 두꺼워집니다.",
+      "먼저 차갑게 보이려 거리를 두는 선제 방어가 있을 수 있어요. 겉은 단단한데 안은 지친 타입이면 공격으로 받아들이고, 관계만 더 굳습니다.",
+      "잘못 인정보다 상황 재해석으로 내러티브를 지키려는 경향이 섞이면, 논리 이기기보다 호흡 맞추기가 덜 상처 나는 경우가 많아요. 그건 당신이 틀렸다는 뜻이 아니라 상대의 방어 기제가 그렇게 작동한다는 뜻입니다.",
     ]),
-    relationshipStyle: pick(h, 13, [
-      "갈등이 생기면 먼저 정리하려 하기보다 거리를 두고 상황이 가라앉기를 기다리는 성향이 신호에 섞여 있을 수 있어요.",
-      "관계에서의 기대치를 말로 명확히 하는 편보다, 행동과 노출로 간접 표현하는 쪽에 가깝습니다.",
-      "친밀해질수록 경계를 다시 세우는 패턴이 반복될 수 있는 타입으로 읽힐 여지가 있습니다.",
-    ]),
-    unconsciousDefensePattern: pick(h, 14, [
-      "감정이 올라올 때 '바쁨·친구·일'로 화제를 전환하거나, 유머로 덮는 방식의 방어가 보일 수 있어요.",
-      "상처받기 싫어서 먼저 차갑게 보이려는 선제적 거리두기 패턴이 무의식에 깔려 있을 수 있습니다.",
-      "잘못을 인정하기보다 상황을 재해석해 자기 내러티브를 보호하는 경향이 신호에 옅게 섞여 있을 수 있어요.",
-    ]),
-    reunionClosureRead: pick(h, 15, [
-      "완전히 닫아버린 사람의 전형적 패턴(관계 흔적 최소화, 감정 언어 제거, 새 서사 강한 전환)과는 거리가 있습니다. 해석의 여지가 남아 있어요.",
-      "닫힌 듯 보이나, 특정 트리거에서 반응이 달라지는 흔적이 있다면 '단단한 종료'보다 '억제된 종료'에 가까울 수 있어요.",
-      "지금은 재회를 적극 열어두는 단계라기보다, 상황이 바뀌면 다시 해석될 수 있는 중간 상태로 보는 편이 신호와 맞습니다.",
+    willTheyReachOutFirst: pick(seed, 15, [
+      "먼저 긴 연락·관계 재정의 타입은 신호상 낮습니다. 짧은 신호나 우연한 듯한 접점 쪽이 더 그럴듯해요. 기다리면 온다에만 기대면 시간만 가고, 방어는 익숙해집니다.",
+      "먼저 잡는 비용을 크게 느끼면 표면 무관심이 나옵니다. 기다림이 항상 답은 아니고, 부담 없는 첫 문장이 변수가 될 때가 있습니다—다만 그 문장도 자극이면 소용없습니다.",
+      "먼저 온다면 고백보다 일상·업무·공통 관심으로 시작하는 쪽이 자연스럽습니다. 그 순간 본인 쪽 과한 압박·추궁이 있으면 바로 닫힙니다.",
     ]),
   };
 
-  const reunionReadiness = pick(h, 16, [
-    "상대의 재회 준비도는 '지금 당장'보다는 조건부로 읽히는 편이에요. 부담이 낮고 자존심이 덜 건드는 접점이 있을 때만 움직일 가능성이 큽니다.",
-    "재회를 원한다기보다, 관계의 의미를 아직 완전히 내려놓지 못한 잔여 구간이 있을 수 있어요. 이 둘은 같지 않습니다.",
-    "상대가 먼저 재회를 제안할 확률은 신호상 높지 않습니다. 다만 완전한 거절 상태로 고정됐다고 보기에도 이릅니다.",
+  const reunionReadiness = pick(seed, 16, [
+    "재회가 '지금 당장'이 아니라 조건부로 읽힙니다. 부담 낮은 접점 없이는 움직일 이유가 신호상 약해요.",
+    "재회 욕망과 의미 정리 미완은 다릅니다. 후자만 있으면 연락은 통할 수 있어도 관계는 같은 자리로 돌아가기 쉽습니다.",
+    "상대가 먼저 제안할 확률은 높지 않습니다. 완전 거절 고정이라 단정하긴 이르지만, 기다림만으로 열리는 타입도 아닙니다.",
   ]);
 
-  const relationshipOpenness = pick(h, 17, [
-    "관계 전반에 대한 개방성은 중간 이하로 읽힙니다. 새로운 깊이로 들어가기 전에 감정 안전지대를 먼저 확보하려는 톤이에요.",
-    "겉으로는 열려 있어 보이나, 실제 감정 투자는 신중한 편으로 해석할 수 있어요.",
-    "관계에 대한 기대를 낮춘 상태에서 천천히 관찰하는 모드에 가깝습니다.",
+  const relationshipOpenness = pick(seed, 17, [
+    "관계 전반 개방성은 중간 이하로 읽힙니다. 안전지대를 먼저 쌓는 신호가 앞섭니다.",
+    "겉으론 열려 보여도 실제 투자는 신중합니다. 친절을 개방으로 착각하면 바로 오해가 납니다.",
+    "기대를 낮춘 채 관망하는 모드에 가깝고, 그 관망이 곧 여지는 아닙니다.",
   ]);
 
-  const currentDatingLikelihood = pick(h, 18, [
-    "다른 사람과 진지한 교제 중이라는 직접 신호는 약합니다. 다만 가벼운 만남·소개 자리 가능성은 열어둘 만해요.",
-    "새로운 로맨스보다는 일상 회복·사교 확장 쪽 에너지가 더 두드러질 수 있어요.",
-    "특정 인물과의 반복 노출이 있다면 '교제 중' 가능성을 열어두되, 친밀한 친구 관계일 수도 있어요.",
+  const currentDatingLikelihood = pick(seed, 18, [
+    "진지한 교제 직접 신호는 약합니다. 가벼운 만남·사교는 열어둘 만하지만 로맨스로 바로 연결하긴 이릅니다.",
+    "새 로맨스보다 일상 회복·사교 쪽 에너지가 더 두드러질 수 있어요. 그건 ‘없다’가 아니라 ‘다른 축에 있다’에 가깝습니다.",
+    "반복 노출이 있어도 친구·업무일 수 있습니다. 단정 대신 변수로만 두는 게 안전합니다.",
   ]);
 
-  const unconsciousPattern = pick(h, 19, [
-    "무의식적으로는 '다시 상처받지 않기'가 먼저입니다. 그래서 관심이 있어도 표면적으로는 차갑게 보일 수 있어요.",
-    "과거 관계에서 반복된 패턴(회피·도망·과잉설명)이 재발하기 전에 관문을 세우는 방어가 작동 중일 수 있습니다.",
-    "좋은 감정과 불안이 동시에 올라올 때, 불안 쪽을 먼저 처리하려는 경향이 신호에 섞여 있을 수 있어요.",
+  const unconsciousPattern = pick(seed, 19, [
+    "다시 상처받지 않기가 먼저라 관심이 있어도 겉은 차갑게 보일 수 있어요. 그걸 거절로만 읽으면 대응이 과해집니다.",
+    "과거 패턴 재발 전에 관문을 세우는 방어가 작동 중일 수 있습니다. 설득보다 자극을 줄이는 쪽이 덜 역효과입니다.",
+    "좋은 감정과 불안이 동시에 올라올 때 불안을 먼저 처리하려는 경향이 섞이면, 짧은 연락도 부담으로 들리기 쉽습니다.",
   ]);
 
-  const contactTiming = pick(h, 20, [
-    "지금은 '큰 말'보다 '짧고 부담 없는 한 줄'이 신호상 덜 자극적입니다. 시간대는 상대가 혼자 있을 법한 구간이 상대적으로 안전해 보여요.",
-    "감정이 올라온 밤보다, 주말 오전·일상 리듬이 안정된 시간대가 역효과 위험이 낮을 수 있어요. 사람마다 다릅니다.",
-    "연락 전 48시간은 상대 피드·스토리 리듬을 한 번 더 보는 것이 신호 해석에 도움이 됩니다.",
+  const contactTiming = pick(seed, 20, [
+    "큰 말보다 짧고 부담 없는 한 줄이 덜 자극적입니다. 길이가 곧 진심이 아니라 부담으로 읽힐 수 있어요.",
+    "감정 폭발이 오른 밤보다 리듬이 안정된 시간대가 역효과 위험이 낮은 편입니다.",
+    "연락 전 상대 피드·스토리 리듬을 짧게라도 다시 보세요. 감으로 쓰면 톤이 어긋나기 쉽습니다.",
   ]);
 
   const synthesis: ReunionSynthesis = {
-    whyThisScore: pick(h, 21, [
-      `점수는 두 계정의 표면 신호를 합쳤을 때, 재회가 '불가능'도 '확정적'도 아닌 중간대에 놓인다는 뜻에 가깝습니다. 내 쪽에서는 정리가 덜 된 흔적이, 상대 쪽에서는 방어와 거리가 함께 읽혀요.`,
-      `가능성 점수가 중간대인 이유는, 긍정 신호와 제한 신호가 동시에 존재하기 때문이에요. 한쪽만 보고 결론 내리면 오판이 나기 쉽습니다.`,
-      `두 사람 모두 '완전 끝' 서사는 약하고, 동시에 '다시 시작하자' 서사도 약합니다. 그 사이의 회색 영역이 점수로 반영됐습니다.`,
+    whyThisScore: pick(seed, 21, [
+      `세 점수가 동시에 높지도 낮지도 않은 이유는, 두 계정 모두 ‘끝냈다’는 표면과 아직 남은 잔상이 같이 잡히기 때문입니다. 헤어진 지 ${monthsSince <= 0 ? "얼마 되지 않아" : "시간이 흘러"} 감정과 방어의 비중이 바뀌는 구간이라 한 신호만 믿고 결론 내리면 오판이 납니다.`,
+      "여지로 읽히는 신호와 방어·피로 신호가 겹칩니다. 점수는 ‘된다/안 된다’가 아니라 지금 이 속도·톤으로 가면 문이 닫힐 쪽으로 기우는지를 말하는 편에 가깝습니다.",
+      "완전 종료 서사도 적극 재시작 서사도 약하면 회색대가 길게 납니다. 그 불편한 간격이 지금 점수 구간이에요.",
     ]),
-    keyVariable: pick(h, 22, [
-      "지금 가장 큰 변수는 상대의 자존심·피로감과, 내 쪽에서 연락이 '부담'으로 읽힐지 '부담 없는 접점'으로 읽힐지입니다.",
-      "시간 변수(마지막 연락 이후 경과)와, 상대가 새 서사를 얼마나 단단히 쌓았는지가 점수를 가를 수 있어요.",
-      "내 감정의 높이와 상대의 방어 사이 간극이 좁혀지느냐가 핵심입니다. 간격이 크면 같은 말도 다르게 들립니다.",
+    keyVariable: pick(seed, 22, [
+      "가장 큰 변수는 상대의 피로·자존심, 그리고 내 연락이 대화 요청으로 들릴지 부담으로 들릴지입니다. 같은 문장도 여기서 갈립니다. 문제는 가능성이 아니라 어떤 접근이 이 사람을 더 닫히게 만드느냐입니다.",
+      "시간이 지난 만큼 상대가 새 생활 서사를 얼마나 단단히 쌓았는지가 두 번째 변수입니다. 쌓일수록 무거운 한 방보다 가벼운 접점이 변수가 됩니다.",
+      "내 감정의 높이와 상대 방어 사이 간격이 좁혀지지 않으면 진심도 전달이 어긋납니다. ‘말했는데 왜 몰라’가 나오기 전에 온도부터 맞추는 게 현실적입니다.",
     ]),
-    ifClosedWhy: pick(h, 23, [
-      "닫혀 보인다면, 대개 '미움'보다 '지침'과 '다시 설명하기 싫음'에 가까운 경우가 많아요. 그건 영원한 종료와는 다른 종류의 닫힘일 수 있어요.",
-      "상대가 닫힌 것처럼 보일 때도, 실제로는 감정이 아직 남아 있어 오히려 더 조심스러운 상태일 수 있습니다.",
-      "방어가 두껍게 보이면, 재회 거절이라기보다 자기보호일 가능성을 함께 열어두는 편이 균형에 가깝습니다.",
-    ]),
-    ifOpenHow: pick(h, 24, [
-      "열려 있다면, 큰 약속보다는 작은 일관성이 신호를 만듭니다. 한 번에 해결하려 하기보다 부담을 낮추는 쪽이 읽힙니다.",
-      "열려 있는 방식이 '다시 사귀자'가 아니라 '일단 무리 없이 대화'일 수 있어요. 후자부터 받아들일 준비가 필요합니다.",
-      "상대가 열려 있을 때도 조건이 붙어 있을 수 있어요. 그 조건이 말로 나오기 전까지는 속도를 맞추는 게 안전합니다.",
+    contactOpensOrCloses: pick(seed, 99, [
+      "지금 충동적으로 장문을 쏘거나 관계를 못 박는 연락은 신호상 문을 닫는 쪽으로 기울 확률이 큽니다. 짧고 존중이 있는 한 줄은 문을 활짝 열진 못해도 나중을 위한 숨구멍은 남길 수 있어요.",
+      "회피 모드에서 연타·죄책감·새 사람 추궁은 방어만 두꺼워집니다. 속도를 줄이는 건 포기가 아니라 온도 맞추기일 수 있지만, 기다림이 항상 정답은 아닙니다.",
+      "연락 한 번이 결과를 바꿀 수도 망칠 수도 있는 구간입니다. 그 불편한 불확실성을 인정할 때 톤이 덜 흔들립니다.",
     ]),
   };
 
   const actionGuide: ReunionActionGuide = {
-    contactNowGuidance: pick(h, 25, [
-      "지금 당장 긴 고백보다는, 짧은 확인 한 줄이 신호상 덜 위험합니다. 단, 상대가 최근 스토리·피드에서 회피 톤이 강하면 하루 이틀 미루는 편이 나을 수 있어요.",
-      "연락 자체가 괜찮을 수도 있지만, '관계 정의'까지 한 번에 가져가면 역효과 가능성이 커집니다.",
-      "내 감정이 폭발 직전이면 연락은 미루는 게 결과적으로 더 나을 수 있어요. 메시지 톤은 감정이 쓴다는 느낌이 나면 위험합니다.",
+    contactNowGuidance: pick(seed, 25, [
+      "지금 연락이 맞는지는 감정이 폭발 직전인지부터 봅니다. 들떠 있으면 오늘은 쓰지 않는 게 이기는 경우가 많아요. 차분할 때 짧은 확인 한 줄이 가장 덜 위험합니다.",
+      "연락은 통할 구간이어도 관계 정의·재회 선언까지 한 번에 가면 역효과가 큽니다. 먼저 부담만 깎으세요.",
+      "상대 피드·스토리가 회피 톤이면 하루 이틀 미루고 리듬을 다시 보는 편이 안전합니다. 강박으로 쓰면 톤이 금방 새요.",
     ]),
-    waitGuidance: pick(h, 26, [
-      "기다림이 맞을 때는, '아무것도 안 함'이 아니라 '자극을 줄임'입니다. 확인 강박이 올라오면 오히려 신호가 틀어질 수 있어요.",
-      "상대가 새 서사를 쌓는 듯한 구간에서는 속도를 맞추는 쪽이 현실적입니다.",
-      "기다릴 때는 하루 단위가 아니라 '상대 리듬이 안정되는지'를 기준으로 보는 편이 좋아요.",
+    waitGuidance: pick(seed, 26, [
+      "기다림은 멍하니 있는 게 아니라 연타·스토리 확인 강박·간접 메시지 같은 자극을 줄이는 겁니다. 안 하면서 스토리만 열어보는 건 기다림이 아니에요.",
+      "상대가 새 서사를 쌓는 구간이면 속도를 맞추는 쪽이 현실적입니다. 내 감정 시계와 상대 시계가 다르다는 걸 전제로 두세요.",
+      "하루 단위보다 상대 리듬이 안정됐는지를 기준으로 보세요. 불안이 기준을 잡으면 판단이 흔들립니다.",
     ]),
-    avoidActions: pick(h, 27, [
-      "죄책감 유발, 비난, 과거 총정리, 새 연애 추궁, 공개 플랫폼에서의 간접 메시지는 신호상 위험도가 높습니다.",
-      "읽씹에 대한 연타, 사과의 과잉, '마지막이야' 협박성 문장도 방어를 키우기 쉬워요.",
-      "친구를 통한 전달, SNS 스토리로만 감정 표현하기는 오해를 키울 수 있어요.",
+    avoidActions: pick(seed, 27, [
+      "죄책감 유발, 비난, 과거 총정리, 새 연애 추궁, 공개 플랫폼 간접 메시지는 위험도가 높습니다. ‘진심’이라는 이름으로 자극만 키우는 경우가 많아요.",
+      "읽씹 후 연타, 과잉 사과, ‘마지막이야’식 문장은 방어를 키웁니다. 말이 길수록 통제욕으로 읽히기 쉽습니다.",
+      "친구 전달·스토리로만 감정 표현은 오해를 키웁니다. 직접 말하기 어렵다는 건 상대에게도 그만큼 부담이라는 뜻일 수 있어요.",
     ]),
-    toneIfContact: pick(h, 28, [
-      "톤은 짧고, 요구가 아니라 선택지를 주는 방식이 덜 부담스럽습니다. '괜찮으면' '부담되면 안 해도 돼' 같은 완충 문장이 도움이 될 수 있어요.",
-      "사과가 필요하다면 한두 문장으로 핵심만, 설명은 상대가 물을 때 늘리는 편이 안전합니다.",
-      "감정의 크기를 말로 증명하려 하기보다, 행동의 일관성을 보여주는 쪽이 신뢰 신호로 읽힐 수 있어요.",
+    toneIfContact: pick(seed, 28, [
+      "짧게, 요구가 아니라 선택지를 주는 톤이 덜 부담스럽습니다. 완충 문장은 미약해 보여도 방어를 덜 긁습니다.",
+      "사과가 필요하면 한두 문장으로 핵심만. 설명은 상대가 물을 때 늘리세요. 먼저 길게 풀면 해명으로 읽힙니다.",
+      "감정 크기를 말로 증명하려 하지 말고 이후 행동이 말을 따라가게 하세요. 말이 앞서면 신뢰 신호로 안 읽힙니다.",
     ]),
   };
 
-  const finalRecommendation = pick(h, 29, [
-    "정리하면, 지금은 '가능성을 닫지 말되, 속도는 낮추라'에 가깝습니다. 신호는 인스타 표면에서 읽힌 해석이며, 대화 한 번이 변수를 바꿀 수 있어요.",
-    "당장 결론을 내리기보다, 한 번의 가벼운 접점에서 상대 반응을 보고 다음을 정하는 전략이 신호와 맞습니다.",
-    "당신의 감정도 중요합니다. '연락해야만 한다'는 강박이 생기면 톤이 틀어지기 쉬워요. 가능하면 친한 사람과 한 번 말로 정리한 뒤 연락을 쓰는 것도 방법입니다.",
+  const freeClosingSummary: ReunionFreeClosingSummary = {
+    whyThisScore: pick(seed, 50, [
+      `지금 점수는 불가능도 확정 성공도 아닙니다. 두 계정 신호가 서로를 당기는 상태를 숫자로 옮긴 거예요. 헤어진 지 ${monthsSince <= 0 ? "얼마 안 된 시점" : "이만큼 지난 시점"}이라 감정과 방어가 섞여 있기 때문입니다.`,
+      "한쪽만 보면 오판이 납니다. 여지만 보면 착각이 되고 방어만 보면 너무 차가워집니다. 점수는 그 사이를 같이 보라는 신호예요.",
+    ]),
+    keyVariable: pick(seed, 51, [
+      "지금 가장 중요한 건 속도입니다. 상대 피로·자존심, 내 연락이 부담으로 들리는지가 다음 한 수를 가릅니다.",
+      "두 번째는 상대가 새 생활 서사를 얼마나 단단히 쌓았는지입니다. 두꺼울수록 무거운 한 방보다 가벼운 접점이 변수입니다.",
+    ]),
+    contactNowOrWait: pick(seed, 52, [
+      "감정이 격해져 있거나 상대 피드가 회피 톤이면 오늘은 기다리는 편이 이득일 수 있어요. 차분하고 짧은 한 줄이 준비됐다면 관계를 더 닫지 않는 쪽으로만 시도하세요.",
+      "연락해야 한다는 강박이 느껴지면 잠시 멈추세요. 강박이 톤에 섞이면 관계가 닫히는 경우가 많습니다. 짧은 메시지가 있으면 부담 최소화 방향으로만 가세요.",
+    ]),
+  };
+
+  const premiumGateCta: ReunionPremiumGateCta = {
+    title: "여기까지가 무료 판독의 끝이다.",
+    body: "지금 연락하면 먹히는지, 기다려야 하는지, 상대가 열려 있는지, 새 사람 쪽으로 기운지—심층에서 문장으로 끝까지 연다. 듣기 좋은 말만 하지 않는다.",
+    footnote: "공개 프로필 시그널·패턴 해석. 운세 아님.",
+    ctaPrimary: "기다릴지 연락할지 끝까지 보기",
+    ctaAuxiliary: "상대 속마음·반응 가능성·첫 문장까지 한 번에",
+    stickyHeadline: "기다릴지 연락할지 끝까지 보기",
+    stickySubline: `심층 열람 ${1_200 + (seed % 800).toLocaleString()}건`,
+    stickyListPrice: "9,900원",
+    stickyPriceLabel: "4,900원",
+    stickySaleNote: "오픈 특가 · 정가 대비",
+  };
+
+  const finalRecommendation = pick(seed, 29, [
+    "숫자에 숨지 마라. 다음 한 수는 짧게. 속도 틀리면 진심도 역효과다.",
+    "한 번에 해결하려 할수록 방어만 두꺼워진다. 가벼운 접점에서 반응을 본 뒤 움직여라.",
+    "연락 강박이 오르면 오늘은 쓰지 마라. 톤에 강박이 묻으면 상대는 피로로 읽는다.",
   ]);
 
-  const premiumLocked: ReunionPremiumCard[] = [
-    {
-      title: "상대가 아직 정리하지 못한 감정의 흔적",
-      body: `캡션에서 반복되는 시간대·계절·장소의 은유, 특정 노래 가사 인용 패턴, 과거 관계와 겹치는 이미지 구도 등을 타임라인 순으로 좁혀 봅니다. "여전히 남아 있다"와 "그저 습관"을 구분하는 체크리스트와, 접촉 시 이 흔적을 건드리면 안 되는 지점(자극 포인트)을 짚습니다. 무료 요약에서는 방향만 제시하고, 심층본에서는 문장 예시와 회피 문장까지 포함합니다.`,
-    },
-    {
-      title: "지금 새로운 사람을 만나고 있을 가능성 시그널",
-      body: `태그 패턴의 변화, 특정 인물과의 반복 노출, 주말·야간 스토리의 상관관계, 피드 톤의 '커플 서사' 가능성을 점수화하지 않고 가능성 구간으로 제시합니다. 오탐이 나기 쉬운 패턴(가족·동료·촬영)을 걸러내는 기준과, 확인 질문이 역효과인 경우를 구분합니다. 심층본에서는 2주 단위 관찰 포인트와 '묻지 말아야 할 질문' 목록을 제공합니다.`,
-    },
-    {
-      title: "상대의 무의식이 재회를 막는 이유",
-      body: `방어가 '거절'인지 '피로'인지 '자존심'인지 '트라우마 재연 방지'인지를 행동 신호로 나눕니다. 상대가 회피할 때 흔히 쓰는 문장 유형과, 그 뒤에 숨은 필요(존중·시간·사과의 형태)를 분리해 설명합니다. 희망고문이 아니라, 현실적으로 문을 열려면 어떤 조건이 필요해 보이는지 '가설'로 제시합니다.`,
-    },
-    {
-      title: "다시 연락이 이어질 수 있는 현실적인 조건",
-      body: `두 사람의 생활 리듬, 거리감, 최근 갈등의 성격(신뢰·소통·외압)을 기준으로 '최소 조건'과 '충분 조건'을 나눕니다. 인스타 신호만으로는 부족한 부분은 솔직히 한계로 표시하고, 대화에서 확인해야 할 질문 5개를 제안합니다. 타임라인별(2주/한 달/분기)로 기대치를 조정하는 가이드도 포함합니다.`,
-    },
-    {
-      title: "내가 연락할 때 먹히는 문장 톤",
-      body: `지금 두 계정 신호를 합쳐 '짧은 첫 문장' 6종, '피해야 할 첫 문장' 6종을 대비합니다. 사과가 필요한 케이스와 불필요한 케이스를 나누고, 상대 방어 패턴에 맞춘 완충 표현을 제안합니다. 복사해 쓰는 문장보다 원칙(길이·요구·감정 과잉 금지)을 먼저 고정하는 연습 시트를 심층본에 둡니다.`,
-    },
-    {
-      title: "지금 관계에서 가장 위험한 오해 포인트",
-      body: `읽씹=싫음인지 피로인지, 스토리 열람=관심인지 습관인지, 친절=재회 신호인지 예의인지 등 흔한 오해 TOP를 짚습니다. 각 오해가 생길 때 감정이 어떻게 폭주하는지와, 폭주를 막는 자기 질문 3가지를 넣습니다. 인스타 기반 해석의 한계와 함께, 반드시 현실 대화로 교차검증해야 할 지점을 명시합니다.`,
-    },
-  ];
+  const breakupLabel = `${breakupYear}년 ${breakupMonth}월`;
+  const monthsSinceLabel = formatMonthsSinceLabel(monthsSince);
+
+  const contactLeanPercent = computeContactLeanPercent(seed, scores);
+  const decisionHint = buildDecisionHint(seed, contactLeanPercent);
+  const signalSnapshot: ReunionSignalSnapshot = {
+    conflictLine: breakupResonance,
+    youLine: pick(seed, 301, SNAPSHOT_YOU),
+    themLine: pick(seed, 302, SNAPSHOT_THEM),
+  };
+  const freeCore = {
+    whyAmbiguous: pick(seed, 400, FREE_WHY_AMBIGUOUS),
+    keyVariable: pick(seed, 401, FREE_KEY_VARIABLE),
+  };
+  const premiumTeasers = buildPremiumTeasers(seed, monthsSince, contactLeanPercent, synthesis, theirFocus, actionGuide);
+  const premiumLocked: ReunionPremiumCard[] = premiumTeasers.map((t) => ({ title: t.title, body: t.lockedBody }));
 
   return {
-    summaryTitle: "재회 가능성 분석 결과",
+    meta: {
+      breakupYear,
+      breakupMonth,
+      breakupLabel,
+      monthsSinceBreakup: monthsSince,
+      monthsSinceLabel,
+    },
+    summaryTitle: "지금, 연락이 먹히는지 판독",
     summaryLine,
     scores,
+    breakupResonance,
+    socialProofLine: "",
+    toc: [
+      { id: "reunion-decision", label: "열릴까 닫힐까" },
+      { id: "reunion-scores", label: "왜 애매한가" },
+      { id: "reunion-snapshot", label: "인스타 흔적" },
+      { id: "reunion-premium", label: "심층 판독" },
+    ],
     myProfileSignals: my,
     theirProfileSignals: their,
     reunionReadiness,
@@ -323,15 +580,47 @@ function buildReport(h: number): ReunionFullReport {
     currentDatingLikelihood,
     unconsciousPattern,
     contactTiming,
-    theirFocus: theirFocus,
+    theirFocus,
     synthesis,
     actionGuide,
+    freeClosingSummary,
+    premiumGateCta,
     finalRecommendation,
+    decisionHint,
+    signalSnapshot,
+    freeCore,
+    premiumTeasers,
     premiumLocked,
   };
 }
 
-export function getReunionFullReport(myId: string, theirId: string, lastContact: string): ReunionFullReport {
-  const h = hashKey(`${myId}|${theirId}|${lastContact}`);
-  return buildReport(h);
+/** 이별 시점을 로컬 기준 현재 이전으로 클램프 (미래 월·연도 방지) */
+export function clampBreakupToPast(
+  breakupYear: number,
+  breakupMonth: number,
+  now = new Date(),
+): { year: number; month: number } {
+  const cy = now.getFullYear();
+  const cm = now.getMonth() + 1;
+  let y = breakupYear;
+  let m = breakupMonth;
+  if (y > cy) y = cy;
+  if (y === cy && m > cm) m = cm;
+  if (m < 1) m = 1;
+  if (y < 2000) y = 2000;
+  return { year: y, month: m };
+}
+
+export function getReunionFullReport(
+  myId: string,
+  theirId: string,
+  breakupYear: number,
+  breakupMonth: number,
+  now = new Date(),
+): ReunionFullReport {
+  const { year, month } = clampBreakupToPast(breakupYear, breakupMonth, now);
+  const key = `${myId}|${theirId}|${year}-${month}`;
+  const seed = hashKey(key);
+  const monthsSince = getMonthsSinceBreakup(year, month, now);
+  return buildReport(seed, monthsSince, year, month);
 }
