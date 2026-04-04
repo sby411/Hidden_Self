@@ -742,7 +742,7 @@ const ResultPage = () => {
                       <Crown className="w-3 h-3 text-[hsl(45,70%,55%)]" />
                       <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium Insight</span>
                     </div>
-                    <p className="text-[11px] text-foreground/80 leading-relaxed">당신의 피드 톤과 캡션 스타일이 외향적인 남성에게는 접근 가능성을, 내향적인 남성에게는 안전한 거리감을 동시에 느끼게 합니다.</p>
+                    <p className="text-[11px] text-foreground/80 leading-relaxed">{personalityInsightText}</p>
                   </div>
                 ) : (
                   <div className="relative mt-4 rounded-xl overflow-hidden">
