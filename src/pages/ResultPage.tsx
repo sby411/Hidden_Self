@@ -238,7 +238,30 @@ const ResultPage = () => {
     return { older, same, younger, extrovert, introvert, teto, aegen, economic, dominant, passive: 100 - dominant, clingy, distancing: 100 - clingy };
   }, [id, ai]);
 
-  // Loading state
+  // Dynamic premium insight texts based on actual distribution data
+  const ageInsightText = useMemo(() => {
+    const { older, same, younger } = distributionStats;
+    const max = Math.max(older, same, younger);
+    if (max === older) return `연상 남성 비율이 ${older}%로 가장 높습니다. 당신의 계정에서 읽히는 성숙한 이미지와 안정감이 나이 많은 남성의 접근 욕구를 자극하는 핵심 원인입니다. 바이오와 하이라이트 구성이 연상 남성에게 특히 강하게 어필하는 구조입니다.`;
+    if (max === younger) return `연하 남성 비율이 ${younger}%로 가장 높습니다. 당신의 피드에서 풍기는 친근하면서도 감각적인 분위기가 연하 남성에게 '편하게 다가갈 수 있는 매력적인 언니' 이미지를 형성하고 있습니다.`;
+    return `동갑 남성 비율이 ${same}%로 가장 높습니다. 당신의 계정 톤이 또래 남성에게 공감과 동질감을 느끼게 하면서, 동시에 접근 가능성을 높이는 균형 잡힌 이미지를 만들고 있습니다.`;
+  }, [distributionStats]);
+
+  const personalityInsightText = useMemo(() => {
+    const { extrovert, introvert } = distributionStats;
+    if (extrovert > introvert) return `외향형 남성 비율이 ${extrovert}%로 더 높습니다. 당신의 피드 톤과 캡션 스타일이 외향적인 남성에게 '이 사람이면 대화가 통하겠다'는 접근 가능성을 느끼게 합니다. 활동적인 콘텐츠 비율이 이 성향을 강하게 자극하고 있어요.`;
+    if (introvert > extrovert) return `내향형 남성 비율이 ${introvert}%로 더 높습니다. 당신의 피드에서 느껴지는 차분한 감성과 깊이 있는 분위기가 내향적인 남성에게 '안전하고 편안한 존재'로 읽히고 있습니다. 자극적이지 않으면서도 끌리는 이미지가 핵심입니다.`;
+    return `외향형과 내향형 남성이 균등하게 끌리고 있습니다. 당신의 피드가 활동적인 면과 차분한 면을 동시에 보여주고 있어, 성향에 관계없이 다양한 남성이 접근 가능성을 느끼는 구조입니다.`;
+  }, [distributionStats]);
+
+  const vibeInsightText = useMemo(() => {
+    const { teto, aegen } = distributionStats;
+    if (teto > aegen) return `테토 이미지 남성 비율이 ${teto}%로 더 높습니다. 당신의 사진 구도와 색감, 전체적인 피드 분위기가 남성적이고 주도적인 성향의 남성을 자극하는 구조를 만들고 있습니다. 이 유형은 빠르게 관심을 표현하지만, 관계 지속성에서는 주의가 필요합니다.`;
+    if (aegen > teto) return `에겐 이미지 남성 비율이 ${aegen}%로 더 높습니다. 당신의 피드에서 풍기는 부드럽고 세련된 감성이 감성적이고 섬세한 성향의 남성을 끌어당기고 있습니다. 이 유형은 천천히 다가오지만, 한번 빠지면 깊게 몰입하는 경향이 있습니다.`;
+    return `테토와 에겐 이미지 남성이 비슷한 비율로 끌리고 있습니다. 당신의 피드가 강한 인상과 부드러운 감성을 동시에 전달하고 있어, 다양한 스펙트럼의 남성에게 매력적으로 읽히는 독특한 구조입니다.`;
+  }, [distributionStats]);
+
+
   const loadingSteps = useMemo(() => [
     { text: "인스타 데이터 수집 중...", target: 15 },
     { text: "당신의 인스타 첫인상 분석 중...", target: 35 },
