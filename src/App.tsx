@@ -5,12 +5,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import LandingPage from "./pages/LandingPage";
+import ServiceHubPage from "./pages/ServiceHubPage";
 import LoadingPage from "./pages/LoadingPage";
 import ResultPage from "./pages/ResultPage";
 import PremiumPage from "./pages/PremiumPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import ReunionLandingPage from "./pages/reunion/ReunionLandingPage";
+import ReunionResultPage from "./pages/reunion/ReunionResultPage";
 
 const queryClient = new QueryClient();
 
@@ -22,12 +25,15 @@ const App = () => (
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<ServiceHubPage />} />
+            <Route path="/attraction" element={<LandingPage />} />
             <Route path="/loading" element={<LoadingPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/premium" element={<PremiumPage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/reunion" element={<ReunionLandingPage />} />
+            <Route path="/reunion/result" element={<ReunionResultPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

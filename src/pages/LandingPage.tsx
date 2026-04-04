@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, Camera, Palette, MessageCircle, Waves, Users, UserPlus, Clock, Activity, Hash, Image, Eye, BarChart3, Scan, Heart, ArrowRight, AlertTriangle, Flame, ShieldAlert, Target } from "lucide-react";
 import Footer from "@/components/Footer";
 
@@ -40,14 +40,14 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="px-5 py-4 border-b border-border/40 backdrop-blur-sm bg-card/60">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 w-fit rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
           <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
             <Scan className="w-3.5 h-3.5 text-white" />
           </div>
           <span className="text-sm font-bold tracking-tight text-foreground">
             LOVE DNA
           </span>
-        </div>
+        </Link>
       </header>
 
       <main className="flex-1 flex flex-col items-center">
