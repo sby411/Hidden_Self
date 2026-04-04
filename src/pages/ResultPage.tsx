@@ -747,7 +747,7 @@ const ResultPage = () => {
                 ) : (
                   <div className="relative mt-4 rounded-xl overflow-hidden">
                     <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
-                      <p className="text-[11px] text-foreground/70 leading-relaxed">당신의 피드 톤과 캡션 스타일이 외향적인 남성에게는 접근 가능성을, 내향적인 남성에게는 안전한 거리감을 동시에 느끼게 합니다.</p>
+                      <p className="text-[11px] text-foreground/70 leading-relaxed">{personalityInsightText}</p>
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
