@@ -703,7 +703,7 @@ const ResultPage = () => {
                       <Crown className="w-3 h-3 text-[hsl(45,70%,55%)]" />
                       <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium Insight</span>
                     </div>
-                    <p className="text-[11px] text-foreground/80 leading-relaxed">당신의 계정에서 읽히는 성숙한 이미지와 안정감이 연상 남성의 접근 비율을 높이는 핵심 원인입니다. 바이오와 하이라이트 구성이 특정 연령대에게 더 강하게 어필하는 구조입니다.</p>
+                    <p className="text-[11px] text-foreground/80 leading-relaxed">{ageInsightText}</p>
                   </div>
                 ) : (
                   <div className="relative mt-4 rounded-xl overflow-hidden">
