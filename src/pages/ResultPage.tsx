@@ -655,7 +655,7 @@ const ResultPage = () => {
                       <span className="text-[10px] font-bold text-primary uppercase tracking-wider">AI가 발견한 매력 패턴</span>
                     </div>
                     <div className="text-7xl mb-4">{ai.attractedType.emoji}</div>
-                    <h2 className="text-2xl font-black text-foreground mb-1 tracking-tight">{ai.attractedType.name}</h2>
+                    <h2 className="text-xl sm:text-2xl font-black text-foreground mb-1 tracking-tight break-keep word-break-keep-all">{ai.attractedType.name}</h2>
                   </div>
                 </div>
               </div>
