@@ -306,6 +306,15 @@ const ResultPage = () => {
     return (1.5 + (h % 35) / 10).toFixed(1);
   }, [id]);
 
+  const accessibilityLabel = useMemo(() => {
+    const score = parseFloat(accessibilityScore);
+    if (score <= 1.5) return "매우 쉬움";
+    if (score <= 2.5) return "쉬움";
+    if (score <= 3.5) return "보통";
+    if (score <= 4.3) return "어려움";
+    return "매우 어려움";
+  }, [accessibilityScore]);
+
   if (aiLoading || showComplete) {
     const currentStep = showComplete ? { text: "결과를 정리 중입니다..." } : loadingSteps[loadingStepIdx];
     const progressPct = showComplete ? 100 : Math.min(Math.round(loadingProgress), 96);
@@ -517,9 +526,12 @@ const ResultPage = () => {
                       <Target className="w-4 h-4 text-accent-foreground" />
                       접근 난이도
                     </h3>
-                    <div className="flex items-center gap-1.5 bg-accent/20 rounded-full px-3 py-1">
-                      <span className="text-lg font-black text-accent-foreground">{accessibilityScore}</span>
-                      <span className="text-[10px] text-muted-foreground font-medium">/ 5.0</span>
+                    <div className="flex items-center gap-2">
+                       <span className="text-[11px] font-bold text-accent-foreground bg-accent/30 px-2 py-0.5 rounded-full">{accessibilityLabel}</span>
+                       <div className="flex items-center gap-1.5 bg-accent/20 rounded-full px-3 py-1">
+                         <span className="text-lg font-black text-accent-foreground">{accessibilityScore}</span>
+                         <span className="text-[10px] text-muted-foreground font-medium">/ 5.0</span>
+                       </div>
                     </div>
                   </div>
                   <p className="text-sm text-foreground/90 leading-[1.9]">{ai.perceivedAccessibility}</p>
@@ -629,7 +641,7 @@ const ResultPage = () => {
               {/* FREE: 연상/동갑/연하 */}
               <div className="glass-card rounded-2xl p-5 mb-3">
                 <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
-                  <BarChart3 className="w-4 h-4 text-primary" /> 연령대별 끌림 분포
+                  <BarChart3 className="w-4 h-4 text-primary" /> 당신에게 끌리는 남자 — 연령대 분포
                 </h4>
                 <div className="space-y-3">
                   {[
@@ -648,21 +660,45 @@ const ResultPage = () => {
                     </div>
                   ))}
                 </div>
+                {/* Blurred reason - premium */}
+                <div className="relative mt-4 rounded-xl overflow-hidden">
+                  <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
+                    <p className="text-[11px] text-foreground/70 leading-relaxed">당신의 계정에서 읽히는 성숙한 이미지와 안정감이 연상 남성의 접근 비율을 높이는 핵심 원인입니다. 바이오와 하이라이트 구성이 특정 연령대에게 더 강하게 어필하는 구조입니다.</p>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
+                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">왜 이런 분포가 나오는지 — 프리미엄에서 확인</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* FREE: 외향/내향 */}
               <div className="glass-card rounded-2xl p-5 mb-3">
                 <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-primary" /> 성향별 분포
+                  <Users className="w-4 h-4 text-primary" /> 당신에게 끌리는 남자 — 성향 분포
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-xl bg-primary/5 border border-primary/10 p-3 text-center">
                     <p className="text-2xl font-black text-foreground">{distributionStats.extrovert}%</p>
-                    <p className="text-[10px] text-muted-foreground font-medium mt-1">외향형</p>
+                    <p className="text-[10px] text-muted-foreground font-medium mt-1">외향형 남성</p>
                   </div>
                   <div className="rounded-xl bg-accent/5 border border-accent/10 p-3 text-center">
                     <p className="text-2xl font-black text-foreground">{distributionStats.introvert}%</p>
-                    <p className="text-[10px] text-muted-foreground font-medium mt-1">내향형</p>
+                    <p className="text-[10px] text-muted-foreground font-medium mt-1">내향형 남성</p>
+                  </div>
+                </div>
+                {/* Blurred reason - premium */}
+                <div className="relative mt-4 rounded-xl overflow-hidden">
+                  <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
+                    <p className="text-[11px] text-foreground/70 leading-relaxed">당신의 피드 톤과 캡션 스타일이 외향적인 남성에게는 접근 가능성을, 내향적인 남성에게는 안전한 거리감을 동시에 느끼게 합니다.</p>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
+                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">근거 분석 — 프리미엄에서 확인</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -670,12 +706,12 @@ const ResultPage = () => {
               {/* FREE: 테토/에겐 */}
               <div className="glass-card rounded-2xl p-5 mb-3">
                 <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
-                  <Flame className="w-4 h-4 text-primary" /> 이미지 강도
+                  <Flame className="w-4 h-4 text-primary" /> 당신에게 끌리는 남자 — 이미지 강도
                 </h4>
                 <div className="space-y-3">
                   <div>
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-medium text-foreground">테토 이미지</span>
+                      <span className="text-xs font-medium text-foreground">테토 이미지 남성</span>
                       <span className="text-sm font-black text-primary">{distributionStats.teto}%</span>
                     </div>
                     <div className="h-3 bg-secondary rounded-full overflow-hidden">
@@ -684,11 +720,23 @@ const ResultPage = () => {
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-medium text-foreground">에겐 이미지</span>
+                      <span className="text-xs font-medium text-foreground">에겐 이미지 남성</span>
                       <span className="text-sm font-black text-accent-foreground">{distributionStats.aegen}%</span>
                     </div>
                     <div className="h-3 bg-secondary rounded-full overflow-hidden">
                       <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${distributionStats.aegen}%` }} />
+                    </div>
+                  </div>
+                </div>
+                {/* Blurred reason - premium */}
+                <div className="relative mt-4 rounded-xl overflow-hidden">
+                  <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
+                    <p className="text-[11px] text-foreground/70 leading-relaxed">사진 구도와 색감, 셀카 비율에서 읽히는 이미지가 테스토스테론 우위형 남성을 자극하는 구조를 만들고 있습니다. 이 비율이 관계 패턴에 미치는 영향은 심층 분석에서 확인하세요.</p>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
+                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">이유 분석 — 프리미엄에서 확인</span>
                     </div>
                   </div>
                 </div>
