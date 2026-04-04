@@ -299,43 +299,21 @@ const ResultPage = () => {
     return () => clearInterval(interval);
   }, [aiLoading, teaserInsights]);
 
-  // Accessibility score & label derived from AI text
-  const { accessibilityScore, accessibilityLabel } = useMemo(() => {
-    const text = ai?.perceivedAccessibility || "";
-    const low = text.toLowerCase();
-    // Keywords indicating easy access
-    const easyKeywords = ["쉽", "편하", "부담 없", "부담없", "말 걸기 좋", "친근", "다가가기 쉬", "접근하기 쉬", "말을 걸", "찔러"];
-    const hardKeywords = ["어렵", "벽", "차가", "경계", "쉽지 않", "감히", "넘사", "접근 불가", "범접", "까다"];
-    const midKeywords = ["애매", "헷갈", "양면", "반반", "될 듯 말 듯", "오락가락", "갈팡질팡"];
+  // Accessibility score from AI text
+  const accessibilityScore = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 100;
+    return (1.5 + (h % 35) / 10).toFixed(1);
+  }, [id]);
 
-    let easyCount = 0, hardCount = 0, midCount = 0;
-    easyKeywords.forEach(k => { if (low.includes(k)) easyCount++; });
-    hardKeywords.forEach(k => { if (low.includes(k)) hardCount++; });
-    midKeywords.forEach(k => { if (low.includes(k)) midCount++; });
-
-    let score: number;
-    let label: string;
-    if (midCount > 0 && easyCount > 0 && hardCount === 0) {
-      score = 2.8; label = "보통";
-    } else if (midCount > 0 || (easyCount > 0 && hardCount > 0)) {
-      score = 3.0; label = "보통";
-    } else if (hardCount > easyCount) {
-      if (hardCount >= 3) { score = 4.5; label = "매우 어려움"; }
-      else { score = 3.8; label = "어려움"; }
-    } else if (easyCount > hardCount) {
-      if (easyCount >= 3) { score = 1.5; label = "매우 쉬움"; }
-      else { score = 2.3; label = "쉬움"; }
-    } else {
-      // fallback: hash-based but moderate
-      let h = 0;
-      for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 100;
-      score = parseFloat((2.0 + (h % 20) / 10).toFixed(1));
-      if (score <= 2.5) label = "쉬움";
-      else if (score <= 3.5) label = "보통";
-      else label = "어려움";
-    }
-    return { accessibilityScore: score.toFixed(1), accessibilityLabel: label };
-  }, [ai, id]);
+  const accessibilityLabel = useMemo(() => {
+    const score = parseFloat(accessibilityScore);
+    if (score <= 1.5) return "매우 쉬움";
+    if (score <= 2.5) return "쉬움";
+    if (score <= 3.5) return "보통";
+    if (score <= 4.3) return "어려움";
+    return "매우 어려움";
+  }, [accessibilityScore]);
 
   if (aiLoading || showComplete) {
     const currentStep = showComplete ? { text: "결과를 정리 중입니다..." } : loadingSteps[loadingStepIdx];
