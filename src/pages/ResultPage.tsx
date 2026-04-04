@@ -526,9 +526,12 @@ const ResultPage = () => {
                       <Target className="w-4 h-4 text-accent-foreground" />
                       접근 난이도
                     </h3>
-                    <div className="flex items-center gap-1.5 bg-accent/20 rounded-full px-3 py-1">
-                      <span className="text-lg font-black text-accent-foreground">{accessibilityScore}</span>
-                      <span className="text-[10px] text-muted-foreground font-medium">/ 5.0</span>
+                    <div className="flex items-center gap-2">
+                       <span className="text-[11px] font-bold text-accent-foreground bg-accent/30 px-2 py-0.5 rounded-full">{accessibilityLabel}</span>
+                       <div className="flex items-center gap-1.5 bg-accent/20 rounded-full px-3 py-1">
+                         <span className="text-lg font-black text-accent-foreground">{accessibilityScore}</span>
+                         <span className="text-[10px] text-muted-foreground font-medium">/ 5.0</span>
+                       </div>
                     </div>
                   </div>
                   <p className="text-sm text-foreground/90 leading-[1.9]">{ai.perceivedAccessibility}</p>
