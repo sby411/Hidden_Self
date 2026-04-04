@@ -661,17 +661,27 @@ const ResultPage = () => {
                   ))}
                 </div>
                 {/* Blurred reason - premium */}
-                <div className="relative mt-4 rounded-xl overflow-hidden">
-                  <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
-                    <p className="text-[11px] text-foreground/70 leading-relaxed">당신의 계정에서 읽히는 성숙한 이미지와 안정감이 연상 남성의 접근 비율을 높이는 핵심 원인입니다. 바이오와 하이라이트 구성이 특정 연령대에게 더 강하게 어필하는 구조입니다.</p>
+                {premiumUnlocked ? (
+                  <div className="mt-4 rounded-xl p-3 bg-[hsl(45,20%,8%)]/60 border border-[hsl(45,40%,25%)]/30">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Crown className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium Insight</span>
+                    </div>
+                    <p className="text-[11px] text-foreground/80 leading-relaxed">당신의 계정에서 읽히는 성숙한 이미지와 안정감이 연상 남성의 접근 비율을 높이는 핵심 원인입니다. 바이오와 하이라이트 구성이 특정 연령대에게 더 강하게 어필하는 구조입니다.</p>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
-                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
-                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">왜 이런 분포가 나오는지 — 프리미엄에서 확인</span>
+                ) : (
+                  <div className="relative mt-4 rounded-xl overflow-hidden">
+                    <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
+                      <p className="text-[11px] text-foreground/70 leading-relaxed">당신의 계정에서 읽히는 성숙한 이미지와 안정감이 연상 남성의 접근 비율을 높이는 핵심 원인입니다. 바이오와 하이라이트 구성이 특정 연령대에게 더 강하게 어필하는 구조입니다.</p>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
+                        <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                        <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">왜 이런 분포가 나오는지 — 프리미엄에서 확인</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* FREE: 외향/내향 */}
@@ -690,17 +700,27 @@ const ResultPage = () => {
                   </div>
                 </div>
                 {/* Blurred reason - premium */}
-                <div className="relative mt-4 rounded-xl overflow-hidden">
-                  <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
-                    <p className="text-[11px] text-foreground/70 leading-relaxed">당신의 피드 톤과 캡션 스타일이 외향적인 남성에게는 접근 가능성을, 내향적인 남성에게는 안전한 거리감을 동시에 느끼게 합니다.</p>
+                {premiumUnlocked ? (
+                  <div className="mt-4 rounded-xl p-3 bg-[hsl(45,20%,8%)]/60 border border-[hsl(45,40%,25%)]/30">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Crown className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium Insight</span>
+                    </div>
+                    <p className="text-[11px] text-foreground/80 leading-relaxed">당신의 피드 톤과 캡션 스타일이 외향적인 남성에게는 접근 가능성을, 내향적인 남성에게는 안전한 거리감을 동시에 느끼게 합니다.</p>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
-                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
-                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">근거 분석 — 프리미엄에서 확인</span>
+                ) : (
+                  <div className="relative mt-4 rounded-xl overflow-hidden">
+                    <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
+                      <p className="text-[11px] text-foreground/70 leading-relaxed">당신의 피드 톤과 캡션 스타일이 외향적인 남성에게는 접근 가능성을, 내향적인 남성에게는 안전한 거리감을 동시에 느끼게 합니다.</p>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
+                        <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                        <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">근거 분석 — 프리미엄에서 확인</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* FREE: 테토/에겐 */}
@@ -729,46 +749,101 @@ const ResultPage = () => {
                   </div>
                 </div>
                 {/* Blurred reason - premium */}
-                <div className="relative mt-4 rounded-xl overflow-hidden">
-                  <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
-                    <p className="text-[11px] text-foreground/70 leading-relaxed">사진 구도와 색감, 셀카 비율에서 읽히는 이미지가 테스토스테론 우위형 남성을 자극하는 구조를 만들고 있습니다. 이 비율이 관계 패턴에 미치는 영향은 심층 분석에서 확인하세요.</p>
+                {premiumUnlocked ? (
+                  <div className="mt-4 rounded-xl p-3 bg-[hsl(45,20%,8%)]/60 border border-[hsl(45,40%,25%)]/30">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Crown className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium Insight</span>
+                    </div>
+                    <p className="text-[11px] text-foreground/80 leading-relaxed">사진 구도와 색감, 셀카 비율에서 읽히는 이미지가 테스토스테론 우위형 남성을 자극하는 구조를 만들고 있습니다. 이 비율이 관계 패턴에 미치는 영향은 심층 분석에서 확인하세요.</p>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
-                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
-                      <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">이유 분석 — 프리미엄에서 확인</span>
+                ) : (
+                  <div className="relative mt-4 rounded-xl overflow-hidden">
+                    <div className="blur-[6px] select-none pointer-events-none p-3 bg-secondary/20 rounded-xl" aria-hidden="true">
+                      <p className="text-[11px] text-foreground/70 leading-relaxed">사진 구도와 색감, 셀카 비율에서 읽히는 이미지가 테스토스테론 우위형 남성을 자극하는 구조를 만들고 있습니다. 이 비율이 관계 패턴에 미치는 영향은 심층 분석에서 확인하세요.</p>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-2.5 py-1 border border-[hsl(45,40%,25%)]/40">
+                        <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                        <span className="text-[9px] font-bold text-[hsl(45,70%,55%)]">이유 분석 — 프리미엄에서 확인</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 심층 성향 분포: LOCKED or UNLOCKED */}
+              {premiumUnlocked ? (
+                <div className="rounded-2xl p-5 mb-3 border-2 border-[hsl(45,50%,40%)]/50 bg-gradient-to-br from-[hsl(45,20%,8%)] to-card shadow-[0_0_15px_hsl(45,50%,40%,0.1)]">
+                  <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
+                    <Crown className="w-3.5 h-3.5 text-[hsl(45,70%,55%)]" /> 심층 성향 분포
+                    <span className="text-[9px] bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-1.5 py-0.5 rounded-full font-bold">UNLOCKED</span>
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-[hsl(45,15%,12%)]/60 border border-[hsl(45,30%,20%)]/30">
+                      <span className="text-xs font-medium text-foreground">경제력 수준</span>
+                      <span className="text-sm font-black text-[hsl(45,70%,55%)]">{distributionStats.economic}</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[hsl(45,15%,12%)]/60 border border-[hsl(45,30%,20%)]/30">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-medium text-foreground">주도형 / 수동형</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="flex-1 text-center rounded-lg bg-primary/10 border border-primary/20 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.dominant}%</p>
+                          <p className="text-[10px] text-muted-foreground">주도형</p>
+                        </div>
+                        <div className="flex-1 text-center rounded-lg bg-accent/10 border border-accent/20 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.passive}%</p>
+                          <p className="text-[10px] text-muted-foreground">수동형</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[hsl(45,15%,12%)]/60 border border-[hsl(45,30%,20%)]/30">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-medium text-foreground">집착형 / 거리두기형</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="flex-1 text-center rounded-lg bg-destructive/10 border border-destructive/20 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.clingy}%</p>
+                          <p className="text-[10px] text-muted-foreground">집착형</p>
+                        </div>
+                        <div className="flex-1 text-center rounded-lg bg-[hsl(200,20%,15%)] border border-[hsl(200,20%,25%)]/30 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.distancing}%</p>
+                          <p className="text-[10px] text-muted-foreground">거리두기형</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* LOCKED: 경제력 / 주도형 / 집착형 */}
-              <div className="relative rounded-2xl overflow-hidden mb-3">
-                <div className="glass-card rounded-2xl p-5">
-                  <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)]" /> 심층 성향 분포
-                    <span className="text-[9px] bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-1.5 py-0.5 rounded-full font-bold">PREMIUM</span>
-                  </h4>
-                  <div className="space-y-3 blur-[7px] select-none pointer-events-none" aria-hidden="true">
-                    {[
-                      { label: "경제력 수준", value: distributionStats.economic },
-                      { label: `주도형 ${distributionStats.dominant}% / 수동형 ${distributionStats.passive}%`, value: "" },
-                      { label: `집착형 ${distributionStats.clingy}% / 거리두기형 ${distributionStats.distancing}%`, value: "" },
-                    ].map((item) => (
-                      <div key={item.label} className="flex justify-between items-center p-3 rounded-xl bg-secondary/30">
-                        <span className="text-xs font-medium text-foreground">{item.label}</span>
-                        {item.value && <span className="text-sm font-black text-foreground">{item.value}</span>}
-                      </div>
-                    ))}
+              ) : (
+                <div className="relative rounded-2xl overflow-hidden mb-3">
+                  <div className="glass-card rounded-2xl p-5">
+                    <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)]" /> 심층 성향 분포
+                      <span className="text-[9px] bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-1.5 py-0.5 rounded-full font-bold">PREMIUM</span>
+                    </h4>
+                    <div className="space-y-3 blur-[7px] select-none pointer-events-none" aria-hidden="true">
+                      {[
+                        { label: "경제력 수준", value: distributionStats.economic },
+                        { label: `주도형 ${distributionStats.dominant}% / 수동형 ${distributionStats.passive}%`, value: "" },
+                        { label: `집착형 ${distributionStats.clingy}% / 거리두기형 ${distributionStats.distancing}%`, value: "" },
+                      ].map((item) => (
+                        <div key={item.label} className="flex justify-between items-center p-3 rounded-xl bg-secondary/30">
+                          <span className="text-xs font-medium text-foreground">{item.label}</span>
+                          {item.value && <span className="text-sm font-black text-foreground">{item.value}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-card/30 backdrop-blur-[2px]">
+                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-3 py-1.5 border border-[hsl(45,40%,25%)]/40">
+                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[10px] font-bold text-[hsl(45,70%,55%)]">프리미엄 잠금 해제 시 확인 가능</span>
+                    </div>
                   </div>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-card/30 backdrop-blur-[2px]">
-                  <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-3 py-1.5 border border-[hsl(45,40%,25%)]/40">
-                    <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
-                    <span className="text-[10px] font-bold text-[hsl(45,70%,55%)]">프리미엄 잠금 해제 시 확인 가능</span>
-                  </div>
-                </div>
-              </div>
+              )}
 
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
@@ -1265,7 +1340,7 @@ const ResultPage = () => {
               </div>
             ) : (
               // ─── UNLOCKED STATE ───
-              <div ref={premiumRef}>
+              <div ref={premiumRef} className="rounded-3xl border-2 border-[hsl(45,50%,40%)]/50 p-4 bg-gradient-to-br from-[hsl(45,15%,6%)] to-background shadow-[0_0_25px_hsl(45,50%,40%,0.08)]">
                 <div ref={premiumReportRef}>
                   {premiumContent}
                 </div>
