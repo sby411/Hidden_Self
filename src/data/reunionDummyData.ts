@@ -200,41 +200,41 @@ function scoreTriplet(seed: number, monthsSince: number): ReunionScores {
 }
 
 const SUMMARY_LINES = [
-  "다시 들일 만큼 열린 건 아니다. 완전히 정리된 것도 아니다. 지금은 가능성보다 부담이 먼저 읽힌다.",
-  "끝낸 척은 하는데 완전히 끝낼 용기는 없어 보인다. 캡션·간격이 그걸 말한다.",
-  "여지 남기는 사람처럼 보여도, 책임은 피하고 싶은 톤에 가깝다. 첫 문장이 부담이면 창구부터 닫힌다.",
-  "다시 만나고 싶은 마음보다, 다시 휘말리고 싶지 않은 쪽이 더 크게 읽힌다—적어도 상대 피드는 그렇다.",
+  "판정부터 말하면, 지금 재회 가능성은 ‘낮다~중간’ 쪽에 가깝다. 다시 들일 만큼 열린 건 아니고 완전히 정리된 것도 아니다. 그래서 지금 당장 적극적으로 연락하는 건 비추다—먼저 들어가면 열리기보다 부담·방어가 먼저 쌓일 가능성이 크다.",
+  "판정은 중간이다. 끝낸 표면 아래 잔상은 남아 있다. ‘연락하면 안 된다’가 아니라 ‘지금 무겁게 연락하면 안 된다’에 가깝다. 아주 얇은 여지는 있어도, 손 대기엔 아직 불리하다.",
+  "판정은 중간이다. 여지처럼 보이는 신호와 책임 회피 톤이 겹친다. 한 줄 결론: 장문·요구·압박으로 들어가면 지금은 닫힌다. 짧고 가벼운 선택지 톤이면 아주 얇은 틈만 남을 수 있다.",
+  "판정은 중간~조금 위다. 다시 휘말리기 싫은 쪽이 상대 피드에 더 크게 보인다. 한 줄 결론: 무거운 연락·정의부터 밀면 지금은 비추다. 짧고 가벼운 한 줄이면 그나마 틈을 건드릴 여지는 있다.",
 ] as const;
 
 const BREAKUP_RESONANCE = [
-  "확인받고 싶다가 한 줄, 혼자 견딘다가 한 줄—같은 주에 공존한다. 말은 괜찮은데 톤은 냉각.",
-  "이별 직후 과하게 멀쩡하면 감정이 없어진 게 아니라, 다시 흔들리는 상황을 피하는 쪽에 가깝다.",
-  "한쪽은 접점을 늘리고 한쪽은 속도를 늦춘다. 연애 문제라기보다 기대·속도 불일치 축.",
-  "급삭제가 아니다. 말하기 지친 축이다. 트리거 소재에서만 톤이 무너진다.",
+  "판독: 지금 양쪽 사이엔 ‘확인’과 ‘거리’가 동시에 걸려 있다. 말은 괜찮은데 톤은 냉각—접점을 늘리면 방어부터 오른다.",
+  "판독: 멀쩡해 보이는 건 감정 소멸이라기보다, 다시 흔들릴 상황을 피하는 쪽에 가깝다. 트리거 소재에서만 톤이 무너진다.",
+  "판독: 한쪽은 접점을 늘리고 한쪽은 속도를 늦춘다. 연애 감정 문제라기보다 기대·속도 불일치 축이 지금의 본론이다.",
+  "판독: 급삭제형이 아니다. 말하기 지친 축이다. 지금은 ‘대화’보다 ‘부담 안 주기’가 상대 기준에 더 크다.",
 ] as const;
 
 const SNAPSHOT_YOU = [
-  "감정이 사라진 게 아니라, 감정이 새는 구멍만 좁혀 둔 상태로 읽힌다.",
-  "스토리로 우회하다 DM은 못 보낸다. 들키기 싫은 욕구가 고백으로 번지기 쉽다.",
-  "‘혼자 잘 산다’가 반복되면 방어다. 무관심이면 굳이 증명할 에너지가 줄어든다.",
+  "네 계정 판독: 감정이 없어진 게 아니라, 새는 구멍만 좁혀 둔 상태다. 스토리로 우회하다 DM은 못 보내기 쉽다.",
+  "네 계정 판독: 들키기 싫은 욕구가 고백·장문으로 번지면, 상대에겐 ‘대화’가 아니라 ‘압박’으로 박힌다.",
+  "네 계정 판독: ‘혼자 잘 산다’ 반복은 방어다. 증명이 많을수록 아직 에너지가 거기에 있다는 뜻이기도 하다.",
 ] as const;
 
 const SNAPSHOT_THEM = [
-  "열린 사람인 척은 해도, 실제로는 다시 흔들리기 싫어서 문을 얇게 잠근 톤.",
-  "연애 캡션은 줄이고 경계는 피드에 박아 뒀다. 친절과 개방을 헷갈리면 오판 난다.",
-  "절대 안 돌아간다도, 다시 열자도 아니다. 새 사람 쪽으로 기운지는 따로 봐야 한다.",
+  "상대 계정 판독: 열린 사람처럼 보여도, 다시 흔들리기 싫어 문을 얇게 잠근 톤이다.",
+  "상대 계정 판독: 연애 캡션은 줄이고 경계는 피드에 박아 뒀다. 친절과 개방을 헷갈리면 오판 난다.",
+  "상대 계정 판독: 절대 안 돌아간다도, 다시 열자도 아니다. 새 사람 쪽 기운은 심층에서 가중치로 본다.",
 ] as const;
 
 const FREE_WHY_AMBIGUOUS = [
-  "끝낸 척은 하는데 잔상은 남았다. 한 신호만 골라 믿으면 ‘될 것 같다’로 오판 난다.",
-  "여지처럼 보이는 것과 방어가 동시에 있다. 점수는 ‘된다’가 아니라 지금 들어가면 방어만 두꺼워질 쪽을 가리킨다.",
-  "완전 종료도 적극 재시작도 약하다. 애매함이 곧 지금의 판정이다.",
+  "지금 먼저 들어가면 불리한 이유: 끝낸 표면 아래 잔상은 있어도, 한 신호만 골라 믿으면 ‘될 것 같다’로 오판 난다. 점수는 ‘된다’가 아니라 지금 들어가면 방어만 두꺼워질 쪽을 가리킨다.",
+  "지금 먼저 들어가면 불리한 이유: 여지처럼 보이는 것과 방어가 동시에 있다. 성급한 연락은 상대에겐 ‘확인’이 아니라 ‘부담’으로 먼저 읽힌다.",
+  "지금 먼저 들어가면 불리한 이유: 완전 종료도 적극 재시작도 약하다. 애매함이 곧 ‘지금은 속도 싸움’이라는 판정이다.",
 ] as const;
 
 const FREE_KEY_VARIABLE = [
-  "연락이 문제라기보다, 지금 들어가면 진심보다 피로로 읽힐 가능성이 크다. 피로·자존심·‘부담인지 대화인지’가 승부를 가른다.",
-  "상대가 새 서사를 쌓았을수록 첫 접점은 가볍지 않으면 문만 닫힌다.",
-  "네 감정 높이와 상대 방어 사이 간격. 좁히기 전엔 말해도 전달이 어긋난다.",
+  "지금 관계를 바꾸는 변수: 연락이 아니라 ‘부담인지 대화인지’다. 피로·자존심·첫 문장 길이가 승부를 가른다.",
+  "지금 관계를 바꾸는 변수: 상대가 새 서사를 쌓았을수록 첫 접점은 가볍지 않으면 문만 닫힌다.",
+  "지금 관계를 바꾸는 변수: 네 감정 높이와 상대 방어 사이 간격. 좁히기 전엔 말해도 전달이 어긋난다.",
 ] as const;
 
 function computeContactLeanPercent(seed: number, scores: ReunionScores): number {
@@ -247,32 +247,43 @@ function buildDecisionHint(seed: number, contactLeanPercent: number): ReunionDec
   const headline =
     contactLeanPercent >= 58
       ? pick(seed, 201, [
-          "지금은 ‘연락하면 먹힐 틈’이 조금 보인다. 그렇다고 지금 당장 손 대도 된다는 뜻은 아니다.",
-          "창구는 있을 수 있다. 첫 문장이 부담이면 틈은 바로 사라진다.",
-          "기다림만이 정답은 아니다. 다만 연락은 짧고 가벼울 때만 관계를 연다.",
+          "한 줄 결론: 지금 당장 무거운 연락은 비추다. 다만 짧고 부담 적은 한 줄이면 아주 얇은 틈은 있다. 장문·정의부터 가면 그 틈도 바로 사라진다.",
+          "한 줄 결론: 완전히 열린 건 아니어도, 가벼운 접점이면 창구를 닫지 않을 여지는 있다. 첫 문장이 부담이면 ‘열림’이 아니라 ‘피로’로 박힌다.",
+          "한 줄 결론: 기다림만 정답은 아니다. 다만 연락은 짧고 가벼울 때만 관계를 연다—지금은 ‘얇은 틈’ 전제가 붙는다.",
         ])
       : contactLeanPercent <= 42
         ? pick(seed, 202, [
-            "지금은 기다리는 쪽에 무게가 실린다. 속도 안 맞춘 연락은 관계를 여는 대신 방어만 두껍게 만든다.",
-            "먼저 들어가면 상대 방어만 더 두꺼워질 가능성이 크다. 자극(연타·간접 압박)부터 줄여라.",
-            "기다림은 멍때림이 아니다. 상대 리듬에 맞출 때까지 손 떼는 쪽이다.",
+            "한 줄 결론: 지금은 연락을 미루는 편이 낫다. 먼저 들어가면 가능성을 높이기보다 방어만 두꺼워질 가능성이 크다. 자극·연타부터 줄여라.",
+            "한 줄 결론: 지금 적극 연락은 비추다. 속도 안 맞춘 한 방은 관계를 여는 대신 문을 닫는 쪽으로 기운다. 완전히 희망이 없다는 뜻은 아니다.",
+            "한 줄 결론: 기다림이 우선이다. 멍때림이 아니라 연타·간접 압박을 끊고 상대 리듬에 맞출 때까지 손 뗀다.",
           ])
         : pick(seed, 203, [
-            "열린 것 같다가도 닫힌 것 같다. 애매함이 지금의 판정이다.",
-            "여지처럼 보이는 것과 방어가 겹친다. 승부수보다 온도가 먼저다.",
-            "된다/안 된다보다, 지금 어떤 접근이 문을 닫는지가 본론이다.",
+            "한 줄 결론: ‘지금 연락하면 안 된다’가 아니라 ‘지금 무겁게 연락하면 안 된다’에 가깝다. 아주 얇은 여지는 있어도, 장문·압박이면 부담이 먼저 찍힌다.",
+            "한 줄 결론: 열린 것 같다가도 닫힌 것 같다. 여지는 얇고 방어는 굵다—온도·길이가 본론이다.",
+            "한 줄 결론: 완전 막힌 구간은 아니다. 다만 어떤 접근이 문을 닫는지가 먼저이고, 무거운 연락은 지금 비추다.",
           ]);
 
   const hintLine = pick(seed, 204, [
-    "지금 손 내밀면 먹히는지·기다려야 하는지·상대가 진짜 열려 있는지—끝까지는 심층에서 판독한다.",
-    "무료는 방향만 준다. 문장·타이밍·답 올 확률은 잠금.",
-    "‘언제·뭐라고’가 갈린다. 그건 유료 구간이다.",
+    "위는 공개 신호만으로 본 방향이다. 왜 그런지·상대 속마음·첫 문장·답 올 톤은 아래 심층에서 이어진다.",
+    "무료는 판과 방향만. ‘언제·뭐라고’는 심층 리포트에서 푼다.",
+    "연락 vs 기다림, 열림 여부, 무의식·새 인물 흔적은 심층 구간에서 문장으로 고정한다.",
   ]);
 
   return { contactLeanPercent, headline, hintLine };
 }
 
 
+const PREMIUM_TONE_PREVIEW = [
+  '"요즘 어때? 한 줄만이라도."',
+  '"바쁠 수 있는데, 괜찮을 때만 짧게."',
+  '"그때 부담 준 건 미안해. 길게 안 할게."',
+] as const;
+
+function waitRangeForMonths(monthsSince: number): string {
+  return monthsSince <= 2 ? "2~4주" : monthsSince <= 8 ? "3~6주" : "8주+";
+}
+
+/** 무료 구간 게이지와 동일한 판독 요약 — 심층 4장 구성 변경 후에도 유료 잠금 본문·공유용으로 유지 */
 function buildPremiumTeasers(
   seed: number,
   monthsSince: number,
@@ -280,8 +291,9 @@ function buildPremiumTeasers(
   synthesis: ReunionSynthesis,
   theirFocus: TheirFocusReport,
   actionGuide: ReunionActionGuide,
+  newPersonWeightPercentOverride?: number,
 ): ReunionPremiumTeaser[] {
-  const waitRangeShort = monthsSince <= 2 ? "2~4주" : monthsSince <= 8 ? "3~6주" : "8주+";
+  const waitRangeShort = waitRangeForMonths(monthsSince);
 
   const waitWindowHint =
     monthsSince <= 2
@@ -290,64 +302,108 @@ function buildPremiumTeasers(
         ? "3~6주 단위로 체크: 피로·회피 톤이 완화되는 신호가 있을 때만 속도를 올린다."
         : "단기가 아니다. 새 서사가 얇아지거나 트리거에서만 톤이 흔들릴 때 관망 비중이 커진다.";
 
-  const tonePreview = pick(seed, 91, [
-    "\"요즘 어때? 한 줄만이라도.\"",
-    "\"바쁠 수 있는데, 괜찮을 때만 짧게.\"",
-    "\"그때 부담 준 건 미안해. 길게 안 할게.\"",
-  ]);
+  const tonePreview = pick(seed, 91, PREMIUM_TONE_PREVIEW);
 
-  const newPersonWeightPercent = 26 + (seed % 37);
+  const newPersonWeightPercent = newPersonWeightPercentOverride ?? 26 + (seed % 37);
 
-  const locked1 = [
-    `【연락 vs 기다림 · 최종 판독】\n${synthesis.whyThisScore}\n\n${theirFocus.openToReunionNow}\n\n무의식 방어: ${theirFocus.unconsciousDefensePattern}\n\n${synthesis.keyVariable}`,
-    `지금 변수: ${synthesis.contactOpensOrCloses}`,
-  ].join("\n\n");
-
-  const locked2 = [
+  const lockedWait = [
     `【기다림이 맞다면 · 언제까지】\n${waitWindowHint}\n\n이후에도 다음이 남아 있으면 연락은 미룬다: 스토리가 회피 톤, 댓글·반응 속도 급락, 야간·주말에만 감정 소재가 튀는 패턴.\n\n2주·4주·8주 체크포인트별로 ‘연락 시도 적합/비적합’ 기준과, 그때 써도 되는 첫 문장 톤(짧음·중립·사과 중심)을 케이스별로 정리한다. 달력이 아니라 계정 신호가 안정·완화되는 패턴을 기준으로 한다.`,
     monthsSince <= 3
       ? "이별 직후라면 ‘즉시’보다 상대 피로가 내려가는 구간을 먼저 잡는 편이 역효과가 적다."
       : "시간이 지난 만큼 새 서사가 단단해졌는지가 변수다. 서사가 두꺼울수록 첫 접점은 더 가볍게.",
   ].join("\n\n");
 
-  const locked3 = [
+  const lockedTone = [
     `【톤 · 문장 · 답장 가능성】\n먹히는 톤: ${actionGuide.toneIfContact}\n\n지금 연락 가이드: ${actionGuide.contactNowGuidance}\n\n기다릴 때: ${actionGuide.waitGuidance}`,
     `답장 가능성이 올라가는 방식: 한 줄 확인, 부담 낮은 질문, 사과는 핵심만, 요구 대신 선택지.\n\n답 없이 더 멀어지는 방식: ${actionGuide.avoidActions}`,
     `첫 문장 후보 3개(복붙용 아님—길이·속도 원칙 고정): (1) 안부 한 줄 (2) 사과 한 줄 (3) 공통 관심 한 줄. 방어형 상대에게는 (1)만 먼저.`,
   ].join("\n\n");
 
-  const locked4 = [
+  const lockedNewPerson = [
     `【새 사람 가능성 · 가중치】\n${theirFocus.newPersonPossibilitySignals}\n\n태그 반복, 특정 인물 단독 노출, 야간·주말 스토리 상관, 장소 루프를 가능성 구간으로만 정리한다. 가족·동료·촬영 오탐을 걸러내는 기준과, 확인 질문이 왜 방어를 올리는지(역효과)를 사례별로 쓴다. 14일 관찰 시트·묻지 말 질문 목록 포함.`,
   ].join("\n");
 
+  const lockedMisunderstanding = pick(seed, 305, [
+    `【이 관계에서 가장 위험한 오해】\n‘아직 흔적이 남아 있다’를 ‘재회 의지가 남아 있다’로 바꿔 읽는 오해다. 잔상은 있어도 감당 의지는 없을 수 있다.\n\n그 상태에서 확인·총정리·감정 고백으로 들어가면 상대는 반가움보다 ‘또 같은 자리’로 읽기 쉽다. 지금 필요한 건 해석 확정이 아니라 접점의 무게 조절이다.\n\n${synthesis.contactOpensOrCloses}`,
+
+    `【이 관계에서 가장 위험한 오해】\n상대의 침묵·짧은 반응을 ‘관심 없음’ 한 가지로만 접는 오해다. 방어·피로·자존심이 겹치면 같은 행동이 ‘거절’처럼 보일 수 있다.\n\n반대로 예의 있는 한 줄을 ‘여지’로만 확대해석하는 것도 위험하다. 지금은 신호의 ‘의도’보다 ‘부담으로 읽히는지’가 먼저다.\n\n무의식 방어 패턴: ${theirFocus.unconsciousDefensePattern}`,
+
+    `【이 관계에서 가장 위험한 오해】\n‘내가 진심이면 통한다’는 공식이 깨진 구간이다. 진심의 세기가 아니라 타이밍·길이·요구가 감정보다 먼저 분류된다.\n\n그래서 같은 말도 짧으면 대화, 길면 압박으로 바뀐다. 지금은 말의 내용만큼 ‘상대가 처리해야 할 일의 크기’를 줄이는 게 우선이다.\n\n${synthesis.keyVariable}`,
+  ]);
+
   return [
-    {
-      key: "contact-wait",
-      title: "지금 연락 vs 기다리기",
-      visibleSummary: "",
-      contactVsWaitPercent: contactPct,
-      lockedBody: locked1,
-    },
     {
       key: "wait-until",
       title: "기다린다면, 언제까지가 맞는지",
       visibleSummary: "",
       waitRangeShort,
-      lockedBody: locked2,
+      lockedBody: lockedWait,
     },
     {
       key: "tone-reply",
       title: "연락한다면: 먹히는 톤 vs 멀어지는 톤",
       visibleSummary: "",
       tonePreview,
-      lockedBody: locked3,
+      lockedBody: lockedTone,
     },
     {
       key: "new-person",
       title: "상대가 새 사람 쪽으로 기운 가능성",
       visibleSummary: "",
       newPersonWeightPercent,
-      lockedBody: locked4,
+      lockedBody: lockedNewPerson,
+    },
+    {
+      key: "misunderstanding",
+      title: "이 관계에서 가장 위험한 오해 포인트",
+      visibleSummary: "",
+      lockedBody: lockedMisunderstanding,
+    },
+  ];
+}
+
+type ReunionDemoPremiumBodies = {
+  waitUntil: string;
+  toneReply: string;
+  newPerson: string;
+  misunderstanding: string;
+};
+
+function buildDemoPremiumTeasers(
+  seed: number,
+  monthsSince: number,
+  newPersonPct: number,
+  bodies: ReunionDemoPremiumBodies,
+): ReunionPremiumTeaser[] {
+  const waitRangeShort = waitRangeForMonths(monthsSince);
+  const tonePreview = pick(seed, 91, PREMIUM_TONE_PREVIEW);
+  return [
+    {
+      key: "wait-until",
+      title: "기다린다면, 언제까지가 맞는지",
+      visibleSummary: "",
+      waitRangeShort,
+      lockedBody: bodies.waitUntil,
+    },
+    {
+      key: "tone-reply",
+      title: "연락한다면: 먹히는 톤 vs 멀어지는 톤",
+      visibleSummary: "",
+      tonePreview,
+      lockedBody: bodies.toneReply,
+    },
+    {
+      key: "new-person",
+      title: "상대가 새 사람 쪽으로 기운 가능성",
+      visibleSummary: "",
+      newPersonWeightPercent: newPersonPct,
+      lockedBody: bodies.newPerson,
+    },
+    {
+      key: "misunderstanding",
+      title: "이 관계에서 가장 위험한 오해 포인트",
+      visibleSummary: "",
+      lockedBody: bodies.misunderstanding,
     },
   ];
 }
@@ -519,12 +575,17 @@ function buildReport(seed: number, monthsSince: number, breakupYear: number, bre
   };
 
   const premiumGateCta: ReunionPremiumGateCta = {
-    title: "여기까지가 무료 판독의 끝이다.",
-    body: "지금 연락하면 먹히는지, 기다려야 하는지, 상대가 열려 있는지, 새 사람 쪽으로 기운지—심층에서 문장으로 끝까지 연다. 듣기 좋은 말만 하지 않는다.",
-    footnote: "공개 프로필 시그널·패턴 해석. 운세 아님.",
-    ctaPrimary: "기다릴지 연락할지 끝까지 보기",
-    ctaAuxiliary: "상대 속마음·반응 가능성·첫 문장까지 한 번에",
-    stickyHeadline: "기다릴지 연락할지 끝까지 보기",
+    title: "여기까지는 표면 분석입니다",
+    body: [
+      "지금까지는 공개 프로필에 보이는 이미지·흐름만으로 판독한 결과입니다.",
+      "",
+      "지금 연락할지 기다릴지, 상대가 정말 열려 있는지, 처음 뭐라고 보내야 하는지, 답장이 올 가능성이 높은 톤과 타이밍, 그리고 상대·내 인스타에서 읽히는 무의식과 새 인물의 흔적은 아래 심층 분석에서 확인할 수 있습니다.",
+    ].join("\n"),
+    footnote: "공개 데이터·패턴 기반 해석입니다. 운세가 아닙니다.",
+    ctaPrimary: "심층 리포트 잠금 해제",
+    ctaAuxiliary:
+      "연락 vs 기다림, 속마음, 첫 문장, 반응 가능성까지 한 번에 · 결제 후 즉시 프리미엄 분석 결과를 확인할 수 있습니다.",
+    stickyHeadline: "심층 리포트 잠금 해제",
     stickySubline: `심층 열람 ${1_200 + (seed % 800).toLocaleString()}건`,
     stickyListPrice: "9,900원",
     stickyPriceLabel: "4,900원",
@@ -532,9 +593,9 @@ function buildReport(seed: number, monthsSince: number, breakupYear: number, bre
   };
 
   const finalRecommendation = pick(seed, 29, [
-    "숫자에 숨지 마라. 다음 한 수는 짧게. 속도 틀리면 진심도 역효과다.",
-    "한 번에 해결하려 할수록 방어만 두꺼워진다. 가벼운 접점에서 반응을 본 뒤 움직여라.",
-    "연락 강박이 오르면 오늘은 쓰지 마라. 톤에 강박이 묻으면 상대는 피로로 읽는다.",
+    "무료 판정 요약: 숫자에 숨지 마라. 다음 한 수는 짧게—속도 틀리면 진심도 역효과다. 심층에서 문장·타이밍을 고정한다.",
+    "무료 판정 요약: 한 번에 해결하려 할수록 방어만 두꺼워진다. 가벼운 접점에서 반응 본 뒤 움직여라.",
+    "무료 판정 요약: 연락 강박이 오르면 오늘은 쓰지 마라. 톤에 강박이 묻으면 상대는 피로로 읽는다.",
   ]);
 
   const breakupLabel = `${breakupYear}년 ${breakupMonth}월`;
@@ -568,10 +629,10 @@ function buildReport(seed: number, monthsSince: number, breakupYear: number, bre
     breakupResonance,
     socialProofLine: "",
     toc: [
-      { id: "reunion-decision", label: "열릴까 닫힐까" },
-      { id: "reunion-scores", label: "왜 애매한가" },
+      { id: "reunion-decision", label: "지금 판정" },
+      { id: "reunion-scores", label: "왜 이렇게 읽히는가" },
       { id: "reunion-snapshot", label: "인스타 흔적" },
-      { id: "reunion-premium", label: "심층 판독" },
+      { id: "reunion-premium", label: "심층 리포트" },
     ],
     myProfileSignals: my,
     theirProfileSignals: their,
@@ -591,6 +652,282 @@ function buildReport(seed: number, monthsSince: number, breakupYear: number, bre
     freeCore,
     premiumTeasers,
     premiumLocked,
+  };
+}
+
+/** URL `?demo=` 로 결과 톤 검증용 (closed / mixed / open) */
+export type ReunionDemoCase = "closed" | "mixed" | "open";
+
+export function parseReunionDemoParam(value: string | null): ReunionDemoCase | null {
+  if (value === "closed" || value === "mixed" || value === "open") return value;
+  return null;
+}
+
+type ReunionDemoPatch = {
+  scores: ReunionScores;
+  contactLeanPercent: number;
+  decisionHeadline: string;
+  summaryLine: string;
+  breakupResonance: string;
+  freeCore: { whyAmbiguous: string; keyVariable: string };
+  signalSnapshot: ReunionSignalSnapshot;
+  finalRecommendation: string;
+  synthesisPartial: Pick<ReunionSynthesis, "whyThisScore" | "keyVariable" | "contactOpensOrCloses">;
+  openToReunionNow: string;
+  newPersonWeightPercent: number;
+};
+
+/** `?demo=` 일 때 심층 4장 잠금 본문 (순서: 기다림 → 톤 → 새 사람 → 오해) */
+const REUNION_DEMO_PREMIUM_BODIES: Record<ReunionDemoCase, ReunionDemoPremiumBodies> = {
+  closed: {
+    waitUntil: `【기다림이 맞다면 · 언제까지】
+
+지금은 기다린다고 자동으로 열리는 구간이 아니다. 다만 지금 바로 들어가면 더 닫힐 확률이 높아서, 최소한 상대의 피로·회피 톤이 완화되는지부터 봐야 한다. 기다림의 기준은 시간 자체보다 신호 변화다.
+
+연애 관련 문장이 다시 살아나는지, 반응이 방어적이지 않은지, 네 존재가 부담보다 일상적인 접점으로 읽히는지가 먼저다. 아무 변화 없이 시간만 보내는 기다림은 의미가 없다.
+
+이 케이스에서 기다림은 "희망을 키우는 시간"이 아니라, "더 닫히지 않게 만드는 시간"에 가깝다.`,
+
+    toneReply: `【연락한다면 · 먹히는 톤 vs 멀어지는 톤】
+
+먹히는 톤은 짧고, 설명이 없고, 답하지 않아도 부담이 적은 문장이다. 예를 들어 안부를 가장한 짧은 확인, 핑계가 붙은 가벼운 접점 정도다.
+
+멀어지는 톤은 관계를 꺼내는 문장이다. "우리 얘기 좀 하자", "왜 이렇게 됐는지 말하고 싶어", "나 아직 정리가 안 됐어" 같은 문장은 지금 구간에선 진심보다 압박으로 읽힐 가능성이 크다.
+
+이 케이스에선 연락 자체보다, 연락이 상대에게 ‘또 설명해야 하는 상황’으로 느껴지느냐가 더 중요하다.`,
+
+    newPerson: `【상대가 새 사람 쪽으로 기운 가능성】
+
+이 케이스에선 새 사람 자체보다, 네 쪽으로 다시 열릴 의지가 약하다는 점이 먼저다. 그래서 새 사람 가능성은 "이미 누군가가 있다"보다는 "새 관계가 들어와도 막지 않을 상태"로 읽는 편이 맞다.
+
+즉, 확실한 대체 인물이 있다는 뜻은 아닐 수 있어도, 다시 과거 관계로 돌아가는 것보다 다른 방향으로 흐를 여지는 열려 있다.
+
+가장 위험한 건 이걸 질투 포인트로 받아들이는 거다. 지금 필요한 건 추궁이 아니라, 상대가 왜 과거보다 새 흐름을 덜 부담스럽게 느끼는지 읽는 것이다.`,
+
+    misunderstanding: `【이 관계에서 가장 위험한 오해 포인트】
+
+가장 위험한 오해는 "아직 감정이 남아 있으니까 가능성도 남아 있다"는 해석이다. 잔상과 재회 의지는 다르다.
+
+지금 상대에게 남아 있을 수 있는 건 감정의 찌꺼기일 수는 있어도, 다시 관계를 감당하겠다는 의지까지는 아닐 수 있다. 이걸 여지로 오해하면, 네 연락은 상대 입장에서 반가움보다 "왜 또 이 문제로 들어오지?"로 읽힐 가능성이 높다.
+
+지금은 해석보다 거리 조절이 먼저다.`,
+  },
+
+  mixed: {
+    waitUntil: `【기다림이 맞다면 · 언제까지】
+
+이 케이스는 무작정 기다리면 되는 것도 아니고, 지금 바로 들어가면 열리는 것도 아니다. 그래서 기다림의 기준이 더 중요하다.
+
+보통은 3~6주 단위로 상대 톤이 완화되는지 보는 게 맞다. 피드/스토리의 결이 너무 차갑지 않은지, 간접 반응에 대한 방어감이 줄어드는지, 관계 관련 신호가 완전히 사라지지는 않았는지 확인해야 한다.
+
+여기서 기다린다는 건 아무것도 안 하고 버티는 게 아니라, 상대의 리듬이 돌아오는지 보는 일이다. 변화 없이 마음만 커지는 기다림은 오히려 타이밍을 망친다.`,
+
+    toneReply: `【연락한다면 · 먹히는 톤 vs 멀어지는 톤】
+
+먹히는 톤은 짧고, 선택권을 주고, 감정의 무게를 바로 얹지 않는 문장이다. 예를 들면 "요즘 어때?"처럼 답장이 와도 부담이 적고, 안 와도 서로 크게 손해 보지 않는 문장. 지금은 이런 톤이 훨씬 유리하다.
+
+반대로 멀어지는 톤은 애매한 관계를 바로 정의하려는 문장이다. "우리 다시 생각해볼 수 있을까", "아직 네 마음이 궁금해" 같은 말은 상대가 감정을 정리하기 전에 책임부터 느끼게 할 수 있다.
+
+지금 구간은 진심의 세기보다, 상대가 물러설 수 있는 여지를 얼마나 남겨두느냐가 더 중요하다.`,
+
+    newPerson: `【상대가 새 사람 쪽으로 기운 가능성】
+
+새 사람 가능성은 아주 높지도, 완전히 없지도 않은 구간이다. 다른 사람을 만날 여지가 생기고는 있지만, 그게 지금 당장 깊은 관계로 이어졌다고 단정하긴 어렵다.
+
+다만 네 쪽으로 다시 열리는 속도보다, 새 흐름을 가볍게 받아들이는 쪽이 덜 부담스러울 수는 있다.
+
+즉 이 카드는 "경쟁자 있다/없다"보다, 상대의 에너지가 과거 복구보다 새로운 흐름 쪽으로 더 편하게 움직이는지 보는 카드다. 질투심을 자극하는 방식으로 들어가면 거의 무조건 손해다.`,
+
+    misunderstanding: `【이 관계에서 가장 위험한 오해 포인트】
+
+가장 위험한 오해는 애매함을 여지로만 읽는 것이다. 상대가 완전히 끊지 않았다고 해서, 다시 받아들일 준비가 된 건 아니다.
+
+오히려 애매하게 남겨둔 이유가 "정리가 덜 돼서"가 아니라 "지금은 책임지고 싶지 않아서"일 수도 있다.
+
+그래서 이 케이스에선 "남아 있다"보다 "어떻게 읽히느냐"가 중요하다. 똑같은 한 문장도 상대에겐 반가운 접점이 될 수도, 또 시작되는 피곤함이 될 수도 있다.`,
+  },
+
+  open: {
+    waitUntil: `【기다림이 맞다면 · 언제까지】
+
+이 케이스는 너무 오래 기다리면 오히려 흐름을 놓칠 수 있다. 완전히 닫힌 구간이 아니기 때문에, 신호가 살아 있을 때 가볍게 접점을 보는 쪽이 더 맞을 수 있다.
+
+다만 여기서도 "당장 진심 고백"은 아니다. 기다림의 기준은 짧다. 보통 1~3주 안에 상대 반응 톤이 유지되는지, 방어적이지 않은지, 작은 접점이 이어질 여지가 있는지 보는 편이 낫다.
+
+즉 이 케이스의 기다림은 시간을 끌기 위한 기다림이 아니라, 타이밍을 놓치지 않기 위한 짧은 관찰 구간에 가깝다.`,
+
+    toneReply: `【연락한다면 · 먹히는 톤 vs 멀어지는 톤】
+
+먹히는 톤은 가볍고, 일상적이고, 답장을 강요하지 않는 문장이다. 예를 들면 안부, 가벼운 근황, 부담 없는 핑계가 붙은 메시지. 지금은 이런 접점이 관계를 다시 움직일 가능성이 있다.
+
+멀어지는 톤은 너무 빨리 관계를 결론 내리려는 문장이다. "우리 다시 해보자", "나 아직 너 좋아해" 같은 말은 아직 준비되지 않은 상대를 다시 닫히게 만들 수 있다.
+
+열린 구간이라 해도, 바로 깊게 들어가는 건 다르다. 이 케이스에서 유리한 건 가벼운 시작이지, 큰 선언이 아니다.`,
+
+    newPerson: `【상대가 새 사람 쪽으로 기운 가능성】
+
+새 사람 가능성은 아주 높아 보이지는 않는다. 지금은 다른 사람을 적극적으로 열고 있다기보다, 네 쪽 가능성을 완전히 닫지 않은 상태에 더 가깝다.
+
+그래서 이 카드에서 중요한 건 "새 사람 있나?"가 아니라 "지금 관계를 다시 움직일 여지가 더 남아 있나?"다.
+
+다만 이걸 안심 신호로만 읽으면 안 된다. 상대가 여지를 남기고 있어도, 네가 무겁게 들어가면 그 여지는 금방 닫힐 수 있다.`,
+
+    misunderstanding: `【이 관계에서 가장 위험한 오해 포인트】
+
+가장 위험한 오해는 열린 신호를 "곧 재회"로 확대해석하는 것이다. 지금은 다시 이어질 가능성이 있는 구간일 수는 있어도, 그게 곧바로 관계 복구를 의미하진 않는다.
+
+오히려 이 시점에서 성급하게 깊은 대화를 꺼내면, 상대는 "역시 또 무거워진다"는 이유로 물러설 수 있다.
+
+열려 있는 문은 맞을 수 있다. 하지만 그 문을 발로 차고 들어가면 다시 닫힌다.`,
+  },
+};
+
+const REUNION_DEMO_PATCHES: Record<ReunionDemoCase, ReunionDemoPatch> = {
+  closed: {
+    scores: { reunionPossibility: 34, theirReunionOpenness: 30, contactTimingFit: 28 },
+    contactLeanPercent: 30,
+    decisionHeadline:
+      "한 줄 결론: 지금은 연락을 미루는 편이 낫다. 먼저 들어가면 재회 가능성을 높이기보다 방어만 두꺼워질 가능성이 크다. 그래서 지금 당장 적극 연락은 비추다. 자극·연타부터 줄여라.",
+    summaryLine:
+      "솔직히 말하면, 지금 재회 가능성은 낮은 편이다. 완전히 끝난 건 아닐 수 있어도, 다시 가까워지는 것보다 거리를 유지하려는 쪽에 더 기울어 있다. 그래서 지금 당장 연락하면 안 되는 구간에 가깝다—먼저 들어가면 열리기보다 방어만 더 세게 만들 가능성이 크다.",
+    breakupResonance:
+      "판독: 멀쩡해 보이는 건 ‘감정 없음’이 아니라, 다시 얽히면 또 흔들릴 상황을 피하는 쪽이다. 트리거 소재에서만 톤이 무너진다.",
+    freeCore: {
+      whyAmbiguous:
+        "지금 먼저 들어가면 불리한 이유: 완전 차단도 다시 열자도 아니다. 관심이 끊긴 게 아니라 새는 통로만 막아 둔 구간이라, 장문·죄책·추궁은 ‘대화’가 아니라 ‘피로’로만 박힌다.",
+      keyVariable:
+        "지금 관계를 바꾸는 변수: 연락 한 방이 살리기보다 회피를 확정시킬 수 있다. 피로가 내려가기 전엔 진심도 통과율이 낮다.",
+    },
+    signalSnapshot: {
+      conflictLine:
+        "둘 사이 축: 너는 ‘답이 필요하다’ 쪽이고, 상대는 ‘지금 대화 자체가 부담’ 쪽이다. 이 간격이 그대로면 연락 한 번이 확인이 아니라 압박으로 들어간다.",
+      youLine:
+        "네 쪽: 스토리·피드에 감정 흔적은 남아 있다. 그런데 DM·장문으로 옮기면 상대 눈에는 ‘지금 나한테 에너지 쓰라는 신호’로만 읽힐 가능성이 크다.",
+      themLine:
+        "상대 쪽: 팔로우·흔적은 완전히 끊지 않았을 수 있다. 다만 캡션·간격을 보면 ‘다시 붙잡히기 싫다’가 먼저다. 지금은 끌어당기기보다 굳히기에 가깝다.",
+    },
+    finalRecommendation:
+      "한 줄 정리: 지금 상태는 ‘연락하면 관계가 살아난다’가 아니라 ‘연락하면 상대 방어부터 선다’에 가깝다. 오늘은 보내지 않는 선택부터 두고, 심층에서 타이밍·첫 문장만 고른다.",
+    synthesisPartial: {
+      whyThisScore:
+        "재회 가능성·상대 개방·연락 적합이 함께 낮다. 감정 소멸이라기보다 재진입 비용을 크게 느끼는 구간으로 읽는다.",
+      keyVariable:
+        "가장 큰 변수는 ‘다시 얽히면 내가 또 지친다’는 방어다. 부담 없는 한 줄도 아니면 문만 닫힌다.",
+      contactOpensOrCloses:
+        "지금 장문·감정 폭발·추궁은 닫는 쪽으로 기운다. 숨 구멍만 남기려면 자극부터 줄여야 한다.",
+    },
+    openToReunionNow:
+      "지금은 환영 모드가 아니다. 감정이 식었다기보다, 다시 관계로 끌려 들어가기 싫어서 거리 두는 쪽에 가깝다. 부담이 낮을 때만 아주 얇은 응답이 나올 여지는 있다.",
+    newPersonWeightPercent: 46,
+  },
+  mixed: {
+    scores: { reunionPossibility: 52, theirReunionOpenness: 50, contactTimingFit: 44 },
+    contactLeanPercent: 46,
+    decisionHeadline:
+      "한 줄 결론: ‘지금 연락하면 안 된다’가 아니라 ‘지금 무겁게 연락하면 안 된다’다. 아주 얇은 여지는 있어도, 부담이 먼저 찍히기 쉬워 속도·길이가 본론이다.",
+    summaryLine:
+      "판정은 중간이다. 끝낸 척은 하는데 잔상은 남아 있다. 그래서 완전히 막힌 건 아니다—다만 지금 먼저 무겁게 들어가면 가능성을 키우기보다 부담이 먼저 읽힐 수 있다. 아주 약한 여지는 ‘짧고 가벼운 접점’ 쪽에만 남아 있다.",
+    breakupResonance:
+      "판독: 접점을 늘리려는 쪽과 속도를 늦추는 쪽이 동시에 있다. 끝낸 표면과 남은 흔적이 겹치면 점수는 회색대에 머문다.",
+    freeCore: {
+      whyAmbiguous:
+        "지금 먼저 들어가면 불리할 수 있는 이유: 여지처럼 보이는 신호와 방어가 겹친다. 한 신호만 골라 믿으면 ‘될 것 같다’로 오판 난다.",
+      keyVariable:
+        "지금 관계를 바꾸는 변수: 가능성 숫자가 아니라 첫 문장이 부담인지 대화인지다. 길이·압박·요구가 붙으면 방어가 이긴다.",
+    },
+    signalSnapshot: {
+      conflictLine:
+        "둘 사이 축: ‘아직 끝난 것 같지 않다’는 신호와 ‘그래도 지금은 부담’이 동시에 보인다. 그래서 같은 행동이 어떤 날은 여지로, 어떤 날은 방어로 읽힐 수 있다.",
+      youLine:
+        "네 쪽: 감정은 꺼진 게 아니라 숨긴 상태에 가깝다. 확인·고백·장문이 튀면 상대는 ‘감정’보다 ‘처리해야 할 일’로 먼저 분류하기 쉽다.",
+      themLine:
+        "상대 쪽: 완전 차단은 아닌데, 연애·관계 언급은 줄였다. 친절과 다시 열림을 헷갈리면 오판한다—지금은 문이 열린 게 아니라 잠겨 있지 않은 정도다.",
+    },
+    finalRecommendation:
+      "한 줄 정리: 지금은 ‘된다/안 된다’보다 ‘무겁게 가면 안 되고, 가볍게 가면 아주 얇은 틈만 있다’가 맞다. 한 번에 못 박지 말고 접점 무게부터 맞춰라.",
+    synthesisPartial: {
+      whyThisScore:
+        "세 축이 중간에 몰려 있다. 완전 종료도 적극 재시작도 약하면 애매함이 곧 지금의 판정이다.",
+      keyVariable:
+        "승부는 ‘된다/안 된다’가 아니라 어떤 접근이 문을 닫는지다. 피로·자존심·부담 인지 대화 인지가 갈린다.",
+      contactOpensOrCloses:
+        "속도 안 맞춘 연락은 관계를 여는 대신 방어만 두껍게 만든다. 짧고 가벼운 한 줄이 변수다.",
+    },
+    openToReunionNow:
+      "적극적으로 다시 열어두는 단계는 아니다. 잔여 감정과 방어가 동시에 있어서 무거운 연락 한 번에 후자가 이기기 쉬운 구간이다. 가벼운 접점이 쌓이면 해석이 바뀔 여지는 있다.",
+    newPersonWeightPercent: 32,
+  },
+  open: {
+    scores: { reunionPossibility: 74, theirReunionOpenness: 70, contactTimingFit: 64 },
+    contactLeanPercent: 64,
+    decisionHeadline:
+      "한 줄 결론: 지금 당장 무거운 연락은 비추다. 다만 짧고 부담 적은 접점이면 아주 얇은 틈은 있다. 장문·관계 정의부터는 금물이다.",
+    summaryLine:
+      "판정상 재회 가능성은 중상이다. 문이 활짝 열린 건 아니어도, 그래도 아주 약한 여지는 남아 있다—짧고 부담 적은 한 줄이면 창구를 닫지 않을 틈이 있다. 반대로 정의·장문부터 밀면 지금은 연락하면 안 되는 쪽으로 기운다.",
+    breakupResonance:
+      "판독: 경계는 있되 완전 봉쇄는 아니다. 회피 톤이 내려간 구간이면 얇은 접점에 반응이 붙을 수 있다.",
+    freeCore: {
+      whyAmbiguous:
+        "지금 먼저 들어가면 불리한 이유: 무거운 한 방·총정리·관계 정의부터 밀면 피로가 이긴다. ‘된다’로 단정할 점수는 아니어도, 짧은 접점과 장문 접점은 판정이 갈린다.",
+      keyVariable:
+        "지금 관계를 바꾸는 변수: 첫 문장 톤이다. 요구·사과 장편·총정리면 방어가 이기고, 한 줄 확인·선택지 톤이면 틈이 유지될 가능성이 크다.",
+    },
+    signalSnapshot: {
+      conflictLine:
+        "둘 사이 축: 다시 이어지고 싶은 쪽과 ‘일단 숨 고르기’ 쪽이 같이 있다. 그래서 짧은 안부는 통할 여지가 있어도, 관계 정의·사과 장편은 바로 무게가 쏠린다.",
+      youLine:
+        "네 쪽: 말하고 싶은 게 많을수록 길이가 늘어나기 쉽다. 지금은 진심의 크기가 아니라 ‘한 화면에 다 담았는지’가 상대에게 부담으로 직결된다.",
+      themLine:
+        "상대 쪽: 완전히 돌아온 톤은 아니어도, 회피만 있는 것도 아니다. 스토리·반응 리듬이 부담 낮을 때만 조금 풀리는 패턴이면 ‘지금은 가벼운 접점’ 쪽으로 읽는 게 맞다.",
+    },
+    finalRecommendation:
+      "한 줄 정리: 지금은 ‘연락 자체가 금지’가 아니라 ‘무거운 연락이 금지’에 가깝다. 다음 한 수는 짧게—정의·총정리는 뒤로 미루고, 심층에서 문장·타이밍만 고른다.",
+    synthesisPartial: {
+      whyThisScore:
+        "재회·개방·연락 적합이 중상으로 올라왔다. 완전 재결합 서사는 약해도, 가벼운 접점 구간은 열려 있을 수 있다.",
+      keyVariable:
+        "변수는 ‘한 번에 못 박기’ 욕구다. 관계 정의·장문이 들어오면 피로가 이기기 쉽다.",
+      contactOpensOrCloses:
+        "짧고 존중 있는 한 줄은 문을 활짝 열진 못해도 나중을 위한 숨구멍은 남길 수 있다. 무거운 연락은 닫는 쪽으로 기운다.",
+    },
+    openToReunionNow:
+      "지금은 조건부 관망에 가깝지만, 완전 차단형과도 거리가 있다. 부담이 낮을 때 짧은 접점에는 반응이 붙을 여지가 있다. ‘다시 사귀자’까지 한 번에 가면 방어가 이긴다.",
+    newPersonWeightPercent: 22,
+  },
+};
+
+function applyReunionDemoPatch(
+  report: ReunionFullReport,
+  demo: ReunionDemoCase,
+  seed: number,
+  monthsSince: number,
+): ReunionFullReport {
+  const p = REUNION_DEMO_PATCHES[demo];
+  const synthesis = { ...report.synthesis, ...p.synthesisPartial };
+  const theirFocus = { ...report.theirFocus, openToReunionNow: p.openToReunionNow };
+  const premiumTeasers = buildDemoPremiumTeasers(
+    seed,
+    monthsSince,
+    p.newPersonWeightPercent,
+    REUNION_DEMO_PREMIUM_BODIES[demo],
+  );
+  return {
+    ...report,
+    scores: p.scores,
+    summaryLine: p.summaryLine,
+    breakupResonance: p.breakupResonance,
+    freeCore: p.freeCore,
+    signalSnapshot: p.signalSnapshot,
+    decisionHint: {
+      contactLeanPercent: p.contactLeanPercent,
+      headline: p.decisionHeadline,
+      hintLine: report.decisionHint.hintLine,
+    },
+    finalRecommendation: p.finalRecommendation,
+    synthesis,
+    theirFocus,
+    premiumTeasers,
+    premiumLocked: premiumTeasers.map((t) => ({ title: t.title, body: t.lockedBody })),
   };
 }
 
@@ -617,10 +954,12 @@ export function getReunionFullReport(
   breakupYear: number,
   breakupMonth: number,
   now = new Date(),
+  demoCase: ReunionDemoCase | null = null,
 ): ReunionFullReport {
   const { year, month } = clampBreakupToPast(breakupYear, breakupMonth, now);
   const key = `${myId}|${theirId}|${year}-${month}`;
   const seed = hashKey(key);
   const monthsSince = getMonthsSinceBreakup(year, month, now);
-  return buildReport(seed, monthsSince, year, month);
+  const base = buildReport(seed, monthsSince, year, month);
+  return demoCase ? applyReunionDemoPatch(base, demoCase, seed, monthsSince) : base;
 }
