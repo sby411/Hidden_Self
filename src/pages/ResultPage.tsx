@@ -772,33 +772,78 @@ const ResultPage = () => {
                 )}
               </div>
 
-              {/* LOCKED: 경제력 / 주도형 / 집착형 */}
-              <div className="relative rounded-2xl overflow-hidden mb-3">
-                <div className="glass-card rounded-2xl p-5">
+              {/* 심층 성향 분포: LOCKED or UNLOCKED */}
+              {premiumUnlocked ? (
+                <div className="rounded-2xl p-5 mb-3 border-2 border-[hsl(45,50%,40%)]/50 bg-gradient-to-br from-[hsl(45,20%,8%)] to-card shadow-[0_0_15px_hsl(45,50%,40%,0.1)]">
                   <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)]" /> 심층 성향 분포
-                    <span className="text-[9px] bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-1.5 py-0.5 rounded-full font-bold">PREMIUM</span>
+                    <Crown className="w-3.5 h-3.5 text-[hsl(45,70%,55%)]" /> 심층 성향 분포
+                    <span className="text-[9px] bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-1.5 py-0.5 rounded-full font-bold">UNLOCKED</span>
                   </h4>
-                  <div className="space-y-3 blur-[7px] select-none pointer-events-none" aria-hidden="true">
-                    {[
-                      { label: "경제력 수준", value: distributionStats.economic },
-                      { label: `주도형 ${distributionStats.dominant}% / 수동형 ${distributionStats.passive}%`, value: "" },
-                      { label: `집착형 ${distributionStats.clingy}% / 거리두기형 ${distributionStats.distancing}%`, value: "" },
-                    ].map((item) => (
-                      <div key={item.label} className="flex justify-between items-center p-3 rounded-xl bg-secondary/30">
-                        <span className="text-xs font-medium text-foreground">{item.label}</span>
-                        {item.value && <span className="text-sm font-black text-foreground">{item.value}</span>}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-[hsl(45,15%,12%)]/60 border border-[hsl(45,30%,20%)]/30">
+                      <span className="text-xs font-medium text-foreground">경제력 수준</span>
+                      <span className="text-sm font-black text-[hsl(45,70%,55%)]">{distributionStats.economic}</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[hsl(45,15%,12%)]/60 border border-[hsl(45,30%,20%)]/30">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-medium text-foreground">주도형 / 수동형</span>
                       </div>
-                    ))}
+                      <div className="flex gap-2">
+                        <div className="flex-1 text-center rounded-lg bg-primary/10 border border-primary/20 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.dominant}%</p>
+                          <p className="text-[10px] text-muted-foreground">주도형</p>
+                        </div>
+                        <div className="flex-1 text-center rounded-lg bg-accent/10 border border-accent/20 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.passive}%</p>
+                          <p className="text-[10px] text-muted-foreground">수동형</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[hsl(45,15%,12%)]/60 border border-[hsl(45,30%,20%)]/30">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-medium text-foreground">집착형 / 거리두기형</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="flex-1 text-center rounded-lg bg-destructive/10 border border-destructive/20 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.clingy}%</p>
+                          <p className="text-[10px] text-muted-foreground">집착형</p>
+                        </div>
+                        <div className="flex-1 text-center rounded-lg bg-[hsl(200,20%,15%)] border border-[hsl(200,20%,25%)]/30 py-2">
+                          <p className="text-lg font-black text-foreground">{distributionStats.distancing}%</p>
+                          <p className="text-[10px] text-muted-foreground">거리두기형</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center bg-card/30 backdrop-blur-[2px]">
-                  <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-3 py-1.5 border border-[hsl(45,40%,25%)]/40">
-                    <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
-                    <span className="text-[10px] font-bold text-[hsl(45,70%,55%)]">프리미엄 잠금 해제 시 확인 가능</span>
+              ) : (
+                <div className="relative rounded-2xl overflow-hidden mb-3">
+                  <div className="glass-card rounded-2xl p-5">
+                    <h4 className="text-xs font-bold text-foreground mb-4 flex items-center gap-1.5">
+                      <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)]" /> 심층 성향 분포
+                      <span className="text-[9px] bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-1.5 py-0.5 rounded-full font-bold">PREMIUM</span>
+                    </h4>
+                    <div className="space-y-3 blur-[7px] select-none pointer-events-none" aria-hidden="true">
+                      {[
+                        { label: "경제력 수준", value: distributionStats.economic },
+                        { label: `주도형 ${distributionStats.dominant}% / 수동형 ${distributionStats.passive}%`, value: "" },
+                        { label: `집착형 ${distributionStats.clingy}% / 거리두기형 ${distributionStats.distancing}%`, value: "" },
+                      ].map((item) => (
+                        <div key={item.label} className="flex justify-between items-center p-3 rounded-xl bg-secondary/30">
+                          <span className="text-xs font-medium text-foreground">{item.label}</span>
+                          {item.value && <span className="text-sm font-black text-foreground">{item.value}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-card/30 backdrop-blur-[2px]">
+                    <div className="flex items-center gap-1.5 bg-card/80 rounded-full px-3 py-1.5 border border-[hsl(45,40%,25%)]/40">
+                      <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                      <span className="text-[10px] font-bold text-[hsl(45,70%,55%)]">프리미엄 잠금 해제 시 확인 가능</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             </div>
