@@ -335,12 +335,30 @@ const ResultPage = () => {
     return () => clearInterval(interval);
   }, [aiLoading, teaserInsights]);
 
-  // Accessibility score from AI text
+  // Accessibility score derived from AI text to stay consistent
   const accessibilityScore = useMemo(() => {
-    let h = 0;
-    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 100;
-    return (1.5 + (h % 35) / 10).toFixed(1);
-  }, [id]);
+    const text = ai?.perceivedAccessibility || "";
+    const lowKeywords = ["쉽", "낮", "편하", "부담 없", "거리낌 없", "말 걸기 쉬", "허들이 낮"];
+    const highKeywords = ["어렵", "높", "넘사벽", "범접", "감히", "쉽지 않", "장벽", "경계", "벽이", "까다"];
+    const midKeywords = ["애매", "중간", "적당", "보통", "미묘", "양면", "헷갈", "모호"];
+    
+    const hasLow = lowKeywords.some(k => text.includes(k));
+    const hasHigh = highKeywords.some(k => text.includes(k));
+    const hasMid = midKeywords.some(k => text.includes(k));
+    
+    // Determine base score from text sentiment
+    let base: number;
+    if (hasHigh && !hasLow) base = 4.0 + (Math.abs(text.length % 8) / 10); // 4.0~4.7
+    else if (hasLow && !hasHigh) base = 1.5 + (Math.abs(text.length % 10) / 10); // 1.5~2.4
+    else if (hasMid || (hasLow && hasHigh)) base = 2.8 + (Math.abs(text.length % 8) / 10); // 2.8~3.5
+    else {
+      // fallback: hash from text length
+      let h = 0;
+      for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 100;
+      base = 2.0 + (h % 25) / 10; // 2.0~4.4
+    }
+    return Math.min(5.0, Math.max(1.0, base)).toFixed(1);
+  }, [id, ai]);
 
   const accessibilityLabel = useMemo(() => {
     const score = parseFloat(accessibilityScore);
