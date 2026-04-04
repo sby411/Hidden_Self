@@ -306,6 +306,15 @@ const ResultPage = () => {
     return (1.5 + (h % 35) / 10).toFixed(1);
   }, [id]);
 
+  const accessibilityLabel = useMemo(() => {
+    const score = parseFloat(accessibilityScore);
+    if (score <= 1.5) return "매우 쉬움";
+    if (score <= 2.5) return "쉬움";
+    if (score <= 3.5) return "보통";
+    if (score <= 4.3) return "어려움";
+    return "매우 어려움";
+  }, [accessibilityScore]);
+
   if (aiLoading || showComplete) {
     const currentStep = showComplete ? { text: "결과를 정리 중입니다..." } : loadingSteps[loadingStepIdx];
     const progressPct = showComplete ? 100 : Math.min(Math.round(loadingProgress), 96);
