@@ -115,6 +115,19 @@ const ResultPage = () => {
   const handleUnlockPremium = async () => {
     if (paymentLoading) return;
     setPaymentLoading(true);
+    
+    // ⚠️ TEST MODE: 결제 없이 바로 프리미엄 해제 (배포 전 반드시 제거!)
+    const TEST_MODE = true;
+    if (TEST_MODE) {
+      toast.success("🧪 테스트 모드: 프리미엄 분석을 확인하세요 🎉");
+      setPremiumUnlocked(true);
+      setPaymentLoading(false);
+      setTimeout(() => {
+        premiumRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+      return;
+    }
+    
     try {
       const result = await requestPayment(id);
       if (result.success) {
