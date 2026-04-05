@@ -948,18 +948,55 @@ export function clampBreakupToPast(
   return { year: y, month: m };
 }
 
+/** `?demo=` 없을 때 scoring 파이프라인이 넘기는 표시용 점수·게이지 보정 */
+export type ReunionScoringMerge = {
+  case: ReunionDemoCase;
+  scores: ReunionScores;
+  contactLeanPercent: number;
+  /** 콘솔 디버그용 — `getReunionFullReport`에서 `[REUNION SCORING]`으로 출력 */
+  debug?: Record<string, unknown>;
+};
+
+/**
+ * @param demoQueryCase `?demo=` 가 있으면 최우선으로 해당 케이스 패치(기존 더미 문구).
+ * @param scoringMerge `demo` 없을 때만 사용: 판정 케이스 + 화면 점수·연락 기울기 보정.
+ * TODO(Apify): scoringMerge는 `buildMockSignalsFromInput` 대신 실제 시그널 소스에서 채우면 된다.
+ */
 export function getReunionFullReport(
   myId: string,
   theirId: string,
   breakupYear: number,
   breakupMonth: number,
   now = new Date(),
-  demoCase: ReunionDemoCase | null = null,
+  demoQueryCase: ReunionDemoCase | null = null,
+  scoringMerge: ReunionScoringMerge | null = null,
 ): ReunionFullReport {
   const { year, month } = clampBreakupToPast(breakupYear, breakupMonth, now);
   const key = `${myId}|${theirId}|${year}-${month}`;
   const seed = hashKey(key);
   const monthsSince = getMonthsSinceBreakup(year, month, now);
   const base = buildReport(seed, monthsSince, year, month);
-  return demoCase ? applyReunionDemoPatch(base, demoCase, seed, monthsSince) : base;
+
+  const patchCase = demoQueryCase ?? scoringMerge?.case ?? null;
+  if (!patchCase) {
+    return base;
+  }
+
+  let report = applyReunionDemoPatch(base, patchCase, seed, monthsSince);
+
+  if (scoringMerge && !demoQueryCase) {
+    report = {
+      ...report,
+      scores: scoringMerge.scores,
+      decisionHint: {
+        ...report.decisionHint,
+        contactLeanPercent: scoringMerge.contactLeanPercent,
+      },
+    };
+    if (scoringMerge.debug != null) {
+      console.log("[REUNION SCORING]", scoringMerge.debug);
+    }
+  }
+
+  return report;
 }

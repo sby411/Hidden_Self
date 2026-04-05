@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import {
   Lock,
@@ -13,8 +13,21 @@ import {
   Image,
 } from "lucide-react";
 import Footer from "@/components/Footer";
-import { getReunionFullReport, parseReunionDemoParam } from "@/data/reunionDummyData";
-import type { ReunionPremiumTeaser } from "@/data/reunionDummyData";
+import {
+  clampBreakupToPast,
+  getMonthsSinceBreakup,
+  getReunionFullReport,
+  parseReunionDemoParam,
+} from "@/data/reunionDummyData";
+import type { ReunionPremiumTeaser, ReunionScoringMerge } from "@/data/reunionDummyData";
+import {
+  buildMockSignalsFromInput,
+  calculateBreakupAdjustment,
+  calculateContactLeanPercent,
+  calculateDisplayScores,
+  calculateReunionScore,
+  decideReunionCase,
+} from "@/lib/reunionScoring";
 import type { ReunionNavigateState } from "./ReunionLandingPage";
 
 function scrollToId(id: string) {
@@ -175,7 +188,44 @@ const ReunionResultPage = () => {
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
-  const report = getReunionFullReport(myId, theirId, breakupYear, breakupMonth, undefined, demoCase);
+  const scoringMerge = useMemo((): ReunionScoringMerge | null => {
+    if (demoCase) return null;
+    const { year, month } = clampBreakupToPast(breakupYear, breakupMonth);
+    const monthsSince = getMonthsSinceBreakup(year, month);
+    const signals = buildMockSignalsFromInput(myId, theirId, monthsSince);
+    const breakupAdjustment = calculateBreakupAdjustment(monthsSince);
+    const finalScore = calculateReunionScore(signals, breakupAdjustment);
+    const effectiveCase = decideReunionCase(signals, monthsSince, finalScore);
+    const naiveBand =
+      finalScore <= 3 ? "closed" : finalScore <= 6 ? "mixed" : "open-candidate";
+    return {
+      case: effectiveCase,
+      scores: calculateDisplayScores(signals, finalScore, monthsSince),
+      contactLeanPercent: calculateContactLeanPercent(signals, finalScore),
+      debug: {
+        signals,
+        finalScore,
+        breakupAdjustment,
+        breakupMonths: monthsSince,
+        naiveBand,
+        effectiveCase,
+      },
+    };
+  }, [demoCase, myId, theirId, breakupYear, breakupMonth]);
+
+  const report = useMemo(
+    () =>
+      getReunionFullReport(
+        myId,
+        theirId,
+        breakupYear,
+        breakupMonth,
+        undefined,
+        demoCase,
+        scoringMerge,
+      ),
+    [myId, theirId, breakupYear, breakupMonth, demoCase, scoringMerge],
+  );
   const {
     scores,
     premiumGateCta,
