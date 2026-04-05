@@ -1,7 +1,7 @@
 /**
- * 재회 판정 뼈대 (Apify / AI 연결 전 단계).
- * TODO(Apify): `buildMockSignalsFromInput` 대신 프로필 스크랩·분석 결과를 `ReunionSignals`로 매핑하는 어댑터만 교체하면 된다.
+ * 재회 판정 — discrete mock 시그널(0~2) + rich 스크랩 시그널(0~100) 파생 점수.
  */
+import type { ReunionRichSignals } from "@/lib/reunionSignals";
 
 /** `reunionDummyData`의 ReunionScores와 동일 필드 (순환 import 방지) */
 export type ReunionDisplayScores = {
@@ -165,4 +165,173 @@ export function calculateContactLeanPercent(signals: ReunionSignals, finalScore:
     signals.relationshipOpenness * 5 +
     (finalScore - 5) * 2;
   return Math.min(78, Math.max(22, Math.round(p)));
+}
+
+function clampUi(n: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, Math.round(n)));
+}
+
+/**
+ * rich signals(0~100) → UI 3점수 + 연락 기울기 % + case (규칙 오버라이드).
+ */
+export function scoreReunionFromRich(s: ReunionRichSignals): {
+  case: ReunionOutcomeCase;
+  displayScores: ReunionDisplayScores;
+  contactLeanPercent: number;
+} {
+  const th = s.theirSignals;
+  const act = s.actionSignals;
+  const pair = s.pairSignals;
+  const my = s.mySignals;
+
+  let reunionPossibility = clampUi(
+    th.opennessScore * 0.22 +
+      th.casualReentryOpenness * 0.22 +
+      (100 - th.avoidanceScore) * 0.18 +
+      pair.reopenConditionScore * 0.18 +
+      act.lightContactFitScore * 0.12 +
+      (100 - act.heavyContactRiskScore) * 0.08,
+    26,
+    88,
+  );
+
+  const theirReunionOpenness = clampUi(
+    th.opennessScore * 0.45 + th.casualReentryOpenness * 0.35 + (100 - th.heavyContactResistance) * 0.2,
+    24,
+    86,
+  );
+
+  const contactTimingFit = clampUi(
+    act.lightContactFitScore * 0.5 +
+      (100 - act.heavyContactRiskScore) * 0.3 +
+      (100 - act.definitionTalkRiskScore) * 0.2,
+    24,
+    84,
+  );
+
+  let contactLeanPercent = Math.round(
+    Math.min(
+      78,
+      Math.max(
+        22,
+        26 +
+          act.lightContactFitScore * 0.38 -
+          act.waitFitScore * 0.22 +
+          (100 - th.heavyContactResistance) * 0.14 +
+          (th.casualReentryOpenness - 50) * 0.12,
+      ),
+    ),
+  );
+
+  let caseResolved: ReunionOutcomeCase = "mixed";
+
+  if (th.avoidanceScore >= 74 && my.emotionalResidueScore >= 58) {
+    caseResolved = "closed";
+  } else if (th.casualReentryOpenness >= 60 && th.defensiveShiftScore <= 52 && act.heavyContactRiskScore < 70) {
+    caseResolved = "open";
+  } else if (reunionPossibility < 42 || th.avoidanceScore >= 80) {
+    caseResolved = "closed";
+  } else if (reunionPossibility >= 60 && contactTimingFit >= 50 && act.heavyContactRiskScore < 72) {
+    caseResolved = "open";
+  }
+
+  if (caseResolved === "open" && act.heavyContactRiskScore >= 72) caseResolved = "mixed";
+  if (caseResolved === "open" && th.avoidanceScore >= 70) caseResolved = "mixed";
+  if (caseResolved === "open" && th.opennessScore < 48) caseResolved = "mixed";
+  if (caseResolved === "closed" && th.opennessScore >= 68 && th.avoidanceScore < 66 && act.heavyContactRiskScore < 75) {
+    caseResolved = "mixed";
+  }
+
+  return {
+    case: caseResolved,
+    displayScores: {
+      reunionPossibility,
+      theirReunionOpenness,
+      contactTimingFit,
+    },
+    contactLeanPercent,
+  };
+}
+
+/** 상대가 먼저 연락 올 확률·시점·채널 (theirSignals + 경과월) */
+export type TheirReachOutForecast = {
+  percent: number;
+  timingBand: string;
+  channelPrimary: string;
+  channelSecondary: string;
+  rationaleLine: string;
+  punchLine: string;
+  lockedBody: string;
+};
+
+export function computeTheirReachOutFirst(s: ReunionRichSignals): TheirReachOutForecast {
+  const th = s.theirSignals;
+  const m = s.profileMeta.breakupMonthsSince;
+
+  const raw =
+    th.casualReentryOpenness * 0.34 +
+    th.emotionalResidueScore * 0.23 +
+    (100 - th.avoidanceScore) * 0.31 +
+    (100 - th.heavyContactResistance) * 0.12;
+  const percent = clampUi(raw * 0.88, 11, 84);
+
+  let timingBand: string;
+  if (th.avoidanceScore >= 74) {
+    timingBand =
+      m <= 1
+        ? "지금~4주: 거의 제로에 가깝다. 회피 점수가 너무 높음."
+        : m <= 4
+          ? "10~14주쯤 가서야 스토리급 가벼운 접점 정도는 볼 수 있음"
+          : "8~12주 넘겨도 장문 DM 먼저 올 확률은 낮음";
+  } else if (percent >= 52) {
+    timingBand =
+      m <= 2 ? "이별 후 4~7주 사이" : m <= 6 ? "이별 후 6~9주 사이" : "이별 후 8~12주 사이";
+  } else {
+    timingBand =
+      m <= 2 ? "6~10주는 봐야 함 — 지금은 아님" : "10주 넘겨도 먼저 길게 쓰진 않을 쪽";
+  }
+
+  let channelPrimary: string;
+  let channelSecondary: string;
+  if (th.avoidanceScore >= 68) {
+    channelPrimary = "스토리 반응 · 이모지 · 짧은 리액션";
+    channelSecondary = `회피 ${th.avoidanceScore}면 장문 DM으로 선뜻 안 온다. 부담 거의 없는 쪽부터 깨는 타입.`;
+  } else if (th.casualReentryOpenness >= 58 && th.emotionalResidueScore >= 52) {
+    channelPrimary = "DM 한두 줄 · 짧은 확인 멘트";
+    channelSecondary = `가벼운 재진입 ${th.casualReentryOpenness} + 잔상 ${th.emotionalResidueScore}면 직접 타이핑 나올 틈은 있음.`;
+  } else if (th.activityTrend === "up") {
+    channelPrimary = "피드·릴 노출 뒤 스토리나 가벼운 댓글";
+    channelSecondary = `노출은 늘었는데 회피 ${th.avoidanceScore} — 오픈 DM보단 겉도는 접점이 먼저.`;
+  } else {
+    channelPrimary = "공개 댓글보다 비공개 스토리·반응 쪽";
+    channelSecondary = `댓글은 부담으로 잡히기 쉬움. 회피 ${th.avoidanceScore}.`;
+  }
+
+  const rationaleLine = `가벼운 재진입 ${th.casualReentryOpenness} · 잔상 ${th.emotionalResidueScore} · 회피 ${th.avoidanceScore} 조합으로 뽑은 수치다.`;
+
+  const punchLine =
+    percent >= 55
+      ? "잔상은 있는데 회피가 같이 높으면 오긴 오는데 티 안 내려고 하는 타입 많다. 안 보이면 없는 거다."
+      : "회피가 잔상 이기면 먼저 온다고 착각했다가 읽씹 각 나온다.";
+
+  const lockedBody = [
+    rationaleLine,
+    "",
+    `예상 시점: ${timingBand}`,
+    "",
+    `먼저 오면 이런 형태: ${channelPrimary}`,
+    channelSecondary,
+    "",
+    punchLine,
+  ].join("\n");
+
+  return {
+    percent,
+    timingBand,
+    channelPrimary,
+    channelSecondary,
+    rationaleLine,
+    punchLine,
+    lockedBody,
+  };
 }
