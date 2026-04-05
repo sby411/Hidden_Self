@@ -19,7 +19,7 @@ import {
   getReunionFullReport,
   parseReunionDemoParam,
 } from "@/data/reunionDummyData";
-import type { ReunionPremiumTeaser, ReunionScoringMerge } from "@/data/reunionDummyData";
+import type { ReunionDemoCase, ReunionPremiumTeaser, ReunionScoringMerge } from "@/data/reunionDummyData";
 import {
   buildMockSignalsFromInput,
   calculateBreakupAdjustment,
@@ -89,7 +89,54 @@ function SectionDivider() {
   return <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />;
 }
 
-function PremiumTeaserCard({ card, unlocked }: { card: ReunionPremiumTeaser; unlocked: boolean }) {
+/** `contactLeanPercent` = 연락하기 쪽 비중(0–100). 높은 쪽을 앞에 두어 읽기 쉽게 표기 */
+function formatReunionLeanComparison(contactLeanPercent: number): string {
+  const c = Math.round(contactLeanPercent);
+  const w = 100 - c;
+  if (w >= c) {
+    return `현재 판단: 기다리기 ${w}% / 연락하기 ${c}%`;
+  }
+  return `현재 판단: 연락하기 ${c}% / 기다리기 ${w}%`;
+}
+
+/** 바 아래 한 줄 — closed/mixed/open과 정합 */
+const REUNION_LEAN_HINT_BY_CASE: Record<ReunionDemoCase, string> = {
+  closed: "즉, 지금은 먼저 들어가기보다 텀을 두는 쪽이 더 안전하다.",
+  mixed: "즉, 지금은 무겁게 밀기보다 속도·톤을 맞추는 쪽이 덜 위험하다.",
+  open: "즉, 지금은 가볍게 접점을 보는 쪽이 더 유리하다.",
+};
+
+/** `contactLean` 분기 대신 `resolvedCase`와 동일 — 점수·패치 본문과 정합 */
+const REUNION_DECISION_SECTION_BY_CASE: Record<ReunionDemoCase, { kicker: string; title: string }> = {
+  closed: {
+    kicker: "한 줄 판정 · 지금은 연락 미루는 쪽",
+    title: "지금 먼저 연락하면 닫힐 가능성이 큼",
+  },
+  mixed: {
+    kicker: "한 줄 판정 · 무거우면 안 됨, 가볍면 얇은 여지",
+    title: "무거운 연락은 비추, 얇은 여지만 있다",
+  },
+  open: {
+    kicker: "한 줄 판정 · 짧은 틈은 있음(조건부)",
+    title: "지금은 짧은 접점이면 얇은 여지",
+  },
+};
+
+/** 넓은 쪽(기울기 방향)만 강한 그라데이션 — 좁은 쪽은 흐린 노랑 톤 */
+const REUNION_LEAN_BAR_MUTED =
+  "h-full bg-gradient-to-r from-[hsl(48,36%,24%)] to-[hsl(42,26%,16%)] transition-all";
+const REUNION_LEAN_BAR_VIBRANT =
+  "h-full bg-gradient-to-r from-primary to-[hsl(45,65%,48%)] transition-all";
+
+function PremiumTeaserCard({
+  card,
+  unlocked,
+  resolvedCase,
+}: {
+  card: ReunionPremiumTeaser;
+  unlocked: boolean;
+  resolvedCase: ReunionDemoCase;
+}) {
   const p = card.contactVsWaitPercent;
   const w = card.waitRangeShort;
   const np = card.newPersonWeightPercent;
@@ -101,21 +148,22 @@ function PremiumTeaserCard({ card, unlocked }: { card: ReunionPremiumTeaser; unl
         {p != null && (
           <div className="space-y-2">
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span>기다림 쪽</span>
-              <span>연락 쪽</span>
+              <span>기다리기</span>
+              <span>연락하기</span>
             </div>
-            <div className="h-3 w-full rounded-full overflow-hidden flex bg-secondary">
+            <div className="h-3 w-full rounded-full overflow-hidden flex border border-border/40">
               <div
-                className="h-full bg-muted-foreground/20 transition-all"
+                className={p >= 50 ? REUNION_LEAN_BAR_MUTED : REUNION_LEAN_BAR_VIBRANT}
                 style={{ width: `${100 - p}%` }}
               />
               <div
-                className="h-full bg-gradient-to-r from-primary to-[hsl(45,65%,48%)] transition-all"
+                className={p >= 50 ? REUNION_LEAN_BAR_VIBRANT : REUNION_LEAN_BAR_MUTED}
                 style={{ width: `${p}%` }}
               />
             </div>
-            <p className="text-xs text-center text-muted-foreground">
-              연락 쪽 기울기 <span className="font-black text-foreground tabular-nums">{p}%</span>
+            <p className="text-xs text-center text-muted-foreground">{formatReunionLeanComparison(p)}</p>
+            <p className="text-xs text-center text-foreground font-semibold leading-relaxed px-0.5">
+              {REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
             </p>
           </div>
         )}
@@ -236,25 +284,11 @@ const ReunionResultPage = () => {
     freeCore,
   } = report;
 
-  const contactLean = decisionHint.contactLeanPercent;
-  const decisionSectionKicker =
-    contactLean <= 42
-      ? "한 줄 판정 · 지금은 연락 미루는 쪽"
-      : contactLean >= 58
-        ? "한 줄 판정 · 짧은 틈은 있음(조건부)"
-        : "한 줄 판정 · 무거우면 안 됨, 가볍면 얇은 여지";
-  const decisionSectionTitle =
-    contactLean <= 42
-      ? "지금 먼저 연락하면 닫힐 가능성이 큼"
-      : contactLean >= 58
-        ? "지금은 짧은 접점이면 얇은 여지"
-        : "무거운 연락은 비추, 얇은 여지만 있다";
-  const decisionGaugeVerdict =
-    contactLean <= 42
-      ? "→ 해석: 지금 당장 적극 연락은 비추다. 기다림·자극 줄이기가 우선이다."
-      : contactLean >= 58
-        ? "→ 해석: 무거운 연락은 비추다. 짧고 가벼운 한 줄이면 아주 얇은 틈만 있다."
-        : "→ 해석: 무겁게 연락하면 비추다. 완전 막힘은 아니어도 여지는 얇다.";
+  /** demo > scoring — 본문·점수·프리미엄 패치와 동일 case만 참조 */
+  const resolvedCase: ReunionDemoCase = demoCase ?? scoringMerge?.case ?? "mixed";
+  const caseSource: "demo" | "scoring" = demoCase ? "demo" : "scoring";
+  const { kicker: decisionSectionKicker, title: decisionSectionTitle } =
+    REUNION_DECISION_SECTION_BY_CASE[resolvedCase];
 
   const handlePremiumUnlock = () => {
     setPremiumUnlocked(true);
@@ -274,6 +308,15 @@ const ReunionResultPage = () => {
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, [premiumUnlocked]);
+
+  useEffect(() => {
+    console.log("[REUNION]", {
+      source: caseSource,
+      effectiveCase: resolvedCase,
+      displayScores: scores,
+      contactLeanPercent: decisionHint.contactLeanPercent,
+    });
+  }, [caseSource, resolvedCase, scores, decisionHint.contactLeanPercent]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -361,25 +404,32 @@ const ReunionResultPage = () => {
               <p className="text-sm font-bold text-foreground leading-[1.85] mb-5">{decisionHint.headline}</p>
               <div className="space-y-2">
                 <div className="flex justify-between text-xs font-medium text-muted-foreground">
-                  <span>기다릴 쪽</span>
-                  <span>연락 쪽</span>
+                  <span>기다리기</span>
+                  <span>연락하기</span>
                 </div>
-                <div className="h-3 w-full rounded-full overflow-hidden flex bg-secondary">
+                <div className="h-3 w-full rounded-full overflow-hidden flex border border-border/40">
                   <div
-                    className="h-full bg-muted-foreground/20"
+                    className={
+                      decisionHint.contactLeanPercent >= 50
+                        ? REUNION_LEAN_BAR_MUTED
+                        : REUNION_LEAN_BAR_VIBRANT
+                    }
                     style={{ width: `${100 - decisionHint.contactLeanPercent}%` }}
                   />
                   <div
-                    className="h-full bg-gradient-to-r from-primary to-[hsl(45,60%,45%)]"
+                    className={
+                      decisionHint.contactLeanPercent >= 50
+                        ? REUNION_LEAN_BAR_VIBRANT
+                        : REUNION_LEAN_BAR_MUTED
+                    }
                     style={{ width: `${decisionHint.contactLeanPercent}%` }}
                   />
                 </div>
                 <p className="text-xs text-center text-muted-foreground pt-1">
-                  지금 손 내밀면 ‘먹힐’ 쪽 기울기{" "}
-                  <span className="font-black text-foreground tabular-nums">{decisionHint.contactLeanPercent}%</span>
+                  {formatReunionLeanComparison(decisionHint.contactLeanPercent)}
                 </p>
                 <p className="text-xs text-center text-foreground font-semibold leading-relaxed px-0.5">
-                  {decisionGaugeVerdict}
+                  {REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
                 </p>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed border-t border-border/50 pt-4 mt-5">
@@ -527,7 +577,12 @@ const ReunionResultPage = () => {
 
             <div id="reunion-premium-cards" className="space-y-4 scroll-mt-28 pb-4">
               {premiumTeasers.slice(0, 4).map((card) => (
-                <PremiumTeaserCard key={card.key} card={card} unlocked={premiumUnlocked} />
+                <PremiumTeaserCard
+                  key={card.key}
+                  card={card}
+                  unlocked={premiumUnlocked}
+                  resolvedCase={resolvedCase}
+                />
               ))}
             </div>
           </div>

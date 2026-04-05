@@ -993,9 +993,6 @@ export function getReunionFullReport(
         contactLeanPercent: scoringMerge.contactLeanPercent,
       },
     };
-    if (scoringMerge.debug != null) {
-      console.log("[REUNION SCORING]", scoringMerge.debug);
-    }
   }
 
   return report;
