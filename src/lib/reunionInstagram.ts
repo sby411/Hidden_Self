@@ -64,6 +64,8 @@ export type ReunionPairPipelineResult =
       their: ReunionScrapeBundle;
       myAi: ReunionAccountAiAnalysis | null;
       theirAi: ReunionAccountAiAnalysis | null;
+      myPersonaLine: string;
+      partnerPersonaLine: string;
       myPrivateWarning: boolean;
       theirPrivateWarning: boolean;
       fromCache: boolean;
@@ -110,12 +112,16 @@ export async function fetchReunionPairWithAnalysis(
   }
 
   if (data?.ok && data?.mode === "pair" && data?.my && data?.their) {
+    const myAi = parseAiAnalysis(data.myAiAnalysis);
+    const theirAi = parseAiAnalysis(data.theirAiAnalysis);
     return {
       ok: true,
       my: data.my as ReunionScrapeBundle,
       their: data.their as ReunionScrapeBundle,
-      myAi: parseAiAnalysis(data.myAiAnalysis),
-      theirAi: parseAiAnalysis(data.theirAiAnalysis),
+      myAi,
+      theirAi,
+      myPersonaLine: (typeof data.myPersonaLine === "string" ? data.myPersonaLine : "") || myAi?.persona || "",
+      partnerPersonaLine: (typeof data.partnerPersonaLine === "string" ? data.partnerPersonaLine : "") || theirAi?.persona || "",
       myPrivateWarning: Boolean(data.myPrivateWarning),
       theirPrivateWarning: Boolean(data.theirPrivateWarning),
       fromCache: Boolean(data.fromCache),

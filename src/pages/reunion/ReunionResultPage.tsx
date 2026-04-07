@@ -444,6 +444,8 @@ const ReunionResultPage = () => {
   const [pairAi, setPairAi] = useState<{
     my: ReunionAccountAiAnalysis | null;
     their: ReunionAccountAiAnalysis | null;
+    myPersonaLine: string;
+    partnerPersonaLine: string;
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
@@ -534,6 +536,8 @@ const ReunionResultPage = () => {
         setPairAi({
           my: pairRes.myAi,
           their: pairRes.theirAi,
+          myPersonaLine: pairRes.myPersonaLine,
+          partnerPersonaLine: pairRes.partnerPersonaLine,
           fromCache: pairRes.fromCache,
         });
         setIgFetchError(false);
@@ -762,7 +766,7 @@ const ReunionResultPage = () => {
             <div className="glass-card rounded-2xl p-5 border border-ai-highlight/20 mb-3">
               <p className="text-[10px] font-bold text-ai-highlight uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
-                {pairAi?.my?.persona || reunionJourney.myTypeName}
+                {pairAi?.myPersonaLine || reunionJourney.myTypeName}
               </p>
               {pairAi?.my ? (
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -825,7 +829,7 @@ const ReunionResultPage = () => {
             <div className="glass-card rounded-2xl p-5 border border-primary/15">
               <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
-                {pairAi?.their?.persona || reunionJourney.theirTypeName}
+                {pairAi?.partnerPersonaLine || reunionJourney.theirTypeName}
               </p>
               {pairAi?.their ? (
                 <div className="flex flex-wrap gap-1.5 mb-4">
