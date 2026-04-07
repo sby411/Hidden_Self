@@ -68,6 +68,8 @@ export type ReunionPairPipelineResult =
       partnerPersonaLine: string;
       compatibilityType: string;
       compatibilityDesc: string;
+      myYearning: number;
+      partnerYearning: number;
       myPrivateWarning: boolean;
       theirPrivateWarning: boolean;
       fromCache: boolean;
@@ -126,6 +128,8 @@ export async function fetchReunionPairWithAnalysis(
       partnerPersonaLine: (typeof data.partnerPersonaLine === "string" ? data.partnerPersonaLine : "") || theirAi?.persona || "",
       compatibilityType: typeof data.compatibilityType === "string" ? data.compatibilityType : "",
       compatibilityDesc: typeof data.compatibilityDesc === "string" ? data.compatibilityDesc : "",
+      myYearning: typeof data.myYearning === "number" ? data.myYearning : 65,
+      partnerYearning: typeof data.partnerYearning === "number" ? data.partnerYearning : 35,
       myPrivateWarning: Boolean(data.myPrivateWarning),
       theirPrivateWarning: Boolean(data.theirPrivateWarning),
       fromCache: Boolean(data.fromCache),

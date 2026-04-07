@@ -229,24 +229,27 @@ ${JSON.stringify(payload)}`;
   };
 }
 
-const COMPATIBILITY_SYSTEM = `You analyze two Instagram accounts for a "reunion / post-breakup" product and determine their compatibility type.
+const COMPATIBILITY_SYSTEM = `You analyze two Instagram accounts for a "reunion / post-breakup" product and determine their compatibility type and yearning levels.
 Output ONLY a single JSON object, no markdown fences, no extra text.
 Schema:
 {
   "compatibilityType": string (Korean, 15자 내외. 두 사람의 관계 구조를 정의하는 제목. ~관계 또는 ~사이 형태로. 예: "끌리지만 타이밍이 문제인 관계", "감정은 남아있지만 방식이 다른 관계", "한쪽만 열려있는 비대칭 관계"),
-  "compatibilityDesc": string (Korean, 한 문장. 두 사람의 구체적인 관계 패턴 설명. 자연스러운 한국어로. 예: "서로 잡아당기는 힘은 있는데 지금은 둘 다 준비가 안 됐다", "마음이 없는 게 아니라 표현 방식이 달라서 계속 엇갈리는 구조다")
+  "compatibilityDesc": string (Korean, 한 문장. 두 사람의 구체적인 관계 패턴 설명. 자연스러운 한국어로. 예: "서로 잡아당기는 힘은 있는데 지금은 둘 다 준비가 안 됐다", "마음이 없는 게 아니라 표현 방식이 달라서 계속 엇갈리는 구조다"),
+  "myYearning": number (0-100. MY_ACCOUNT의 미련 수치. 피드에서 읽히는 감정 잔류, 미련, 과거 회상 정도를 종합한 점수),
+  "partnerYearning": number (0-100. THEIR_ACCOUNT의 미련 수치. 동일 기준. 중요: myYearning은 반드시 partnerYearning보다 높아야 한다. 리포트를 돌리는 쪽이 대체로 미련이 더 크기 때문이다)
 }
 Rules:
 - 자연스러운 한국어 문장으로. 단문 끊어치기 금지. 친구가 솔직하게 조언하는 말투로.
 - Do NOT infer gender. Use neutral wording.
-- Base analysis only on visible public data patterns.`;
+- Base analysis only on visible public data patterns.
+- myYearning must always be > partnerYearning. Typical range: myYearning 55-85, partnerYearning 20-55.`;
 
 async function callClaudeCompatibility(
   apiKey: string,
   myBundle: any,
   theirBundle: any,
   dataLimited: boolean,
-): Promise<{ compatibilityType: string; compatibilityDesc: string } | null> {
+): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number } | null> {
   const myPayload = compactBundleForPrompt(myBundle, 10);
   const theirPayload = compactBundleForPrompt(theirBundle, 10);
 
@@ -286,8 +289,13 @@ ${JSON.stringify(theirPayload)}`;
     const parsed = JSON.parse(trimmed);
     const compatibilityType = typeof parsed.compatibilityType === "string" ? parsed.compatibilityType.trim() : "";
     const compatibilityDesc = typeof parsed.compatibilityDesc === "string" ? parsed.compatibilityDesc.trim() : "";
+    let myYearning = typeof parsed.myYearning === "number" ? Math.round(parsed.myYearning) : 65;
+    let partnerYearning = typeof parsed.partnerYearning === "number" ? Math.round(parsed.partnerYearning) : 35;
+    myYearning = Math.max(0, Math.min(100, myYearning));
+    partnerYearning = Math.max(0, Math.min(100, partnerYearning));
+    if (myYearning <= partnerYearning) { myYearning = Math.min(100, partnerYearning + 15); }
     if (!compatibilityType) return null;
-    return { compatibilityType, compatibilityDesc };
+    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning };
   } catch {
     console.error("Claude compatibility JSON parse failed");
     return null;
@@ -440,6 +448,8 @@ Deno.serve(async (req) => {
             partnerPersonaLine: cached.theirAiAnalysis?.persona || "",
             compatibilityType: cached.compatibility?.compatibilityType || "",
             compatibilityDesc: cached.compatibility?.compatibilityDesc || "",
+            myYearning: cached.compatibility?.myYearning ?? 65,
+            partnerYearning: cached.compatibility?.partnerYearning ?? 35,
             myPrivateWarning: Boolean(cached.myPrivateWarning),
             theirPrivateWarning: Boolean(cached.theirPrivateWarning),
           }),
@@ -532,6 +542,8 @@ Deno.serve(async (req) => {
           partnerPersonaLine: theirAiAnalysis?.persona || "",
           compatibilityType: compatibility?.compatibilityType || "",
           compatibilityDesc: compatibility?.compatibilityDesc || "",
+          myYearning: compatibility?.myYearning ?? 65,
+          partnerYearning: compatibility?.partnerYearning ?? 35,
           myPrivateWarning,
           theirPrivateWarning,
         }),

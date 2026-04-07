@@ -115,36 +115,6 @@ function HookQuote({ text }: { text: string }) {
   );
 }
 
-/** 2×2 그리드용 시그널 미니 카드 */
-function SignalMiniCard({
-  emoji,
-  label,
-  value,
-  accent,
-  sub,
-}: {
-  emoji: string;
-  label: string;
-  value: number;
-  accent: "primary" | "ai-highlight";
-  sub?: string;
-}) {
-  const rounded = Math.round(value);
-  const barColor = accent === "primary" ? "gradient-primary" : "gradient-ai";
-  return (
-    <div className="rounded-xl bg-secondary/30 border border-border/40 p-3 text-center">
-      <span className="text-lg leading-none block mb-1">{emoji}</span>
-      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">{label}</p>
-      <p className="text-xl font-black text-foreground tabular-nums leading-none mb-1">
-        {sub ?? rounded}
-      </p>
-      <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
-        <div className={`h-full rounded-full ${barColor} transition-all`} style={{ width: `${rounded}%` }} />
-      </div>
-    </div>
-  );
-}
-
 /* ── loading screen with animated progress ───────────────── */
 
 const LOADING_STEPS = [
@@ -448,6 +418,8 @@ const ReunionResultPage = () => {
     partnerPersonaLine: string;
     compatibilityType: string;
     compatibilityDesc: string;
+    myYearning: number;
+    partnerYearning: number;
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
@@ -542,6 +514,8 @@ const ReunionResultPage = () => {
           partnerPersonaLine: pairRes.partnerPersonaLine,
           compatibilityType: pairRes.compatibilityType,
           compatibilityDesc: pairRes.compatibilityDesc,
+          myYearning: pairRes.myYearning,
+          partnerYearning: pairRes.partnerYearning,
           fromCache: pairRes.fromCache,
         });
         setIgFetchError(false);
@@ -780,8 +754,8 @@ const ReunionResultPage = () => {
             </div>
 
             {/* 내 타입 */}
-            <div className="glass-card rounded-2xl p-5 border border-ai-highlight/20 mb-3">
-              <p className="text-[10px] font-bold text-ai-highlight uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
+            <div className="glass-card rounded-2xl p-5 border border-red-500/20 mb-3">
+              <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
                 {pairAi?.myPersonaLine || reunionJourney.myTypeName}
               </p>
@@ -790,61 +764,31 @@ const ReunionResultPage = () => {
                   {pairAi.my.keywords.map((k, i) => (
                     <span
                       key={`my-${i}`}
-                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-ai-highlight/15 border border-ai-highlight/30 text-ai-highlight"
+                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/25 text-red-400"
                     >
                       {k}
                     </span>
                   ))}
                 </div>
               ) : null}
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                <SignalMiniCard
-                  emoji="🎭"
-                  label="감정 잔류"
-                  value={richSignalsForUi.mySignals.emotionalResidueScore}
-                  accent="ai-highlight"
-                />
-                <SignalMiniCard
-                  emoji="🔍"
-                  label="간접 시그널"
-                  value={richSignalsForUi.mySignals.indirectSignalScore}
-                  accent="ai-highlight"
-                />
-                <SignalMiniCard
-                  emoji="🧹"
-                  label="정리 미완"
-                  value={richSignalsForUi.mySignals.cleanupIncompleteScore}
-                  accent="ai-highlight"
-                />
-                <SignalMiniCard
-                  emoji="🌱"
-                  label="자기 집중"
-                  value={richSignalsForUi.mySignals.selfFocusScore}
-                  accent="ai-highlight"
-                />
-              </div>
-              <BlurGate locked={!premiumUnlocked} hint="심층 분석에서 전부 공개">
-                <div className="grid grid-cols-2 gap-2">
-                  <SignalMiniCard
-                    emoji="👥"
-                    label="사회 확장"
-                    value={richSignalsForUi.mySignals.socialExpansionScore}
-                    accent="ai-highlight"
-                  />
-                  <SignalMiniCard
-                    emoji="📈"
-                    label="활동 추세"
-                    value={richSignalsForUi.mySignals.activityTrend === "up" ? 75 : richSignalsForUi.mySignals.activityTrend === "flat" ? 50 : 25}
-                    accent="ai-highlight"
-                    sub={richSignalsForUi.mySignals.activityTrend === "up" ? "상승" : richSignalsForUi.mySignals.activityTrend === "flat" ? "유지" : "하락"}
+              {/* 미련 수치 */}
+              <div className="rounded-xl bg-red-500/5 border border-red-500/15 p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider">미련 수치</p>
+                  <p className="text-xl font-black text-red-400 tabular-nums">{pairAi?.myYearning ?? 65}</p>
+                </div>
+                <div className="h-2.5 w-full rounded-full bg-secondary overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-red-500 to-red-400 transition-all duration-700"
+                    style={{ width: `${pairAi?.myYearning ?? 65}%` }}
                   />
                 </div>
-              </BlurGate>
+              </div>
             </div>
 
             {/* 상대 타입 */}
-            <div className="glass-card rounded-2xl p-5 border border-primary/15">
-              <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
+            <div className="glass-card rounded-2xl p-5 border border-border/30">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
                 {pairAi?.partnerPersonaLine || reunionJourney.theirTypeName}
               </p>
@@ -853,55 +797,26 @@ const ReunionResultPage = () => {
                   {pairAi.their.keywords.map((k, i) => (
                     <span
                       key={`their-${i}`}
-                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary"
+                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-secondary/60 border border-border/50 text-muted-foreground"
                     >
                       {k}
                     </span>
                   ))}
                 </div>
               ) : null}
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                <SignalMiniCard
-                  emoji="💛"
-                  label="개방도"
-                  value={richSignalsForUi.theirSignals.opennessScore}
-                  accent="primary"
-                />
-                <SignalMiniCard
-                  emoji="🛡️"
-                  label="회피 방어"
-                  value={richSignalsForUi.theirSignals.avoidanceScore}
-                  accent="primary"
-                />
-                <SignalMiniCard
-                  emoji="🎭"
-                  label="감정 잔류"
-                  value={richSignalsForUi.theirSignals.emotionalResidueScore}
-                  accent="primary"
-                />
-                <SignalMiniCard
-                  emoji="🚪"
-                  label="가벼운 재진입"
-                  value={richSignalsForUi.theirSignals.casualReentryOpenness}
-                  accent="primary"
-                />
-              </div>
-              <BlurGate locked={!premiumUnlocked} hint="심층 분석에서 전부 공개">
-                <div className="grid grid-cols-2 gap-2">
-                  <SignalMiniCard
-                    emoji="🧲"
-                    label="새 인물 힌트"
-                    value={richSignalsForUi.theirSignals.newPersonHintScore}
-                    accent="primary"
-                  />
-                  <SignalMiniCard
-                    emoji="🚫"
-                    label="무거운 연락 저항"
-                    value={richSignalsForUi.theirSignals.heavyContactResistance}
-                    accent="primary"
+              {/* 미련 수치 */}
+              <div className="rounded-xl bg-secondary/30 border border-border/30 p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">미련 수치</p>
+                  <p className="text-xl font-black text-muted-foreground tabular-nums">{pairAi?.partnerYearning ?? 35}</p>
+                </div>
+                <div className="h-2.5 w-full rounded-full bg-secondary overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-zinc-500 to-zinc-400 transition-all duration-700"
+                    style={{ width: `${pairAi?.partnerYearning ?? 35}%` }}
                   />
                 </div>
-              </BlurGate>
+              </div>
             </div>
           </section>
 
@@ -976,13 +891,13 @@ const ReunionResultPage = () => {
 
           <SectionDivider />
 
-          {/* ──────────────── 섹션 6: 연락해? 말아? 게이지 ──────────────── */}
+          {/* ──────────────── 섹션 6: 먼저 연락할지 말지 ──────────────── */}
           <section id="reunion-decision" className="scroll-mt-28">
             <div className="flex items-start gap-3 mb-4">
               <SectionBadge step="6" />
               <div>
                 <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Contact Decision</p>
-                <h2 className="text-sm font-bold text-foreground">연락해? 말아?</h2>
+                <h2 className="text-sm font-bold text-foreground">먼저 연락할지 말지</h2>
               </div>
             </div>
 
