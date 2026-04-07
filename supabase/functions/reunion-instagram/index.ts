@@ -158,7 +158,8 @@ Schema:
 Rules:
 - Do NOT infer gender from names, usernames, or photos. Use neutral wording: "이 사람", "계정", "상대".
 - Do not state private facts; only patterns visible from the given text/numbers.
-- If data is sparse or the account is private/partial, say so briefly and lower confidence in wording.`;
+- If data is sparse or the account is private/partial, say so briefly and lower confidence in wording.
+- 말투: 자연스러운 한국어 문장으로 써줘. 단문 끊어치기 금지. "~다. ~다. ~다." 반복 금지. 친구가 솔직하게 조언해주는 톤으로. 문장은 적절히 이어서 쓰고, 읽었을 때 자연스럽게 흘러야 한다.`;
 
 async function callClaudeAnalysis(
   apiKey: string,

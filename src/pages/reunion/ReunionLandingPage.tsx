@@ -146,9 +146,6 @@ const ReunionLandingPage = () => {
 
               <div className="space-y-2">
                 <Label className="text-xs font-semibold text-foreground">이별 시기 (연·월)</Label>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  리포트에서 &quot;헤어진 지 ○개월&quot; 맥락으로 쓰입니다. 오늘 이후 날짜는 선택할 수 없습니다.
-                </p>
                 <div className="grid grid-cols-2 gap-3">
                   <select
                     aria-label="이별 연도"
