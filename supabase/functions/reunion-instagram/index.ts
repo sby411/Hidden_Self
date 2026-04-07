@@ -432,7 +432,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      const cacheKey = `reunion_ai_v3:${myUserId.toLowerCase()}:${theirUserId.toLowerCase()}`;
+      const cacheKey = `reunion_ai_v4:${myUserId.toLowerCase()}:${theirUserId.toLowerCase()}`;
       const cached = await restGetCache(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, cacheKey);
       if (cached?.my && cached?.their) {
         return new Response(
@@ -444,8 +444,8 @@ Deno.serve(async (req) => {
             their: cached.their,
             myAiAnalysis: cached.myAiAnalysis ?? null,
             theirAiAnalysis: cached.theirAiAnalysis ?? null,
-            myPersonaLine: (cached.myAiAnalysis?.persona || "").slice(0, 20),
-            partnerPersonaLine: (cached.theirAiAnalysis?.persona || "").slice(0, 20),
+            myPersonaLine: cached.myAiAnalysis?.persona || "",
+            partnerPersonaLine: cached.theirAiAnalysis?.persona || "",
             compatibilityType: cached.compatibility?.compatibilityType || "",
             compatibilityDesc: cached.compatibility?.compatibilityDesc || "",
             myYearning: cached.compatibility?.myYearning ?? 65,
@@ -538,8 +538,8 @@ Deno.serve(async (req) => {
           their: theirBundle,
           myAiAnalysis,
           theirAiAnalysis,
-          myPersonaLine: (myAiAnalysis?.persona || "").slice(0, 20),
-          partnerPersonaLine: (theirAiAnalysis?.persona || "").slice(0, 20),
+          myPersonaLine: myAiAnalysis?.persona || "",
+          partnerPersonaLine: theirAiAnalysis?.persona || "",
           compatibilityType: compatibility?.compatibilityType || "",
           compatibilityDesc: compatibility?.compatibilityDesc || "",
           myYearning: compatibility?.myYearning ?? 65,
