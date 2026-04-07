@@ -62,7 +62,8 @@ const ReunionLandingPage = () => {
     navigate("/reunion/result", { state });
   };
 
-  const canSubmit = myId.replace("@", "").trim() && theirId.replace("@", "").trim();
+  const [publicConfirmed, setPublicConfirmed] = useState(false);
+  const canSubmit = myId.replace("@", "").trim() && theirId.replace("@", "").trim() && publicConfirmed;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -191,6 +192,18 @@ const ReunionLandingPage = () => {
               <p className="text-[11px] text-muted-foreground text-center">
                 🔒 비공개 계정은 분석이 어려워요. 잠시 공개로 전환 후 진행해 주세요.
               </p>
+
+              <label className="flex items-center gap-2.5 cursor-pointer select-none mb-1">
+                <input
+                  type="checkbox"
+                  checked={publicConfirmed}
+                  onChange={(e) => setPublicConfirmed(e.target.checked)}
+                  className="w-4 h-4 rounded border-border accent-primary cursor-pointer"
+                />
+                <span className="text-[11px] text-muted-foreground leading-snug">
+                  두 계정 모두 공개 계정인지 확인했어요
+                </span>
+              </label>
 
               <button
                 type="button"
