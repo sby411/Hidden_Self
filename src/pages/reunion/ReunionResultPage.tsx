@@ -100,10 +100,10 @@ function HeartScale({ score }: { score: number }) {
 }
 
 function reunionRecommendLabel(score: number) {
-  if (score >= 71) return { tag: "추천", color: "text-green-400", line: "지금이 타이밍. 어떻게 할지 → 아래에서" };
-  if (score >= 51) return { tag: "가능", color: "text-primary", line: "여지는 있다. 단, 방법을 골라야 한다 → 아래에서" };
-  if (score >= 31) return { tag: "중립", color: "text-amber-400", line: "반반이다. 잘못 건들면 끝장 → 아래에서 확인" };
-  return { tag: "비추", color: "text-red-400", line: "재회 추천하지 않아. 근데 굳이 하고 싶다면 → 아래에서" };
+  if (score >= 71) return { tag: "추천", color: "text-green-400", line: "지금이 타이밍이다. 방법만 잘 고르면 된다" };
+  if (score >= 51) return { tag: "가능", color: "text-primary", line: "여지는 있다. 단, 방법을 골라야 한다" };
+  if (score >= 31) return { tag: "중립", color: "text-amber-400", line: "반반이다. 잘못 건들면 끝장날 수 있다" };
+  return { tag: "비추", color: "text-red-400", line: "솔직히 재회는 추천하지 않는다" };
 }
 
 /** 도발 따옴표 훅 */
@@ -446,6 +446,8 @@ const ReunionResultPage = () => {
     their: ReunionAccountAiAnalysis | null;
     myPersonaLine: string;
     partnerPersonaLine: string;
+    compatibilityType: string;
+    compatibilityDesc: string;
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
@@ -538,6 +540,8 @@ const ReunionResultPage = () => {
           their: pairRes.theirAi,
           myPersonaLine: pairRes.myPersonaLine,
           partnerPersonaLine: pairRes.partnerPersonaLine,
+          compatibilityType: pairRes.compatibilityType,
+          compatibilityDesc: pairRes.compatibilityDesc,
           fromCache: pairRes.fromCache,
         });
         setIgFetchError(false);
@@ -748,6 +752,19 @@ const ReunionResultPage = () => {
                 {recommend.line}
               </p>
             </div>
+
+            {/* 궁합 유형 카드 */}
+            {pairAi?.compatibilityType ? (
+              <div className="mt-3 rounded-2xl p-5 bg-gradient-to-br from-[hsl(280,20%,12%)] to-[hsl(260,15%,8%)] border border-[hsl(280,30%,25%)]/40">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-2xl leading-none">💫</span>
+                  <p className="text-base font-black text-foreground leading-snug">{pairAi.compatibilityType}</p>
+                </div>
+                {pairAi.compatibilityDesc ? (
+                  <p className="text-sm text-foreground/70 leading-relaxed">{pairAi.compatibilityDesc}</p>
+                ) : null}
+              </div>
+            ) : null}
           </section>
 
           <SectionDivider />

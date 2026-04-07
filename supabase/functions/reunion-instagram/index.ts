@@ -229,6 +229,71 @@ ${JSON.stringify(payload)}`;
   };
 }
 
+const COMPATIBILITY_SYSTEM = `You analyze two Instagram accounts for a "reunion / post-breakup" product and determine their compatibility type.
+Output ONLY a single JSON object, no markdown fences, no extra text.
+Schema:
+{
+  "compatibilityType": string (Korean, 15자 내외. 두 사람의 관계 구조를 정의하는 제목. ~관계 또는 ~사이 형태로. 예: "끌리지만 타이밍이 문제인 관계", "감정은 남아있지만 방식이 다른 관계", "한쪽만 열려있는 비대칭 관계"),
+  "compatibilityDesc": string (Korean, 한 문장. 두 사람의 구체적인 관계 패턴 설명. 자연스러운 한국어로. 예: "서로 잡아당기는 힘은 있는데 지금은 둘 다 준비가 안 됐다", "마음이 없는 게 아니라 표현 방식이 달라서 계속 엇갈리는 구조다")
+}
+Rules:
+- 자연스러운 한국어 문장으로. 단문 끊어치기 금지. 친구가 솔직하게 조언하는 말투로.
+- Do NOT infer gender. Use neutral wording.
+- Base analysis only on visible public data patterns.`;
+
+async function callClaudeCompatibility(
+  apiKey: string,
+  myBundle: any,
+  theirBundle: any,
+  dataLimited: boolean,
+): Promise<{ compatibilityType: string; compatibilityDesc: string } | null> {
+  const myPayload = compactBundleForPrompt(myBundle, 10);
+  const theirPayload = compactBundleForPrompt(theirBundle, 10);
+
+  const userBlock = `Data quality: ${dataLimited ? "LIMITED — some accounts are private or have few posts." : "Public posts available for both."}
+MY_ACCOUNT:
+${JSON.stringify(myPayload)}
+
+THEIR_ACCOUNT:
+${JSON.stringify(theirPayload)}`;
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL,
+      max_tokens: 400,
+      system: COMPATIBILITY_SYSTEM,
+      messages: [{ role: "user", content: userBlock }],
+    }),
+  });
+
+  if (!res.ok) {
+    console.error("Claude compatibility API error:", res.status);
+    return null;
+  }
+
+  const json = await res.json();
+  const text = json?.content?.[0]?.text;
+  if (!text || typeof text !== "string") return null;
+
+  try {
+    const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+    const parsed = JSON.parse(trimmed);
+    const compatibilityType = typeof parsed.compatibilityType === "string" ? parsed.compatibilityType.trim() : "";
+    const compatibilityDesc = typeof parsed.compatibilityDesc === "string" ? parsed.compatibilityDesc.trim() : "";
+    if (!compatibilityType) return null;
+    return { compatibilityType, compatibilityDesc };
+  } catch {
+    console.error("Claude compatibility JSON parse failed");
+    return null;
+  }
+}
+
 async function restGetCache(
   supabaseUrl: string,
   serviceKey: string,
@@ -373,6 +438,8 @@ Deno.serve(async (req) => {
             theirAiAnalysis: cached.theirAiAnalysis ?? null,
             myPersonaLine: cached.myAiAnalysis?.persona || "",
             partnerPersonaLine: cached.theirAiAnalysis?.persona || "",
+            compatibilityType: cached.compatibility?.compatibilityType || "",
+            compatibilityDesc: cached.compatibility?.compatibilityDesc || "",
             myPrivateWarning: Boolean(cached.myPrivateWarning),
             theirPrivateWarning: Boolean(cached.theirPrivateWarning),
           }),
@@ -432,6 +499,13 @@ Deno.serve(async (req) => {
         callClaudeAnalysis(ANTHROPIC_API_KEY, theirBundle, "them", myUserId, theirLimited),
       ]);
 
+      const compatibility = await callClaudeCompatibility(
+        ANTHROPIC_API_KEY,
+        myBundle,
+        theirBundle,
+        myLimited || theirLimited,
+      );
+
       const expiresAt = new Date(Date.now() + CACHE_TTL_MS).toISOString();
       const payloadToStore = {
         version: 1,
@@ -439,6 +513,7 @@ Deno.serve(async (req) => {
         their: theirBundle,
         myAiAnalysis,
         theirAiAnalysis,
+        compatibility,
         myPrivateWarning,
         theirPrivateWarning,
       };
@@ -455,6 +530,8 @@ Deno.serve(async (req) => {
           theirAiAnalysis,
           myPersonaLine: myAiAnalysis?.persona || "",
           partnerPersonaLine: theirAiAnalysis?.persona || "",
+          compatibilityType: compatibility?.compatibilityType || "",
+          compatibilityDesc: compatibility?.compatibilityDesc || "",
           myPrivateWarning,
           theirPrivateWarning,
         }),

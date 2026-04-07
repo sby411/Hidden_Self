@@ -66,6 +66,8 @@ export type ReunionPairPipelineResult =
       theirAi: ReunionAccountAiAnalysis | null;
       myPersonaLine: string;
       partnerPersonaLine: string;
+      compatibilityType: string;
+      compatibilityDesc: string;
       myPrivateWarning: boolean;
       theirPrivateWarning: boolean;
       fromCache: boolean;
@@ -122,6 +124,8 @@ export async function fetchReunionPairWithAnalysis(
       theirAi,
       myPersonaLine: (typeof data.myPersonaLine === "string" ? data.myPersonaLine : "") || myAi?.persona || "",
       partnerPersonaLine: (typeof data.partnerPersonaLine === "string" ? data.partnerPersonaLine : "") || theirAi?.persona || "",
+      compatibilityType: typeof data.compatibilityType === "string" ? data.compatibilityType : "",
+      compatibilityDesc: typeof data.compatibilityDesc === "string" ? data.compatibilityDesc : "",
       myPrivateWarning: Boolean(data.myPrivateWarning),
       theirPrivateWarning: Boolean(data.theirPrivateWarning),
       fromCache: Boolean(data.fromCache),
