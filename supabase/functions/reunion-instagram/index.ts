@@ -149,7 +149,7 @@ const REUNION_AI_SYSTEM = `You analyze public Instagram profile data for a "reun
 Output ONLY a single JSON object, no markdown fences, no extra text.
 Schema:
 {
-  "persona": string (Korean, 반드시 25자 이내. 딱 한 줄 강렬하게. 이 사람의 인스타 페르소나를 팩폭으로 정의. ~타입/~형 추상어 절대 금지. 해당 계정의 실제 데이터(팔로워 수, 게시물 주제, 캡션 스타일, 활동 빈도)를 직접 반영. 일반 심리 묘사 금지. 그 계정에서만 나올 수 있는 구체적 행동/콘텐츠를 담을 것. 예: "쇼핑몰 사장인데 인스타는 광고판", "도예 하는 감성남인데 SNS는 방치", "DM 안읽으면서 스토리는 올리는 인플루언서". 절대 다른 계정과 같은 문장 금지. 25자 넘기면 안 됨),
+  "persona": string (Korean, 20자 내외. 계정 데이터에서 이 사람의 무의식/심리/결핍/전시욕구를 꿰뚫어서 팩폭 한 줄로. 사실 나열 절대 금지. 반드시 왜 그렇게 행동하는지 무의식과 결핍을 해석해서 약간 웃기고 찔리게. ~타입/~형 금지. 문장 끝맺음 형식 자유. 예: "옷 팔고 싶어서 멋진 나를 전시 중", "졸작엔 진심인데 팔로워는 관심 없음", "일상 재미없어서 여행으로 자아 보충 중", "먹는 게 낙인데 취향러 코스프레", "자기가 예쁜 거 알고 확인받고 싶은 것", "몸 만들면서 의지력도 과시하고 싶은 것". 절대 다른 계정과 같은 문장 금지),
   "impression": string (Korean, 2-3 sentences, concrete, grounded in the data),
   "keywords": string[] (3-5 short Korean keyword phrases),
   "approach": string (Korean: in reunion context — recommended tone, how to open contact, what to avoid; practical),
