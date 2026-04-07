@@ -764,7 +764,7 @@ const ReunionResultPage = () => {
             <div className="glass-card rounded-2xl p-5 border border-red-500/20 mb-3">
               <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
-                {pairAi?.myPersonaLine || reunionJourney.myTypeName}
+                {pairAi?.myPersonaLine || ""}
               </p>
               {pairAi?.my ? (
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -797,7 +797,7 @@ const ReunionResultPage = () => {
             <div className="glass-card rounded-2xl p-5 border border-border/30">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
-                {pairAi?.partnerPersonaLine || reunionJourney.theirTypeName}
+                {pairAi?.partnerPersonaLine || ""}
               </p>
               {pairAi?.their ? (
                 <div className="flex flex-wrap gap-1.5 mb-4">

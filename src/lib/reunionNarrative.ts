@@ -58,12 +58,7 @@ export function buildReunionNarrative(
         ? `짧고 가벼운 한 줄 정도는 아직 창구가 열려 있는 상태다. 다만 장문이나 관계 총정리부터 밀면 오히려 역효과가 날 수 있다.${confNote}`
         : `된다 안 된다로 딱 잘라 말하기 어려운 상태다. 무거운 연락은 닫히고, 가벼운 한 줄만 간혹 통하는 정도라서 속도 조절이 핵심이다.${confNote}`;
 
-  const myTypeTitle =
-    my.emotionalResidueScore >= 62
-      ? "끝났다면서 피드로 감정 새는 중"
-      : my.selfFocusScore >= 58
-        ? "연애 접고 셀프 브랜딩 올인 중"
-        : "정리한 척 인스타는 계속 보는 중";
+  const myTypeTitle = "";
 
   const myTypeBody =
     my.emotionalResidueScore >= 62
@@ -75,12 +70,7 @@ export function buildReunionNarrative(
   const mySubA = lingeringAttachmentProxy(my);
   const mySubB = "접점에 대한 욕구가 피드나 스토리로 새어나가기 쉬운 상태다. DM으로 넘어가는 순간 상대한테는 에너지를 요구하는 것처럼 느껴질 수 있다.";
 
-  const theirTypeTitle =
-    th.avoidanceScore >= 68
-      ? "마음은 있는데 엮이긴 싫은 중"
-      : th.opennessScore >= 62
-        ? "문 열어둔 척 무거운 건 거부"
-        : "자기 루틴 먼저 감정은 나중";
+  const theirTypeTitle = "";
 
   const theirTypeBody =
     th.newPersonHintScore >= 58

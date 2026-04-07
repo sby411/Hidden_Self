@@ -254,19 +254,9 @@ const FREE_KEY_VARIABLE = [
   "지금 변수는 네 감정의 높이와 상대 방어 사이의 간격이다. 그 간격을 좁히기 전에는 말을 해도 전달이 엇나갈 수밖에 없다.",
 ] as const;
 
-const MY_TYPE_NAMES = [
-  "정리한 척 인스타는 계속 보는 중",
-  "입으론 안 한다며 스토리로 새는 중",
-  "보고 싶지만 반응부터 살피는 중",
-  "안 끊었고 그냥 결론 미루는 중",
-] as const;
+const MY_TYPE_NAMES = ["", "", "", ""] as const;
 
-const THEIR_TYPE_NAMES = [
-  "마음은 있는데 엮이긴 싫은 중",
-  "열린 척하지만 먼저는 절대 안 옴",
-  "관계보다 본인 루틴이 먼저",
-  "안 닫았는데 피곤함이 앞서는 중",
-] as const;
+const THEIR_TYPE_NAMES = ["", "", "", ""] as const;
 
 function buildReunionJourney(
   seed: number,
