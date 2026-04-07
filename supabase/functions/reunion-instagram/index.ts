@@ -149,6 +149,7 @@ const REUNION_AI_SYSTEM = `You analyze public Instagram profile data for a "reun
 Output ONLY a single JSON object, no markdown fences, no extra text.
 Schema:
 {
+  "persona": string (Korean, 20자 내외. 이 사람의 인스타 페르소나를 팩폭 한 줄로 정의. ~타입/~형 같은 말 금지. 구체적인 행동 묘사 위주. 예: "피드는 활발한데 감정은 잠금 설정한 사람", "SNS는 열심인데 DM은 읽씹하는 사람"),
   "impression": string (Korean, 2-3 sentences, concrete, grounded in the data),
   "keywords": string[] (3-5 short Korean keyword phrases),
   "approach": string (Korean: in reunion context — recommended tone, how to open contact, what to avoid; practical),
@@ -211,6 +212,7 @@ ${JSON.stringify(payload)}`;
     return null;
   }
 
+  const persona = typeof parsed.persona === "string" ? parsed.persona : "";
   const impression = typeof parsed.impression === "string" ? parsed.impression : "";
   const keywords = Array.isArray(parsed.keywords) ? parsed.keywords.filter((x) => typeof x === "string") : [];
   const approach = typeof parsed.approach === "string" ? parsed.approach : "";
@@ -218,6 +220,7 @@ ${JSON.stringify(payload)}`;
   if (!impression || keywords.length === 0) return null;
 
   return {
+    persona: persona.trim() || "",
     impression,
     keywords: keywords.slice(0, 8),
     approach: approach || "데이터가 부족해 접근 방식을 구체화하기 어렵다. 짧고 부담 없는 톤부터 시도하는 편이 상대적으로 안전할 수 있다.",

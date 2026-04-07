@@ -50,6 +50,7 @@ export type ReunionScrapeResult =
 
 /** Claude 인물 분석 (페어 모드) — 스크랩 번들 타입은 그대로 두고 응답에만 부가 */
 export type ReunionAccountAiAnalysis = {
+  persona: string;
   impression: string;
   keywords: string[];
   approach: string;
@@ -72,12 +73,14 @@ export type ReunionPairPipelineResult =
 function parseAiAnalysis(raw: unknown): ReunionAccountAiAnalysis | null {
   if (!raw || typeof raw !== "object") return null;
   const o = raw as Record<string, unknown>;
+  const persona = typeof o.persona === "string" ? o.persona : "";
   const impression = typeof o.impression === "string" ? o.impression : "";
   const keywords = Array.isArray(o.keywords) ? o.keywords.filter((x): x is string => typeof x === "string") : [];
   const approach = typeof o.approach === "string" ? o.approach : "";
   const psychState = typeof o.psychState === "string" ? o.psychState : "";
   if (!impression.trim() || keywords.length === 0) return null;
   return {
+    persona: persona.trim(),
     impression: impression.trim(),
     keywords: keywords.slice(0, 8),
     approach: approach.trim() || "데이터가 부족해 접근 방식을 구체화하기 어렵다.",

@@ -145,6 +145,112 @@ function SignalMiniCard({
   );
 }
 
+/* ── loading screen with animated progress ───────────────── */
+
+const LOADING_STEPS = [
+  "인스타 공개 데이터 수집 중",
+  "내 계정 톤·리듬 분석 중",
+  "상대 계정 시그널 해석 중",
+  "둘 사이 관계 패턴 분석 중",
+  "재회 가능성 계산 중",
+];
+
+function ReunionLoadingScreen() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let raf: number;
+    const start = Date.now();
+    const duration = 18_000; // 0→85% over 18 seconds (ease-out)
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = 1 - (1 - t) ** 3; // cubic ease-out
+      setProgress(Math.round(eased * 85));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const activeStep = Math.min(Math.floor(progress / 17), LOADING_STEPS.length - 1);
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="px-5 py-4 flex items-center justify-between border-b border-border/50 backdrop-blur-sm bg-card/60">
+        <Link
+          to="/"
+          className="flex items-center gap-2 min-w-0 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        >
+          <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-white" />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm font-bold tracking-tight text-foreground leading-tight">LOVE DNA</span>
+            <span className="text-[9px] text-muted-foreground font-medium truncate">재회 시그널 리포트</span>
+          </div>
+        </Link>
+      </header>
+      <main className="flex-1 flex flex-col items-center justify-center px-5 py-16">
+        <div className="w-full max-w-sm mx-auto">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-5 shadow-lg shadow-primary/30">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </div>
+            <h2 className="text-foreground text-xl font-bold mb-1">신호 분석 중이에요...</h2>
+            <p className="text-muted-foreground text-sm">두 계정의 흐름을 읽고 있어요</p>
+          </div>
+
+          {/* animated progress */}
+          <div className="mb-6">
+            <div className="flex justify-between items-baseline text-xs mb-2">
+              <span className="text-muted-foreground">분석 중...</span>
+              <span className="text-primary font-black tabular-nums text-sm">{progress}%</span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
+              <div
+                className="h-full rounded-full gradient-primary transition-[width] duration-300 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          {/* step indicators */}
+          <div className="space-y-3 mb-8">
+            {LOADING_STEPS.map((step, i) => {
+              const done = i < activeStep;
+              const active = i === activeStep;
+              return (
+                <div key={i} className="flex items-center gap-3">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border ${done ? "bg-primary border-primary" : active ? "bg-primary/20 border-primary/60" : "bg-secondary/30 border-border/40"}`}>
+                    {done ? (
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    ) : active ? (
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    ) : (
+                      <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+                    )}
+                  </div>
+                  <span className={`text-sm ${done ? "text-foreground/50 line-through" : active ? "text-foreground font-medium" : "text-foreground/40"}`}>
+                    {step}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="bg-card border border-border rounded-2xl p-4">
+            <p className="text-primary text-xs font-semibold tracking-wider mb-2">✦ SIGNAL INSIGHT</p>
+            <p className="text-foreground/70 text-sm italic">"공개 피드에 남은 흔적이 생각보다 많은 걸 말하고 있어..."</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 /* ── lean bar helpers ────────────────────────────────────── */
 
 function formatReunionLeanComparison(contactLeanPercent: number): string {
@@ -513,60 +619,7 @@ const ReunionResultPage = () => {
 
   /* ── loading screen ── */
   if (showIgLoading) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <header className="px-5 py-4 flex items-center justify-between border-b border-border/50 backdrop-blur-sm bg-card/60">
-          <Link
-            to="/"
-            className="flex items-center gap-2 min-w-0 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-          >
-            <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center shrink-0">
-              <Sparkles className="w-3.5 h-3.5 text-white" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold tracking-tight text-foreground leading-tight">LOVE DNA</span>
-              <span className="text-[9px] text-muted-foreground font-medium truncate">재회 시그널 리포트</span>
-            </div>
-          </Link>
-        </header>
-        <main className="flex-1 flex flex-col items-center justify-center px-5 py-16">
-          <div className="w-full max-w-sm mx-auto">
-            <div className="flex flex-col items-center mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-5 shadow-lg shadow-primary/30">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-              </div>
-              <h2 className="text-foreground text-xl font-bold mb-1">신호 분석 중이에요...</h2>
-              <p className="text-muted-foreground text-sm">두 계정의 흐름을 읽고 있어요</p>
-            </div>
-            <div className="mb-6">
-              <div className="flex justify-between text-xs text-muted-foreground mb-2">
-                <span>분석 중...</span>
-                <span className="text-primary font-medium">잠시만요</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-1.5">
-                <div className="bg-primary h-1.5 rounded-full animate-pulse" style={{ width: "75%" }} />
-              </div>
-            </div>
-            <div className="space-y-3 mb-8">
-              {["인스타 공개 데이터 수집 중", "내 계정 톤·리듬 분석 중", "상대 계정 시그널 해석 중", "둘 사이 관계 패턴 분석 중", "재회 가능성 계산 중"].map((step, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  </div>
-                  <span className="text-foreground/80 text-sm">{step}</span>
-                </div>
-              ))}
-            </div>
-            <div className="bg-card border border-border rounded-2xl p-4">
-              <p className="text-primary text-xs font-semibold tracking-wider mb-2">✦ SIGNAL INSIGHT</p>
-              <p className="text-foreground/70 text-sm italic">"공개 피드에 남은 흔적이 생각보다 많은 걸 말하고 있어..."</p>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+    return <ReunionLoadingScreen />;
   }
 
   /* ════════════════════════════════════════════════════════
@@ -702,7 +755,7 @@ const ReunionResultPage = () => {
             <div className="glass-card rounded-2xl p-5 border border-ai-highlight/20 mb-3">
               <p className="text-[10px] font-bold text-ai-highlight uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
-                {reunionJourney.myTypeName}
+                {pairAi?.my?.persona || reunionJourney.myTypeName}
               </p>
               {pairAi?.my ? (
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -765,7 +818,7 @@ const ReunionResultPage = () => {
             <div className="glass-card rounded-2xl p-5 border border-primary/15">
               <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
               <p className="text-base font-black text-foreground leading-snug mb-3">
-                {reunionJourney.theirTypeName}
+                {pairAi?.their?.persona || reunionJourney.theirTypeName}
               </p>
               {pairAi?.their ? (
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -883,7 +936,6 @@ const ReunionResultPage = () => {
                   />
                 </div>
               </div>
-              <p className="text-sm font-semibold text-foreground/90 mb-3">{reachOutForecast.rationaleLine}</p>
               <BlurGate locked={!premiumUnlocked} hint="시점·방식은 심층 분석에서">
                 <div className="space-y-2 text-xs text-foreground/70 leading-relaxed">
                   <p><span className="text-muted-foreground text-[10px] uppercase tracking-wide">예상 시점:</span> {reachOutForecast.timingBand}</p>
