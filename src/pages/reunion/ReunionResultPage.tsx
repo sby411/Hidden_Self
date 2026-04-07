@@ -609,7 +609,10 @@ const ReunionResultPage = () => {
       displayScores: scores,
       contactLeanPercent: decisionHint.contactLeanPercent,
     });
-  }, [caseSource, resolvedCase, scores, decisionHint.contactLeanPercent]);
+    console.log("[REUNION pairAi]", pairAi);
+    console.log("[REUNION myPersonaLine]", pairAi?.myPersonaLine);
+    console.log("[REUNION partnerPersonaLine]", pairAi?.partnerPersonaLine);
+  }, [caseSource, resolvedCase, scores, decisionHint.contactLeanPercent, pairAi]);
 
   const recommend = reunionRecommendLabel(scores.reunionPossibility);
 
