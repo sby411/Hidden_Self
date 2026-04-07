@@ -185,6 +185,188 @@ function ReunionAccountAiSection({
   );
 }
 
+/** 바 시각화만 쓰고, 여기선 방향만 말함 (숫자는 게이지에만) */
+function formatReunionLeanComparison(contactLeanPercent: number): string {
+  const c = contactLeanPercent;
+  if (c >= 55) return "바 기준으로 연락 쪽 무게가 더 실림.";
+  if (c <= 45) return "바 기준으로 기다림 쪽 무게가 더 실림.";
+  return "바가 거의 중앙—지금은 한쪽으로 크게 기울지 않음.";
+}
+
+/** `report.toc` 라벨을 화면용 구어체로만 덮어씀 (데이터 파일은 그대로) */
+const REUNION_TOC_LABEL_BY_ID: Record<string, string> = {
+  "reunion-my-type": "내 계정 톤",
+  "reunion-their-type": "상대 계정 톤",
+  "reunion-combo": "둘이 엮이는 방식",
+  "reunion-decision": "연락해? 말아?",
+  "reunion-scores": "왜 이렇게 된 거야",
+  "reunion-snapshot": "피드에 남은 신호",
+  "reunion-premium": "속내 분석",
+};
+
+/** 바 아래 한 줄 — closed/mixed/open과 정합 (팩폭 톤) */
+const REUNION_LEAN_HINT_BY_CASE: Record<ReunionDemoCase, string> = {
+  closed: "즉, 지금 네가 먼저 길게 쓰면 읽씹·닫힘 쪽으로 간다.",
+  mixed: "즉, 무거우면 망하고 짧게만 가야 산다.",
+  open: "즉, 틈은 있는데 길게 못 박으면 그날로 끝이다.",
+};
+
+/** `contactLean` 분기 대신 `resolvedCase`와 동일 — 점수·패치 본문과 정합 */
+const REUNION_DECISION_SECTION_BY_CASE: Record<ReunionDemoCase, { kicker: string; title: string }> = {
+  closed: {
+    kicker: "지금 네가 먼저 쓰면 닫힘",
+    title: "무겁게 들어가면 읽씹·차단 쪽으로 간다",
+  },
+  mixed: {
+    kicker: "무거우면 망함",
+    title: "장문·총정리는 비추, 한 줄이면 간혹 통함",
+  },
+  open: {
+    kicker: "틈은 얇게 있음",
+    title: "짧은 접점만, 길게 쓰면 그날로 끝",
+  },
+};
+
+/** 넓은 쪽(기울기 방향)만 강한 그라데이션 — 좁은 쪽은 흐린 노랑 톤 */
+const REUNION_LEAN_BAR_MUTED =
+  "h-full bg-gradient-to-r from-[hsl(48,36%,24%)] to-[hsl(42,26%,16%)] transition-all";
+const REUNION_LEAN_BAR_VIBRANT =
+  "h-full bg-gradient-to-r from-primary to-[hsl(45,65%,48%)] transition-all";
+
+/** attraction ResultPage 프리미엄과 동일 계열 — 골드 톤 */
+const REUNION_GOLD = "text-[hsl(45,70%,55%)]";
+const REUNION_GOLD_BG = "bg-[hsl(45,70%,55%)]/15 border-[hsl(45,40%,28%)]/45";
+const REUNION_PREMIUM_CARD_SHELL_UNLOCKED =
+  "border-2 border-[hsl(45,50%,40%)]/50 shadow-[0_0_18px_hsl(45,50%,40%,0.12)] bg-gradient-to-br from-[hsl(45,20%,8%)] to-card";
+const REUNION_PREMIUM_CARD_SHELL_LOCKED = "border border-[hsl(45,40%,25%)]/35 bg-card/40";
+
+/** 심층 카드별 이모지 + 매운맛 레이블 (카드 key 기준) */
+const REUNION_PREMIUM_CARD_META: Record<string, { emoji: string; tags: string[] }> = {
+  "wait-until": { emoji: "⏳", tags: ["⏰ 타이밍", "🔥 관망 각"] },
+  "tone-reply": { emoji: "🎙️", tags: ["💬 톤", "☠️ 망하는 말"] },
+  "first-message": { emoji: "✉️", tags: ["💬 첫 문장", "📌 한 줄만"] },
+  "reply-style": { emoji: "📬", tags: ["📊 답장 확률", "🧊 피할 톤"] },
+  "new-person": { emoji: "🧲", tags: ["🆕 새 인물", "⚖️ 가중치"] },
+  misunderstanding: { emoji: "☠️", tags: ["⚠️ 오해 포인트", "🩸 찔림 주의"] },
+  "their-trace": { emoji: "🔍", tags: ["👁 흔적", "🚪 안 오는 이유"] },
+  "my-destroy": { emoji: "🧨", tags: ["💥 자추 패턴", "⛔ 손대면 망"] },
+};
+
+function reunionPremiumMetaForKey(key: string) {
+  return REUNION_PREMIUM_CARD_META[key] ?? { emoji: "📌", tags: ["💎 심층"] };
+}
+
+function stripCornerBrackets(text: string): string {
+  return text.replace(/【[^】]*】\s*/g, "").trim();
+}
+
+function splitLockedBodyToPoints(raw: string): string[] {
+  const t = stripCornerBrackets(raw);
+  if (!t) return [];
+  let chunks = t
+    .split(/\n\n+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (chunks.length === 1 && chunks[0].includes("\n")) {
+    const lines = chunks[0]
+      .split(/\n/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 12);
+    if (lines.length >= 2) chunks = lines;
+  }
+  if (chunks.length >= 2) return chunks.slice(0, 5);
+  const one = chunks[0] ?? t;
+  const bySentence = one.split(/(?<=[.!?。])\s+/).filter((s) => s.trim().length > 8);
+  if (bySentence.length >= 2) return bySentence.slice(0, 4).map((s) => s.trim());
+  if (one.length > 220) {
+    const mid = Math.floor(one.length / 2);
+    const cut = one.lastIndexOf(" ", mid);
+    if (cut > 40) return [one.slice(0, cut).trim(), one.slice(cut).trim()];
+  }
+  return [one];
+}
+
+function ReunionHighlightedText({ text, className }: { text: string; className?: string }) {
+  const re = /(\d+(?:~\d+)?%?|\d+~\d+주|\d+주|\d+개월|\d+대\b)/g;
+  const out: ReactNode[] = [];
+  let last = 0;
+  let mi = 0;
+  let m: RegExpExecArray | null;
+  const rx = new RegExp(re.source, "g");
+  while ((m = rx.exec(text)) !== null) {
+    if (m.index > last) {
+      out.push(
+        <span key={`t-${mi++}`} className="text-foreground/90">
+          {text.slice(last, m.index)}
+        </span>,
+      );
+    }
+    out.push(
+      <strong key={`n-${mi++}`} className="font-black text-[hsl(45,72%,58%)] tabular-nums">
+        {m[0]}
+      </strong>,
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) {
+    out.push(
+      <span key={`t-${mi++}`} className="text-foreground/90">
+        {text.slice(last)}
+      </span>,
+    );
+  }
+  return <span className={className}>{out}</span>;
+}
+
+function ReunionPremiumBodyPoints({
+  raw,
+  unlocked,
+}: {
+  raw: string;
+  unlocked: boolean;
+}) {
+  const points = splitLockedBodyToPoints(raw);
+  const inner = (
+    <div className="space-y-3">
+      {points.map((para, i) => (
+        <div
+          key={i}
+          className={`rounded-xl p-3.5 border border-[hsl(45,30%,20%)]/35 ${unlocked ? "bg-[hsl(45,15%,12%)]/55" : "bg-secondary/10"}`}
+        >
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1.5">
+            포인트 {i + 1}
+          </p>
+          <div className="text-xs leading-relaxed">
+            <ReunionHighlightedText text={para} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="relative rounded-xl overflow-hidden border border-[hsl(45,40%,25%)]/30 bg-[hsl(45,12%,8%)]/40">
+      <div
+        className={`p-4 ${unlocked ? "" : "blur-[5px] select-none pointer-events-none"}`}
+        aria-hidden={!unlocked}
+      >
+        {inner}
+      </div>
+      {!unlocked && (
+        <div className="absolute inset-0 flex items-center justify-center bg-card/30 backdrop-blur-[1px] px-3">
+          <div className="flex items-center gap-1.5 rounded-full bg-card/95 border border-[hsl(45,40%,28%)]/50 px-3 py-2 shadow-sm">
+            <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)] shrink-0" />
+            <span className="text-[9px] font-bold text-[hsl(45,70%,52%)] leading-tight text-center">
+              핵심 해석 · 문장 예시 잠금
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** 섹션 하단 심층 잠금 — PremiumTeaserCard와 동일 blur 패턴 */
 function ReunionTeaserLockCard({
   title,
   teaser,
