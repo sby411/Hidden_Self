@@ -115,6 +115,36 @@ function HookQuote({ text }: { text: string }) {
   );
 }
 
+/** 2×2 그리드용 시그널 미니 카드 */
+function SignalMiniCard({
+  emoji,
+  label,
+  value,
+  accent,
+  sub,
+}: {
+  emoji: string;
+  label: string;
+  value: number;
+  accent: "primary" | "ai-highlight";
+  sub?: string;
+}) {
+  const rounded = Math.round(value);
+  const barColor = accent === "primary" ? "gradient-primary" : "gradient-ai";
+  return (
+    <div className="rounded-xl bg-secondary/30 border border-border/40 p-3 text-center">
+      <span className="text-lg leading-none block mb-1">{emoji}</span>
+      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">{label}</p>
+      <p className="text-xl font-black text-foreground tabular-nums leading-none mb-1">
+        {sub ?? rounded}
+      </p>
+      <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+        <div className={`h-full rounded-full ${barColor} transition-all`} style={{ width: `${rounded}%` }} />
+      </div>
+    </div>
+  );
+}
+
 /* ── lean bar helpers ────────────────────────────────────── */
 
 function formatReunionLeanComparison(contactLeanPercent: number): string {
@@ -671,56 +701,125 @@ const ReunionResultPage = () => {
             {/* 내 타입 */}
             <div className="glass-card rounded-2xl p-5 border border-ai-highlight/20 mb-3">
               <p className="text-[10px] font-bold text-ai-highlight uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
-              <p className="text-base font-black text-foreground leading-snug mb-2">
+              <p className="text-base font-black text-foreground leading-snug mb-3">
                 {reunionJourney.myTypeName}
               </p>
               {pairAi?.my ? (
-                <>
-                  <p className="text-sm text-foreground/80 leading-relaxed mb-3">{pairAi.my.impression}</p>
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {pairAi.my.keywords.map((k, i) => (
-                      <span
-                        key={`my-${i}`}
-                        className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-ai-highlight/15 border border-ai-highlight/30 text-ai-highlight"
-                      >
-                        {k}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <p className="text-sm text-foreground/70 leading-relaxed mb-3">{reunionJourney.myTypeLead}</p>
-              )}
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {pairAi.my.keywords.map((k, i) => (
+                    <span
+                      key={`my-${i}`}
+                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-ai-highlight/15 border border-ai-highlight/30 text-ai-highlight"
+                    >
+                      {k}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                <SignalMiniCard
+                  emoji="🎭"
+                  label="감정 잔류"
+                  value={richSignalsForUi.mySignals.emotionalResidueScore}
+                  accent="ai-highlight"
+                />
+                <SignalMiniCard
+                  emoji="🔍"
+                  label="간접 시그널"
+                  value={richSignalsForUi.mySignals.indirectSignalScore}
+                  accent="ai-highlight"
+                />
+                <SignalMiniCard
+                  emoji="🧹"
+                  label="정리 미완"
+                  value={richSignalsForUi.mySignals.cleanupIncompleteScore}
+                  accent="ai-highlight"
+                />
+                <SignalMiniCard
+                  emoji="🌱"
+                  label="자기 집중"
+                  value={richSignalsForUi.mySignals.selfFocusScore}
+                  accent="ai-highlight"
+                />
+              </div>
               <BlurGate locked={!premiumUnlocked} hint="심층 분석에서 전부 공개">
-                <p className="text-xs text-foreground/70 leading-relaxed">{pairAi?.my?.psychState ?? reunionJourney.myTypeSubcards[0]}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <SignalMiniCard
+                    emoji="👥"
+                    label="사회 확장"
+                    value={richSignalsForUi.mySignals.socialExpansionScore}
+                    accent="ai-highlight"
+                  />
+                  <SignalMiniCard
+                    emoji="📈"
+                    label="활동 추세"
+                    value={richSignalsForUi.mySignals.activityTrend === "up" ? 75 : richSignalsForUi.mySignals.activityTrend === "flat" ? 50 : 25}
+                    accent="ai-highlight"
+                    sub={richSignalsForUi.mySignals.activityTrend === "up" ? "상승" : richSignalsForUi.mySignals.activityTrend === "flat" ? "유지" : "하락"}
+                  />
+                </div>
               </BlurGate>
             </div>
 
             {/* 상대 타입 */}
             <div className="glass-card rounded-2xl p-5 border border-primary/15">
               <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
-              <p className="text-base font-black text-foreground leading-snug mb-2">
+              <p className="text-base font-black text-foreground leading-snug mb-3">
                 {reunionJourney.theirTypeName}
               </p>
               {pairAi?.their ? (
-                <>
-                  <p className="text-sm text-foreground/80 leading-relaxed mb-3">{pairAi.their.impression}</p>
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {pairAi.their.keywords.map((k, i) => (
-                      <span
-                        key={`their-${i}`}
-                        className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary"
-                      >
-                        {k}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <p className="text-sm text-foreground/70 leading-relaxed mb-3">{reunionJourney.theirTypeLead}</p>
-              )}
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {pairAi.their.keywords.map((k, i) => (
+                    <span
+                      key={`their-${i}`}
+                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary"
+                    >
+                      {k}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                <SignalMiniCard
+                  emoji="💛"
+                  label="개방도"
+                  value={richSignalsForUi.theirSignals.opennessScore}
+                  accent="primary"
+                />
+                <SignalMiniCard
+                  emoji="🛡️"
+                  label="회피 방어"
+                  value={richSignalsForUi.theirSignals.avoidanceScore}
+                  accent="primary"
+                />
+                <SignalMiniCard
+                  emoji="🎭"
+                  label="감정 잔류"
+                  value={richSignalsForUi.theirSignals.emotionalResidueScore}
+                  accent="primary"
+                />
+                <SignalMiniCard
+                  emoji="🚪"
+                  label="가벼운 재진입"
+                  value={richSignalsForUi.theirSignals.casualReentryOpenness}
+                  accent="primary"
+                />
+              </div>
               <BlurGate locked={!premiumUnlocked} hint="심층 분석에서 전부 공개">
-                <p className="text-xs text-foreground/70 leading-relaxed">{pairAi?.their?.psychState ?? reunionJourney.theirTypeSubcards[0]}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <SignalMiniCard
+                    emoji="🧲"
+                    label="새 인물 힌트"
+                    value={richSignalsForUi.theirSignals.newPersonHintScore}
+                    accent="primary"
+                  />
+                  <SignalMiniCard
+                    emoji="🚫"
+                    label="무거운 연락 저항"
+                    value={richSignalsForUi.theirSignals.heavyContactResistance}
+                    accent="primary"
+                  />
+                </div>
               </BlurGate>
             </div>
           </section>
