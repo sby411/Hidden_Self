@@ -149,7 +149,7 @@ const REUNION_AI_SYSTEM = `You analyze public Instagram profile data for a "reun
 Output ONLY a single JSON object, no markdown fences, no extra text.
 Schema:
 {
-  "persona": string (10~15자. 짧고 강렬하게. 숨겨진 욕구나 결핍을 찌르듯이. 문체 자유, 끝맺음 형식 없음. 나쁜 예: "쇼핑몰 사장인데 자기 상품 입고 SNS에 올려야 해"(너무 길고 설명조). 좋은 예: "옷 팔려고 멋진 나 전시 중", "졸작엔 진심 인스타는 방치", "먹는 게 낙인데 취향러 코스프레", "DM은 읽씹하며 스토리는 올리는 인플루언서", "본인의 아름다움에 취해있는 공주병". 반드시 해당 계정의 실제 데이터 기반으로 그 사람만의 문장으로),
+  "persona": string (10~15자. 이 사람의 본질적 욕구나 캐릭터를 한 방에 정의. 계정 사실 나열 절대 금지. 그 사람이 보면 찔릴 정도로 날카롭게. 예시 톤: "느좋남인줄 아는 그냥남", "본인 얼굴에 취해있는 공주병", "어떻게든 여자 찍어보려는 유사 사진가", "DM 읽씹하며 스토리는 올리는 인플루언서", "인스타 팔로워로 자존감 채우는 중", "감성 코스프레하는 평범인". 계정 데이터로 이 사람의 욕구/결핍/허세를 뽑아내서 캐릭터로 정의할 것),
   "impression": string (Korean, 2-3 sentences, concrete, grounded in the data),
   "keywords": string[] (3-5 short Korean keyword phrases),
   "approach": string (Korean: in reunion context — recommended tone, how to open contact, what to avoid; practical),
@@ -444,8 +444,8 @@ Deno.serve(async (req) => {
             their: cached.their,
             myAiAnalysis: cached.myAiAnalysis ?? null,
             theirAiAnalysis: cached.theirAiAnalysis ?? null,
-            myPersonaLine: cached.myAiAnalysis?.persona || "",
-            partnerPersonaLine: cached.theirAiAnalysis?.persona || "",
+            myPersonaLine: (cached.myAiAnalysis?.persona || "").slice(0, 20),
+            partnerPersonaLine: (cached.theirAiAnalysis?.persona || "").slice(0, 20),
             compatibilityType: cached.compatibility?.compatibilityType || "",
             compatibilityDesc: cached.compatibility?.compatibilityDesc || "",
             myYearning: cached.compatibility?.myYearning ?? 65,
@@ -538,8 +538,8 @@ Deno.serve(async (req) => {
           their: theirBundle,
           myAiAnalysis,
           theirAiAnalysis,
-          myPersonaLine: myAiAnalysis?.persona || "",
-          partnerPersonaLine: theirAiAnalysis?.persona || "",
+          myPersonaLine: (myAiAnalysis?.persona || "").slice(0, 20),
+          partnerPersonaLine: (theirAiAnalysis?.persona || "").slice(0, 20),
           compatibilityType: compatibility?.compatibilityType || "",
           compatibilityDesc: compatibility?.compatibilityDesc || "",
           myYearning: compatibility?.myYearning ?? 65,
