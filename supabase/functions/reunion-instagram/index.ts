@@ -432,7 +432,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      const cacheKey = `reunion_ai_v4:${myUserId.toLowerCase()}:${theirUserId.toLowerCase()}`;
+      const cacheKey = `reunion_ai_v5:${myUserId.toLowerCase()}:${theirUserId.toLowerCase()}`;
       const cached = await restGetCache(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, cacheKey);
       if (cached?.my && cached?.their) {
         return new Response(
