@@ -553,8 +553,8 @@ const ReunionResultPage = () => {
   const [searchParams] = useSearchParams();
   const state = location.state as ReunionNavigateState | null;
 
-  const myId = state?.myId ?? "demo_me";
-  const theirId = state?.theirId ?? "demo_them";
+  const myId = state?.myId ?? searchParams.get("myId") ?? "demo_me";
+  const theirId = state?.theirId ?? searchParams.get("targetId") ?? "demo_them";
   const breakupYear = state?.breakupYear ?? DEMO_BREAKUP.year;
   const breakupMonth = state?.breakupMonth ?? DEMO_BREAKUP.month;
   const demoCase = parseReunionDemoParam(searchParams.get("demo"));
