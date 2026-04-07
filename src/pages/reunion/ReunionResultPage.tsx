@@ -772,10 +772,40 @@ const ReunionResultPage = () => {
           </Link>
         </header>
         <main className="flex-1 flex flex-col items-center justify-center px-5 py-16">
-          <Loader2 className="w-9 h-9 text-primary animate-spin mb-4" aria-hidden />
-          <p className="text-sm text-muted-foreground text-center leading-relaxed">
-            공개 인스타 데이터를 불러오고 신호를 계산하는 중입니다.
-          </p>
+          <div className="w-full max-w-sm mx-auto">
+            <div className="flex flex-col items-center mb-8">
+              <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-5 shadow-lg shadow-primary/30">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </div>
+              <h2 className="text-foreground text-xl font-bold mb-1">신호 분석 중이에요...</h2>
+              <p className="text-muted-foreground text-sm">두 계정의 흐름을 읽고 있어요</p>
+            </div>
+            <div className="mb-6">
+              <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                <span>분석 중...</span>
+                <span className="text-primary font-medium">잠시만요</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-1.5">
+                <div className="bg-primary h-1.5 rounded-full animate-pulse" style={{width: "75%"}}></div>
+              </div>
+            </div>
+            <div className="space-y-3 mb-8">
+              {["인스타 공개 데이터 수집 중", "내 계정 톤·리듬 분석 중", "상대 계정 시그널 해석 중", "둘 사이 관계 패턴 분석 중", "재회 가능성 계산 중"].map((step, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+                  </div>
+                  <span className="text-foreground/80 text-sm">{step}</span>
+                </div>
+              ))}
+            </div>
+            <div className="bg-card border border-border rounded-2xl p-4">
+              <p className="text-primary text-xs font-semibold tracking-wider mb-2">✦ SIGNAL INSIGHT</p>
+              <p className="text-foreground/70 text-sm italic">"공개 피드에 남은 흔적이 생각보다 많은 걸 말하고 있어..."</p>
+            </div>
+          </div>
         </main>
       </div>
     );
