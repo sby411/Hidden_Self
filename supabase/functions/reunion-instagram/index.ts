@@ -13,7 +13,7 @@ const corsHeaders = {
 const APIFY_ACTOR_URL =
   "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items";
 
-const CLAUDE_MODEL = Deno.env.get("REUNION_CLAUDE_MODEL") ?? "claude-haiku-4-5-20251001";
+const CLAUDE_MODEL = Deno.env.get("REUNION_CLAUDE_MODEL") ?? "claude-sonnet-4-5-20251001";
 const CACHE_TTL_MS = 72 * 60 * 60 * 1000;
 
 /** PostgREST: 값에 `.` `:` `T` 등이 있으면 파서가 깨짐 → 반드시 큰따옴표로 감싼 뒤 쿼리스트링에 넣음 */
@@ -432,7 +432,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      const cacheKey = `reunion_ai_v2:${myUserId.toLowerCase()}:${theirUserId.toLowerCase()}`;
+      const cacheKey = `reunion_ai_v3:${myUserId.toLowerCase()}:${theirUserId.toLowerCase()}`;
       const cached = await restGetCache(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, cacheKey);
       if (cached?.my && cached?.their) {
         return new Response(
