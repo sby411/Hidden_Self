@@ -4,15 +4,9 @@ import {
   Lock,
   Unlock,
   Heart,
-  ChevronRight,
-  BookOpen,
   Crown,
   Sparkles,
-  Scale,
-  Radar,
-  Image,
   Users,
-  Loader2,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import {
@@ -46,202 +40,104 @@ import type { ReunionRichSignals } from "@/lib/reunionSignals";
 import { buildReunionNarrative, mergeReunionNarrativeIntoReport } from "@/lib/reunionNarrative";
 import type { ReunionNavigateState } from "./ReunionLandingPage";
 
+/* ── helpers ─────────────────────────────────────────────── */
+
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function StatScore({ label, value, sub }: { label: string; value: number; sub: string }) {
-  return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/10 p-3.5 text-center">
-      <p className="text-[10px] text-muted-foreground font-medium mb-1">{label}</p>
-      <p className="text-xl font-black text-foreground tabular-nums">{value}</p>
-      <p className="text-[10px] text-muted-foreground font-medium mt-1 leading-snug px-0.5">{sub}</p>
-      <div className="mt-2.5 h-2.5 w-full rounded-full bg-secondary overflow-hidden">
-        <div className="h-full rounded-full gradient-primary transition-all" style={{ width: `${value}%` }} />
-      </div>
-    </div>
-  );
-}
-
-/** 섹션 타이틀: 단계 배지 + 제목 + 보조 */
-function ReunionSectionHeader({
-  id,
-  step,
-  eyebrow,
-  title,
-  subtitle,
-}: {
-  id?: string;
-  step: string;
-  eyebrow?: string;
-  title: string;
-  subtitle?: string;
-}) {
-  const inner = (
-    <div className="flex items-start gap-3">
-      <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white shrink-0">
-        {step}
-      </div>
-      <div className="min-w-0 pt-0.5">
-        {eyebrow ? (
-          <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-1">{eyebrow}</p>
-        ) : null}
-        <h2 className="text-sm font-bold text-foreground tracking-tight">{title}</h2>
-        {subtitle ? <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{subtitle}</p> : null}
-      </div>
-    </div>
-  );
-  if (id) {
-    return (
-      <div id={id} className="scroll-mt-28 mb-5">
-        {inner}
-      </div>
-    );
-  }
-  return <div className="mb-5">{inner}</div>;
-}
-
 function SectionDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />;
 }
 
-/** 무료 구간에서 본문만 블러 + 잠금 배지 */
-function ReunionBlurGate({
-  active,
+function SectionBadge({ step }: { step: string }) {
+  return (
+    <div className="w-7 h-7 rounded-lg gradient-ai flex items-center justify-center text-[10px] font-black text-white shrink-0">
+      {step}
+    </div>
+  );
+}
+
+function BlurGate({
+  locked,
   children,
   className = "",
-  minHeightClass = "min-h-[4.5rem]",
+  hint = "심층 분석에서 확인",
 }: {
-  active: boolean;
+  locked: boolean;
   children: React.ReactNode;
   className?: string;
-  minHeightClass?: string;
+  hint?: string;
 }) {
-  if (!active) return <div className={className}>{children}</div>;
+  if (!locked) return <div className={className}>{children}</div>;
   return (
-    <div className={`relative overflow-hidden rounded-xl ${className} ${minHeightClass}`}>
-      <div className="blur-[5px] select-none pointer-events-none opacity-[0.55]">{children}</div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-card/60 backdrop-blur-[2px] px-3">
-        <Lock className="w-4 h-4 text-[hsl(45,70%,55%)] shrink-0" aria-hidden />
-        <span className="text-[9px] font-black text-[hsl(45,70%,52%)] text-center leading-tight">
-          유료 열람
+    <div className={`relative overflow-hidden rounded-xl ${className}`}>
+      <div className="blur-[6px] select-none pointer-events-none opacity-60" aria-hidden>
+        {children}
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center bg-card/50 backdrop-blur-[2px]">
+        <div className="flex items-center gap-1.5 rounded-full bg-card/90 border border-[hsl(45,40%,28%)]/50 px-3 py-1.5 shadow-sm">
+          <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+          <span className="text-[9px] font-bold text-[hsl(45,70%,52%)]">{hint}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** 하트 5개 척도 */
+function HeartScale({ score }: { score: number }) {
+  const filled = score >= 71 ? 5 : score >= 51 ? 4 : score >= 31 ? 3 : score >= 16 ? 2 : 1;
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: 5 }, (_, i) => (
+        <span key={i} className="text-lg">
+          {i < filled ? "❤️" : "🤍"}
         </span>
-      </div>
+      ))}
     </div>
   );
 }
 
-function ReunionAccountAiSection({
-  label,
-  analysis,
-}: {
-  label: string;
-  analysis: ReunionAccountAiAnalysis | null;
-}) {
-  if (!analysis) return null;
+function reunionRecommendLabel(score: number) {
+  if (score >= 71) return { tag: "추천", color: "text-green-400", line: "지금이 타이밍. 어떻게 할지 → 아래에서" };
+  if (score >= 51) return { tag: "가능", color: "text-primary", line: "여지는 있다. 단, 방법을 골라야 한다 → 아래에서" };
+  if (score >= 31) return { tag: "중립", color: "text-amber-400", line: "반반이다. 잘못 건들면 끝장 → 아래에서 확인" };
+  return { tag: "비추", color: "text-red-400", line: "재회 추천하지 않아. 근데 굳이 하고 싶다면 → 아래에서" };
+}
 
-  const isMine = label.includes("내 계정");
-
+/** 도발 따옴표 훅 */
+function HookQuote({ text }: { text: string }) {
   return (
-    <div className="mt-4 space-y-3">
-      {/* 나는 어떤 타입인가 / 상대는 어떤 타입인가 */}
-      <div className="rounded-xl border border-ai-highlight/25 bg-ai-highlight/5 p-4">
-        <p className="text-[10px] font-bold text-ai-highlight uppercase tracking-wider mb-3">
-          {isMine ? "나는 어떤 타입인가" : "상대는 어떤 타입인가"}
-        </p>
-        <p className="text-sm text-foreground/80 leading-[1.75] mb-3">{analysis.impression}</p>
-        <div className="flex flex-wrap gap-1.5">
-          {analysis.keywords.map((k, i) => (
-            <span
-              key={`${i}-${k}`}
-              className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-ai-highlight/15 border border-ai-highlight/30 text-ai-highlight"
-            >
-              {k}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* 상대 눈엔 어떻게 보여 / 지금 심리 상태 */}
-      <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
-        <div>
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-            {isMine ? "상대 눈엔 어떻게 보여" : "지금 심리 상태"}
-          </p>
-          <p className="text-sm text-foreground/80 leading-[1.75]">
-            {analysis.psychState}
-          </p>
-        </div>
-        <div className="border-t border-border/50 pt-3">
-          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-            {isMine ? "지금 내 피드가 주는 신호" : "상대가 반응하는 조건"}
-          </p>
-          <p className="text-sm text-foreground/80 leading-[1.75]">
-            {analysis.approach}
-          </p>
-        </div>
-      </div>
-    </div>
+    <p className="text-sm italic text-foreground/70 leading-relaxed border-l-2 border-primary/40 pl-3">
+      "{text}"
+    </p>
   );
 }
 
-/** 바 시각화만 쓰고, 여기선 방향만 말함 (숫자는 게이지에만) */
+/* ── lean bar helpers ────────────────────────────────────── */
+
 function formatReunionLeanComparison(contactLeanPercent: number): string {
   const c = contactLeanPercent;
-  if (c >= 55) return "바 기준으로 연락 쪽 무게가 더 실림.";
-  if (c <= 45) return "바 기준으로 기다림 쪽 무게가 더 실림.";
-  return "바가 거의 중앙—지금은 한쪽으로 크게 기울지 않음.";
+  if (c >= 55) return "연락 쪽 무게가 더 실림";
+  if (c <= 45) return "기다림 쪽 무게가 더 실림";
+  return "거의 중앙—한쪽으로 크게 기울지 않음";
 }
 
-/** `report.toc` 라벨을 화면용 구어체로만 덮어씀 (데이터 파일은 그대로) */
-const REUNION_TOC_LABEL_BY_ID: Record<string, string> = {
-  "reunion-my-type": "내 계정 톤",
-  "reunion-their-type": "상대 계정 톤",
-  "reunion-combo": "둘이 엮이는 방식",
-  "reunion-decision": "연락해? 말아?",
-  "reunion-scores": "왜 이렇게 된 거야",
-  "reunion-snapshot": "피드에 남은 신호",
-  "reunion-premium": "속내 분석",
-};
-
-/** 바 아래 한 줄 — closed/mixed/open과 정합 (팩폭 톤) */
 const REUNION_LEAN_HINT_BY_CASE: Record<ReunionDemoCase, string> = {
-  closed: "즉, 지금 네가 먼저 길게 쓰면 읽씹·닫힘 쪽으로 간다.",
-  mixed: "즉, 무거우면 망하고 짧게만 가야 산다.",
-  open: "즉, 틈은 있는데 길게 못 박으면 그날로 끝이다.",
+  closed: "지금 네가 먼저 길게 쓰면 읽씹·닫힘 쪽으로 간다.",
+  mixed: "무거우면 망하고 짧게만 가야 산다.",
+  open: "틈은 있는데 길게 못 박으면 그날로 끝이다.",
 };
 
-/** `contactLean` 분기 대신 `resolvedCase`와 동일 — 점수·패치 본문과 정합 */
-const REUNION_DECISION_SECTION_BY_CASE: Record<ReunionDemoCase, { kicker: string; title: string }> = {
-  closed: {
-    kicker: "지금 네가 먼저 쓰면 닫힘",
-    title: "무겁게 들어가면 읽씹·차단 쪽으로 간다",
-  },
-  mixed: {
-    kicker: "무거우면 망함",
-    title: "장문·총정리는 비추, 한 줄이면 간혹 통함",
-  },
-  open: {
-    kicker: "틈은 얇게 있음",
-    title: "짧은 접점만, 길게 쓰면 그날로 끝",
-  },
-};
-
-/** 넓은 쪽(기울기 방향)만 강한 그라데이션 — 좁은 쪽은 흐린 노랑 톤 */
-const REUNION_LEAN_BAR_MUTED =
+const LEAN_BAR_MUTED =
   "h-full bg-gradient-to-r from-[hsl(48,36%,24%)] to-[hsl(42,26%,16%)] transition-all";
-const REUNION_LEAN_BAR_VIBRANT =
+const LEAN_BAR_VIBRANT =
   "h-full bg-gradient-to-r from-primary to-[hsl(45,65%,48%)] transition-all";
 
-/** attraction ResultPage 프리미엄과 동일 계열 — 골드 톤 */
-const REUNION_GOLD = "text-[hsl(45,70%,55%)]";
-const REUNION_GOLD_BG = "bg-[hsl(45,70%,55%)]/15 border-[hsl(45,40%,28%)]/45";
-const REUNION_PREMIUM_CARD_SHELL_UNLOCKED =
-  "border-2 border-[hsl(45,50%,40%)]/50 shadow-[0_0_18px_hsl(45,50%,40%,0.12)] bg-gradient-to-br from-[hsl(45,20%,8%)] to-card";
-const REUNION_PREMIUM_CARD_SHELL_LOCKED = "border border-[hsl(45,40%,25%)]/35 bg-card/40";
+/* ── premium card helpers ────────────────────────────────── */
 
-/** 심층 카드별 이모지 + 매운맛 레이블 (카드 key 기준) */
-const REUNION_PREMIUM_CARD_META: Record<string, { emoji: string; tags: string[] }> = {
+const PREMIUM_CARD_META: Record<string, { emoji: string; tags: string[] }> = {
   "wait-until": { emoji: "⏳", tags: ["⏰ 타이밍", "🔥 관망 각"] },
   "tone-reply": { emoji: "🎙️", tags: ["💬 톤", "☠️ 망하는 말"] },
   "first-message": { emoji: "✉️", tags: ["💬 첫 문장", "📌 한 줄만"] },
@@ -251,10 +147,6 @@ const REUNION_PREMIUM_CARD_META: Record<string, { emoji: string; tags: string[] 
   "their-trace": { emoji: "🔍", tags: ["👁 흔적", "🚪 안 오는 이유"] },
   "my-destroy": { emoji: "🧨", tags: ["💥 자추 패턴", "⛔ 손대면 망"] },
 };
-
-function reunionPremiumMetaForKey(key: string) {
-  return REUNION_PREMIUM_CARD_META[key] ?? { emoji: "📌", tags: ["💎 심층"] };
-}
 
 function stripCornerBrackets(text: string): string {
   return text.replace(/【[^】]*】\s*/g, "").trim();
@@ -286,21 +178,14 @@ function splitLockedBodyToPoints(raw: string): string[] {
   return [one];
 }
 
-function ReunionHighlightedText({ text, className }: { text: string; className?: string }) {
-  const re = /(\d+(?:~\d+)?%?|\d+~\d+주|\d+주|\d+개월|\d+대\b)/g;
+function HighlightedText({ text, className }: { text: string; className?: string }) {
   const out: ReactNode[] = [];
   let last = 0;
   let mi = 0;
+  const rx = /(\d+(?:~\d+)?%?|\d+~\d+주|\d+주|\d+개월|\d+대\b)/g;
   let m: RegExpExecArray | null;
-  const rx = new RegExp(re.source, "g");
   while ((m = rx.exec(text)) !== null) {
-    if (m.index > last) {
-      out.push(
-        <span key={`t-${mi++}`} className="text-foreground/90">
-          {text.slice(last, m.index)}
-        </span>,
-      );
-    }
+    if (m.index > last) out.push(<span key={`t-${mi++}`}>{text.slice(last, m.index)}</span>);
     out.push(
       <strong key={`n-${mi++}`} className="font-black text-[hsl(45,72%,58%)] tabular-nums">
         {m[0]}
@@ -308,179 +193,46 @@ function ReunionHighlightedText({ text, className }: { text: string; className?:
     );
     last = m.index + m[0].length;
   }
-  if (last < text.length) {
-    out.push(
-      <span key={`t-${mi++}`} className="text-foreground/90">
-        {text.slice(last)}
-      </span>,
-    );
-  }
+  if (last < text.length) out.push(<span key={`t-${mi++}`}>{text.slice(last)}</span>);
   return <span className={className}>{out}</span>;
 }
 
-function ReunionPremiumBodyPoints({
-  raw,
-  unlocked,
-}: {
-  raw: string;
-  unlocked: boolean;
-}) {
-  const points = splitLockedBodyToPoints(raw);
-  const inner = (
-    <div className="space-y-3">
-      {points.map((para, i) => (
-        <div
-          key={i}
-          className={`rounded-xl p-3.5 border border-[hsl(45,30%,20%)]/35 ${unlocked ? "bg-[hsl(45,15%,12%)]/55" : "bg-secondary/10"}`}
-        >
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1.5">
-            포인트 {i + 1}
-          </p>
-          <div className="text-xs leading-relaxed">
-            <ReunionHighlightedText text={para} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+/* ── compact premium card (locked) ───────────────────────── */
 
-  return (
-    <div className="relative rounded-xl overflow-hidden border border-[hsl(45,40%,25%)]/30 bg-[hsl(45,12%,8%)]/40">
-      <div
-        className={`p-4 ${unlocked ? "" : "blur-[5px] select-none pointer-events-none"}`}
-        aria-hidden={!unlocked}
-      >
-        {inner}
-      </div>
-      {!unlocked && (
-        <div className="absolute inset-0 flex items-center justify-center bg-card/30 backdrop-blur-[1px] px-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-card/95 border border-[hsl(45,40%,28%)]/50 px-3 py-2 shadow-sm">
-            <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)] shrink-0" />
-            <span className="text-[9px] font-bold text-[hsl(45,70%,52%)] leading-tight text-center">
-              핵심 해석 · 문장 예시 잠금
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+const PREMIUM_HOOKS: Record<string, string> = {
+  "wait-until": "지금 연락하면 읽씹 각? 아니면 답장 각?",
+  "tone-reply": "처음 뭐라고 보내야 안 튕겨?",
+  "first-message": "처음 뭐라고 보내야 안 튕겨?",
+  "reply-style": "지금 상대가 너 생각하고 있을까?",
+  "new-person": "이 조건 맞으면 상대가 먼저 연락 온다",
+  misunderstanding: "네가 제일 자주 하는 실수는 이거야",
+  "their-trace": "지금 상대가 너 생각하고 있을까?",
+  "my-destroy": "네가 제일 자주 하는 실수는 이거야",
+};
 
-/** 섹션 하단 심층 잠금 — PremiumTeaserCard와 동일 blur 패턴 */
-function ReunionTeaserLockCard({
-  title,
-  teaser,
-  body,
-  unlocked,
-}: {
-  title: string;
-  teaser: string;
-  body: string;
-  unlocked: boolean;
-}) {
-  return (
-    <div className="glass-card rounded-2xl border border-[hsl(45,40%,25%)]/35 overflow-hidden">
-      <div className="p-5 space-y-3">
-        <h3 className="text-sm font-bold text-foreground leading-snug pr-2">{title}</h3>
-        <p className="text-sm text-foreground/90 leading-[1.75]">{teaser}</p>
-        <div className="relative rounded-xl overflow-hidden border border-border/50 bg-secondary/15">
-          <div
-            className={`p-4 text-xs leading-relaxed text-muted-foreground whitespace-pre-line ${
-              unlocked ? "" : "blur-[5px] select-none pointer-events-none"
-            }`}
-            aria-hidden={!unlocked}
-          >
-            {body}
-          </div>
-          {!unlocked && (
-            <div className="absolute inset-0 flex items-center justify-center bg-card/25 backdrop-blur-[1px] px-3">
-              <div className="flex items-center gap-1.5 rounded-full bg-card/95 border border-[hsl(45,40%,28%)]/50 px-3 py-2 shadow-sm">
-                <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)] shrink-0" />
-                <span className="text-[9px] font-bold text-[hsl(45,70%,52%)] leading-tight text-center">
-                  심층 해석 잠금
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PremiumTeaserCard({
+function CompactPremiumCard({
   card,
   unlocked,
-  resolvedCase,
-  fullBleedLock = false,
 }: {
   card: ReunionPremiumTeaser;
   unlocked: boolean;
-  resolvedCase: ReunionDemoCase;
-  /** true면 미열람 시 카드 전체 잠금(무료 구간 미리보기 없음) */
-  fullBleedLock?: boolean;
 }) {
-  const p = card.contactVsWaitPercent;
-  const w = card.waitRangeShort;
-  const np = card.newPersonWeightPercent;
-  const meta = reunionPremiumMetaForKey(card.key);
+  const meta = PREMIUM_CARD_META[card.key] ?? { emoji: "📌", tags: ["💎 심층"] };
+  const hook = PREMIUM_HOOKS[card.key] ?? card.visibleSummary;
+  const points = splitLockedBodyToPoints(card.lockedBody);
 
-  const tagRow = (
-    <div className="flex flex-wrap gap-1.5">
-      {meta.tags.map((tag) => (
-        <span
-          key={tag}
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-black tracking-tight border ${REUNION_GOLD_BG} ${REUNION_GOLD}`}
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
-
-  const headerBlock = (
-    <div className="flex items-start gap-3 border-b border-[hsl(45,40%,25%)]/30 pb-4">
-      <span className="text-[2rem] leading-none shrink-0 select-none" aria-hidden>
-        {meta.emoji}
-      </span>
-      <div className="min-w-0 flex-1">
-        {unlocked ? (
-          <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <Crown className="w-3.5 h-3.5 text-[hsl(45,70%,55%)] shrink-0" />
-            <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">
-              Premium Insight
-            </span>
-            <span className="text-[9px] font-black bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-2 py-0.5 rounded-full border border-[hsl(45,40%,30%)]/40">
-              UNLOCKED
-            </span>
-          </div>
-        ) : (
-          <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)] shrink-0" />
-            <span className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium</span>
-          </div>
-        )}
-        <h3 className="text-sm font-black text-foreground leading-snug pr-1">{card.title}</h3>
-      </div>
-    </div>
-  );
-
-  if (fullBleedLock && !unlocked) {
+  if (!unlocked) {
     return (
-      <div
-        className={`rounded-2xl overflow-hidden relative min-h-[120px] mb-6 ${REUNION_PREMIUM_CARD_SHELL_LOCKED}`}
-      >
-        <div className="p-5 space-y-3">
-          {tagRow}
-          <div className="flex items-start gap-3 opacity-40">
-            <span className="text-[2rem] leading-none shrink-0">{meta.emoji}</span>
-            <h3 className="text-sm font-black text-foreground leading-snug pt-1">{card.title}</h3>
-          </div>
+      <div className="rounded-2xl border border-[hsl(45,40%,25%)]/35 bg-card/40 p-4 max-h-32 overflow-hidden relative">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-xl leading-none">{meta.emoji}</span>
+          <h4 className="text-xs font-black text-foreground leading-snug flex-1">{card.title}</h4>
         </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-card/55 backdrop-blur-[3px] px-3">
-          <div className="flex items-center gap-2 rounded-full bg-card/95 border border-[hsl(45,40%,28%)]/50 px-3 py-2 shadow-sm">
-            <Lock className="w-3.5 h-3.5 text-[hsl(45,70%,55%)] shrink-0" />
-            <span className="text-[9px] font-black text-[hsl(45,70%,52%)] leading-tight">심층 유료 · 열면 전부 선명</span>
+        <p className="text-[11px] text-foreground/60 leading-relaxed mb-2">{hook}</p>
+        <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-card/95 to-transparent flex items-end justify-center pb-2">
+          <div className="flex items-center gap-1 rounded-full bg-card/90 border border-[hsl(45,40%,28%)]/50 px-2.5 py-1">
+            <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+            <span className="text-[9px] font-bold text-[hsl(45,70%,52%)]">잠금</span>
           </div>
         </div>
       </div>
@@ -488,74 +240,44 @@ function PremiumTeaserCard({
   }
 
   return (
-    <div
-      className={`rounded-2xl overflow-hidden mb-6 ${unlocked ? REUNION_PREMIUM_CARD_SHELL_UNLOCKED : REUNION_PREMIUM_CARD_SHELL_LOCKED}`}
-    >
-      <div className="p-5 space-y-4">
-        {tagRow}
-        {headerBlock}
-
-        {p != null && (
-          <div className="space-y-2 rounded-xl border border-[hsl(45,30%,22%)]/40 bg-[hsl(45,12%,10%)]/50 p-3">
-            <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span>기다리기</span>
-              <span>연락하기</span>
-            </div>
-            <div className="h-3 w-full rounded-full overflow-hidden flex border border-[hsl(45,40%,25%)]/35">
-              <div
-                className={p >= 50 ? REUNION_LEAN_BAR_MUTED : REUNION_LEAN_BAR_VIBRANT}
-                style={{ width: `${100 - p}%` }}
-              />
-              <div
-                className={p >= 50 ? REUNION_LEAN_BAR_VIBRANT : REUNION_LEAN_BAR_MUTED}
-                style={{ width: `${p}%` }}
-              />
-            </div>
-            <p className="text-xs text-center text-muted-foreground">{formatReunionLeanComparison(p)}</p>
-            <p className="text-xs text-center text-foreground font-semibold leading-relaxed px-0.5">
-              {REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
+    <div className="rounded-2xl border-2 border-[hsl(45,50%,40%)]/50 shadow-[0_0_18px_hsl(45,50%,40%,0.12)] bg-gradient-to-br from-[hsl(45,20%,8%)] to-card p-4">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-xl leading-none">{meta.emoji}</span>
+        <h4 className="text-xs font-black text-foreground leading-snug flex-1">{card.title}</h4>
+        <span className="text-[9px] font-black bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-2 py-0.5 rounded-full border border-[hsl(45,40%,30%)]/40">
+          UNLOCKED
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-1 mb-3">
+        {meta.tags.map((tag) => (
+          <span
+            key={tag}
+            className="text-[9px] font-black px-2 py-0.5 rounded-full bg-[hsl(45,70%,55%)]/15 border border-[hsl(45,40%,28%)]/45 text-[hsl(45,70%,55%)]"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+      {card.visibleSummary ? (
+        <p className="text-xs text-foreground/90 leading-relaxed font-semibold border-l-2 border-[hsl(45,70%,55%)]/50 pl-2.5 mb-3">
+          {card.visibleSummary}
+        </p>
+      ) : null}
+      <div className="space-y-2">
+        {points.map((para, i) => (
+          <div key={i} className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
+            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1">포인트 {i + 1}</p>
+            <p className="text-[11px] leading-relaxed text-foreground/80">
+              <HighlightedText text={para} />
             </p>
           </div>
-        )}
-
-        {p == null && w != null && (
-          <div className="rounded-xl border border-[hsl(45,40%,28%)]/45 bg-[hsl(45,18%,10%)]/70 px-4 py-3">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">권장 관망 구간</p>
-            <p className="text-xl font-black text-[hsl(45,72%,58%)] tabular-nums tracking-tight">{w}</p>
-          </div>
-        )}
-
-        {p == null && w == null && card.tonePreview && (
-          <div className="rounded-xl border border-[hsl(45,30%,22%)]/40 bg-[hsl(45,12%,10%)]/50 p-3">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-2">먹히는 톤 예시</p>
-            <p className="text-sm text-foreground font-mono leading-relaxed rounded-lg px-3 py-3 border border-[hsl(45,40%,25%)]/25 bg-secondary/20">
-              {card.tonePreview}
-            </p>
-          </div>
-        )}
-
-        {p == null && w == null && !card.tonePreview && np != null && (
-          <div className="rounded-xl border border-[hsl(45,40%,28%)]/45 bg-[hsl(45,18%,10%)]/70 px-4 py-3">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">
-              새 인물 시그널 가중치
-            </p>
-            <p className="text-xl font-black text-[hsl(45,72%,58%)] tabular-nums">{np}%</p>
-          </div>
-        )}
-
-        {card.visibleSummary ? (
-          <p className="text-sm text-foreground/90 leading-[1.8] font-semibold border-l-2 border-[hsl(45,70%,55%)]/50 pl-3">
-            {card.visibleSummary}
-          </p>
-        ) : null}
-
-        <div className="pt-1 border-t border-[hsl(45,40%,25%)]/25">
-          <ReunionPremiumBodyPoints raw={card.lockedBody} unlocked={unlocked} />
-        </div>
+        ))}
       </div>
     </div>
   );
 }
+
+/* ── main page ───────────────────────────────────────────── */
 
 const DEMO_BREAKUP = { year: 2025, month: 9 } as const;
 
@@ -583,6 +305,7 @@ const ReunionResultPage = () => {
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
 
+  /* ── scoring ── */
   const scoringMerge = useMemo((): ReunionScoringMerge | null => {
     if (demoCase) return null;
     const { year, month } = clampBreakupToPast(breakupYear, breakupMonth);
@@ -608,6 +331,7 @@ const ReunionResultPage = () => {
     };
   }, [demoCase, myId, theirId, breakupYear, breakupMonth]);
 
+  /* ── IG pipeline ── */
   useEffect(() => {
     if (demoCase) {
       setPipelineReport(null);
@@ -719,14 +443,9 @@ const ReunionResultPage = () => {
     premiumTeasers,
     meta,
     decisionHint,
-    signalSnapshot,
-    freeCore,
     reunionJourney,
-    myProfileSignals,
-    theirProfileSignals,
   } = report;
 
-  /** demo > 파이프라인 > 해시 scoring */
   const resolvedCase: ReunionDemoCase = demoCase ?? pipelineCase ?? scoringMerge?.case ?? "mixed";
   const caseSource: "demo" | "pipeline" | "scoring" = demoCase
     ? "demo"
@@ -734,8 +453,6 @@ const ReunionResultPage = () => {
       ? "pipeline"
       : "scoring";
   const showIgLoading = !demoCase && igFetchLoading && !pipelineReport && !igFetchError;
-  const { kicker: decisionSectionKicker, title: decisionSectionTitle } =
-    REUNION_DECISION_SECTION_BY_CASE[resolvedCase];
 
   const handlePremiumUnlock = () => {
     setPremiumUnlocked(true);
@@ -747,10 +464,7 @@ const ReunionResultPage = () => {
       setShowStickyBar(false);
       return;
     }
-    const onScroll = () => {
-      const y = window.scrollY || document.documentElement.scrollTop;
-      setShowStickyBar(y > 600);
-    };
+    const onScroll = () => setShowStickyBar((window.scrollY || document.documentElement.scrollTop) > 600);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
@@ -765,6 +479,9 @@ const ReunionResultPage = () => {
     });
   }, [caseSource, resolvedCase, scores, decisionHint.contactLeanPercent]);
 
+  const recommend = reunionRecommendLabel(scores.reunionPossibility);
+
+  /* ── loading screen ── */
   if (showIgLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -787,7 +504,7 @@ const ReunionResultPage = () => {
             <div className="flex flex-col items-center mb-8">
               <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-5 shadow-lg shadow-primary/30">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                 </svg>
               </div>
               <h2 className="text-foreground text-xl font-bold mb-1">신호 분석 중이에요...</h2>
@@ -799,14 +516,14 @@ const ReunionResultPage = () => {
                 <span className="text-primary font-medium">잠시만요</span>
               </div>
               <div className="w-full bg-muted rounded-full h-1.5">
-                <div className="bg-primary h-1.5 rounded-full animate-pulse" style={{width: "75%"}}></div>
+                <div className="bg-primary h-1.5 rounded-full animate-pulse" style={{ width: "75%" }} />
               </div>
             </div>
             <div className="space-y-3 mb-8">
               {["인스타 공개 데이터 수집 중", "내 계정 톤·리듬 분석 중", "상대 계정 시그널 해석 중", "둘 사이 관계 패턴 분석 중", "재회 가능성 계산 중"].map((step, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                   </div>
                   <span className="text-foreground/80 text-sm">{step}</span>
                 </div>
@@ -822,8 +539,12 @@ const ReunionResultPage = () => {
     );
   }
 
+  /* ════════════════════════════════════════════════════════
+     MAIN RESULT
+     ════════════════════════════════════════════════════════ */
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* header */}
       <header className="px-5 py-4 flex items-center justify-between border-b border-border/50 backdrop-blur-sm bg-card/60">
         <Link
           to="/"
@@ -837,439 +558,315 @@ const ReunionResultPage = () => {
             <span className="text-[9px] text-muted-foreground font-medium truncate">재회 시그널 리포트</span>
           </div>
         </Link>
-        <div className="flex items-center gap-1.5 shrink-0 max-w-[45%]">
-          <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full truncate">
-            @{myId}
-          </span>
-        </div>
+        <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full truncate max-w-[45%]">
+          @{myId}
+        </span>
       </header>
 
       <main className={`flex-1 flex flex-col items-center px-5 pt-6 ${premiumUnlocked ? "pb-24" : "pb-32"}`}>
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md space-y-6">
+
+          {/* error banner */}
           {igFetchError && !demoCase && !pipelineReport ? (
-            <div
-              role="status"
-              className="mb-4 rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-xs text-foreground/90 leading-relaxed"
-            >
-              인스타 스크랩에 실패했습니다. 아래는 해시 기반 추정 모드입니다. Edge 함수·API 키를 확인하거나 잠시 후 다시 시도해 주세요.
+            <div className="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-xs text-foreground/90 leading-relaxed">
+              인스타 스크랩에 실패했습니다. 아래는 해시 기반 추정 모드입니다.
             </div>
           ) : null}
+
+          {/* cache notice */}
           {pipelineReport && pairAi?.fromCache ? (
-            <p className="mb-3 text-[10px] text-muted-foreground text-center leading-relaxed px-1">
-              동일 계정 조합은 최근 72시간 안에 분석된 결과를 재사용합니다. (스크랩·AI 호출 절감)
+            <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
+              동일 조합은 72h 내 캐시를 재사용합니다.
             </p>
           ) : null}
-          <div className="text-center mb-6">
+
+          {/* eyebrow */}
+          <div className="text-center">
             <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-ai-highlight mb-1">
               Instagram Reunion Report
             </p>
             <div className="h-px w-12 mx-auto bg-ai-highlight/30" />
           </div>
 
-          <h1 className="text-xl font-bold text-foreground text-center leading-tight mb-1">{report.summaryTitle}</h1>
-          <ReunionBlurGate active={!premiumUnlocked} className="mb-3" minHeightClass="min-h-[2.75rem]">
-            <p className="text-xs sm:text-sm text-muted-foreground text-center leading-relaxed px-1">
-              공개 피드에 남은 신호만으로 지금 둘 사이가 어디쯤인지 읽어냈습니다.
-            </p>
-          </ReunionBlurGate>
-          <p className="text-sm text-muted-foreground text-center mb-6 leading-relaxed">
-            @{myId} · @{theirId} · 이별 {meta.breakupLabel} · 헤어진 지{" "}
-            <span className="text-foreground font-semibold">{meta.monthsSinceLabel}</span>
-          </p>
-
-          <div className="grid grid-cols-3 gap-2 mb-5">
-            <StatScore label="재회 가능성" value={scores.reunionPossibility} sub="종합" />
-            <StatScore label="상대 개방도" value={scores.theirReunionOpenness} sub="상대" />
-            <StatScore label="연락 적합도" value={scores.contactTimingFit} sub="톤·타이밍" />
+          {/* meta badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-[10px]">
+            <span className="px-2.5 py-1 rounded-full bg-secondary border border-border/50 text-muted-foreground font-medium">
+              @{myId}
+            </span>
+            <span className="text-muted-foreground">×</span>
+            <span className="px-2.5 py-1 rounded-full bg-secondary border border-border/50 text-muted-foreground font-medium">
+              @{theirId}
+            </span>
+            <span className="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold">
+              헤어진 지 {meta.monthsSinceLabel}
+            </span>
           </div>
 
-          <div className="relative glass-card rounded-2xl p-5 mb-5 border-l-4 border-l-primary">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <Scale className="w-4 h-4 text-primary" />
-              한 줄 요약
-            </h3>
-            <p className="text-sm text-foreground/90 leading-[1.9]">{report.summaryLine}</p>
-          </div>
-
-          <ReunionBlurGate active={!premiumUnlocked} className="mb-8" minHeightClass="min-h-[5.5rem]">
-            <div className="glass-card rounded-2xl p-5">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <BookOpen className="w-4 h-4 text-primary" />
-                어디부터 볼까
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {report.toc.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => scrollToId(item.id)}
-                    className="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20 hover:bg-primary/15 transition-colors"
-                  >
-                    {REUNION_TOC_LABEL_BY_ID[item.id] ?? item.label}
-                    <ChevronRight className="w-3.5 h-3.5 opacity-70" />
-                  </button>
-                ))}
+          {/* ──────────────── 섹션 1: 재회 가능성 히어로 ──────────────── */}
+          <section id="reunion-hero" className="scroll-mt-28">
+            <div className="flex items-start gap-3 mb-4">
+              <SectionBadge step="1" />
+              <div>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Reunion Possibility</p>
+                <h2 className="text-sm font-bold text-foreground">재회 가능성</h2>
               </div>
             </div>
-          </ReunionBlurGate>
 
-          <SectionDivider />
-
-          {/* 02 내 계정 톤 */}
-          <section className="relative mb-8 pt-8">
-            <ReunionSectionHeader
-              id="reunion-my-type"
-              step="2"
-              title="내 계정 톤"
-              subtitle="네 피드가 상대한테 지금 어떻게 읽히는지."
-            />
-            <div className="glass-card rounded-2xl p-5 border border-primary/10 mb-3">
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                한 줄 요약
+            <div className="glass-card rounded-2xl p-6 text-center border border-primary/15">
+              {/* 큰 숫자 히어로 */}
+              <p className="text-6xl font-black text-foreground tabular-nums tracking-tighter leading-none mb-1">
+                {scores.reunionPossibility}
+                <span className="text-3xl align-top text-primary">%</span>
               </p>
-              <p className="text-base font-black text-foreground leading-snug mb-3">{reunionJourney.myTypeName}</p>
-              <p className="text-sm text-foreground/90 leading-[1.9] mb-4">{reunionJourney.myTypeLead}</p>
-              <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[14rem]">
-                <div className="space-y-4">
-                  <ReunionAccountAiSection label="내 계정이 상대한테 어떻게 읽히고 있나" analysis={pairAi?.my ?? null} />
-                  <div className="space-y-2">
-                    <div className="rounded-xl border border-border/50 bg-secondary/15 p-4">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">흔적</p>
-                      <p className="text-sm text-foreground/90 leading-relaxed">{reunionJourney.myTypeSubcards[0]}</p>
-                    </div>
-                    <div className="rounded-xl border border-border/50 bg-secondary/15 p-4">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">접점</p>
-                      <p className="text-sm text-foreground/90 leading-relaxed">{reunionJourney.myTypeSubcards[1]}</p>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">{myProfileSignals.observedFrom}</p>
+              {/* 원형 게이지 바 */}
+              <div className="w-full max-w-[200px] mx-auto mt-4 mb-4">
+                <div className="h-3 w-full rounded-full bg-secondary overflow-hidden">
+                  <div
+                    className="h-full rounded-full gradient-primary transition-all duration-700"
+                    style={{ width: `${scores.reunionPossibility}%` }}
+                  />
                 </div>
-              </ReunionBlurGate>
-            </div>
-            <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[10rem]" className="mt-3">
-              <ReunionTeaserLockCard
-                title={premiumTeasers[7]?.title ?? "내가 먼저 망치는 패턴"}
-                teaser="지금 네 쪽에서 제일 위험한 건 감정 그 자체보다, 감정이 새는 방식입니다."
-                body={premiumTeasers[7]?.lockedBody ?? ""}
-                unlocked={premiumUnlocked}
-              />
-            </ReunionBlurGate>
-          </section>
-
-          <SectionDivider />
-
-          {/* 03 상대 계정 톤 */}
-          <section className="relative mb-8 pt-8">
-            <ReunionSectionHeader
-              id="reunion-their-type"
-              step="3"
-              title="상대 계정 톤"
-              subtitle="상대 계정이 지금 어디쯤 와 있는지."
-            />
-            <div className="glass-card rounded-2xl p-5 border border-primary/10 mb-3">
-              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                한 줄 요약
-              </p>
-              <p className="text-base font-black text-foreground leading-snug mb-3">{reunionJourney.theirTypeName}</p>
-              <p className="text-sm text-foreground/90 leading-[1.9] mb-4">{reunionJourney.theirTypeLead}</p>
-              <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[14rem]">
-                <div className="space-y-4">
-                  <ReunionAccountAiSection label="상대 계정에서 읽히는 것들" analysis={pairAi?.their ?? null} />
-                  <div className="space-y-2">
-                    <div className="rounded-xl border border-border/50 bg-secondary/15 p-4">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">경계</p>
-                      <p className="text-sm text-foreground/90 leading-relaxed">{reunionJourney.theirTypeSubcards[0]}</p>
-                    </div>
-                    <div className="rounded-xl border border-border/50 bg-secondary/15 p-4">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">재회 쪽 온도</p>
-                      <p className="text-sm text-foreground/90 leading-relaxed">{reunionJourney.theirTypeSubcards[1]}</p>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">{theirProfileSignals.observedFrom}</p>
-                </div>
-              </ReunionBlurGate>
-            </div>
-            <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[10rem]" className="mt-3">
-              <ReunionTeaserLockCard
-                title={premiumTeasers[6]?.title ?? "상대가 안 오는데 흔적은 남기는 이유"}
-                teaser="모르는 게 아니라, 알아서 피하는 걸 수도 있습니다. 상대가 지금 진짜 피하는 게 너인지, 상황인지, 감정인지 아래에서 갈립니다."
-                body={premiumTeasers[6]?.lockedBody ?? ""}
-                unlocked={premiumUnlocked}
-              />
-            </ReunionBlurGate>
-          </section>
-
-          <SectionDivider />
-
-          {/* 04 둘이 엮이는 방식 */}
-          <section className="relative mb-8 pt-8">
-            <ReunionSectionHeader
-              id="reunion-combo"
-              step="4"
-              title="둘이 엮이는 방식"
-              subtitle="둘 사이에서 계속 반복되는 패턴의 정체."
-            />
-            <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[16rem]">
-              <div className="glass-card rounded-2xl p-5 bg-primary/5 border border-primary/15 mb-3">
-                <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-primary" />
-                  이 관계가 꼬이는 방식
-                </h4>
-                <p className="text-sm text-foreground/90 leading-[1.9] whitespace-pre-line">{reunionJourney.comboCardBody}</p>
               </div>
-              <ReunionTeaserLockCard
-                title="둘이 다시 이어질 수 있는 조건"
-                teaser={reunionJourney.lockTeaserComboConditions}
-                body={reunionJourney.lockBodyComboConditions}
-                unlocked={premiumUnlocked}
-              />
-            </ReunionBlurGate>
+              <HookQuote text={report.summaryLine} />
+            </div>
           </section>
 
           <SectionDivider />
 
-          {/* 05 연락해? 말아? */}
-          <section className="relative mb-8 pt-8">
-            <ReunionSectionHeader
-              id="reunion-decision"
-              step="5"
-              eyebrow={decisionSectionKicker}
-              title="연락해? 말아?"
-              subtitle="연락했을 때 반응이 올지, 아니면 완전히 차단각인지."
-            />
-            <p className="text-sm font-bold text-foreground leading-snug mb-4 px-0.5">{decisionSectionTitle}</p>
+          {/* ──────────────── 섹션 2: 재회 추천도 ──────────────── */}
+          <section id="reunion-recommend" className="scroll-mt-28">
+            <div className="flex items-start gap-3 mb-4">
+              <SectionBadge step="2" />
+              <div>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Recommendation</p>
+                <h2 className="text-sm font-bold text-foreground">재회 추천도</h2>
+              </div>
+            </div>
+
+            <div className="glass-card rounded-2xl p-5 border border-primary/10">
+              <div className="flex items-center justify-between mb-3">
+                <HeartScale score={scores.reunionPossibility} />
+                <span className={`text-xs font-black px-3 py-1 rounded-full border ${recommend.color} bg-current/10`}>
+                  {recommend.tag}
+                </span>
+              </div>
+              <p className="text-sm font-bold text-foreground/90 leading-relaxed">
+                {recommend.line}
+              </p>
+            </div>
+          </section>
+
+          <SectionDivider />
+
+          {/* ──────────────── 섹션 3: 나 / 상대 타입 카드 ──────────────── */}
+          <section id="reunion-types" className="scroll-mt-28">
+            <div className="flex items-start gap-3 mb-4">
+              <SectionBadge step="3" />
+              <div>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Type Analysis</p>
+                <h2 className="text-sm font-bold text-foreground">나 vs 상대 타입</h2>
+              </div>
+            </div>
+
+            {/* 내 타입 */}
+            <div className="glass-card rounded-2xl p-5 border border-ai-highlight/20 mb-3">
+              <p className="text-[10px] font-bold text-ai-highlight uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
+              <p className="text-base font-black text-foreground leading-snug mb-2">
+                {reunionJourney.myTypeName}
+              </p>
+              {pairAi?.my ? (
+                <>
+                  <p className="text-sm text-foreground/80 leading-relaxed mb-3">{pairAi.my.impression}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {pairAi.my.keywords.map((k, i) => (
+                      <span
+                        key={`my-${i}`}
+                        className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-ai-highlight/15 border border-ai-highlight/30 text-ai-highlight"
+                      >
+                        {k}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-foreground/70 leading-relaxed mb-3">{reunionJourney.myTypeLead}</p>
+              )}
+              <BlurGate locked={!premiumUnlocked} hint="심층 분석에서 전부 공개">
+                <p className="text-xs text-foreground/70 leading-relaxed">{pairAi?.my?.psychState ?? reunionJourney.myTypeSubcards[0]}</p>
+              </BlurGate>
+            </div>
+
+            {/* 상대 타입 */}
             <div className="glass-card rounded-2xl p-5 border border-primary/15">
-              <ReunionBlurGate active={!premiumUnlocked} className="mb-5" minHeightClass="min-h-[3.5rem]">
-                <p className="text-sm font-bold text-foreground leading-[1.85]">{decisionHint.headline}</p>
-              </ReunionBlurGate>
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-medium text-muted-foreground">
+              <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
+              <p className="text-base font-black text-foreground leading-snug mb-2">
+                {reunionJourney.theirTypeName}
+              </p>
+              {pairAi?.their ? (
+                <>
+                  <p className="text-sm text-foreground/80 leading-relaxed mb-3">{pairAi.their.impression}</p>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {pairAi.their.keywords.map((k, i) => (
+                      <span
+                        key={`their-${i}`}
+                        className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary"
+                      >
+                        {k}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-foreground/70 leading-relaxed mb-3">{reunionJourney.theirTypeLead}</p>
+              )}
+              <BlurGate locked={!premiumUnlocked} hint="심층 분석에서 전부 공개">
+                <p className="text-xs text-foreground/70 leading-relaxed">{pairAi?.their?.psychState ?? reunionJourney.theirTypeSubcards[0]}</p>
+              </BlurGate>
+            </div>
+          </section>
+
+          <SectionDivider />
+
+          {/* ──────────────── 섹션 4: 둘 사이 구조 ──────────────── */}
+          <section id="reunion-combo" className="scroll-mt-28">
+            <div className="flex items-start gap-3 mb-4">
+              <SectionBadge step="4" />
+              <div>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Relationship Structure</p>
+                <h2 className="text-sm font-bold text-foreground">둘 사이 구조</h2>
+              </div>
+            </div>
+
+            <div className="glass-card rounded-2xl p-5 border border-primary/10">
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="w-4 h-4 text-primary" />
+                <p className="text-xs font-bold text-foreground">반복되는 패턴</p>
+              </div>
+              <p className="text-sm text-foreground/90 leading-relaxed mb-3">
+                {reunionJourney.comboCardBody.split("\n")[0]}
+              </p>
+              <BlurGate locked={!premiumUnlocked}>
+                <div className="space-y-2 text-sm text-foreground/80 leading-relaxed">
+                  {reunionJourney.comboCardBody.split("\n").slice(1).filter(Boolean).map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                  <p className="font-semibold text-foreground/90">{reunionJourney.lockTeaserComboConditions}</p>
+                </div>
+              </BlurGate>
+            </div>
+          </section>
+
+          <SectionDivider />
+
+          {/* ──────────────── 섹션 5: 상대 먼저 연락할 확률 ──────────────── */}
+          <section id="reunion-reachout" className="scroll-mt-28">
+            <div className="flex items-start gap-3 mb-4">
+              <SectionBadge step="5" />
+              <div>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Their First Move</p>
+                <h2 className="text-sm font-bold text-foreground">상대가 먼저 연락할 확률</h2>
+              </div>
+            </div>
+
+            <div className="glass-card rounded-2xl p-6 text-center border border-primary/15">
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                먼저 연락 올 가능성
+              </p>
+              <p className="text-5xl font-black text-foreground tabular-nums tracking-tighter leading-none mb-1">
+                {reachOutForecast.percent}
+                <span className="text-2xl align-top text-primary">%</span>
+              </p>
+              <div className="w-full max-w-[180px] mx-auto mt-3 mb-4">
+                <div className="h-2.5 w-full rounded-full bg-secondary overflow-hidden">
+                  <div
+                    className="h-full rounded-full gradient-primary transition-all duration-700"
+                    style={{ width: `${reachOutForecast.percent}%` }}
+                  />
+                </div>
+              </div>
+              <p className="text-sm font-semibold text-foreground/90 mb-3">{reachOutForecast.rationaleLine}</p>
+              <BlurGate locked={!premiumUnlocked} hint="시점·방식은 심층 분석에서">
+                <div className="space-y-2 text-xs text-foreground/70 leading-relaxed">
+                  <p><span className="text-muted-foreground text-[10px] uppercase tracking-wide">예상 시점:</span> {reachOutForecast.timingBand}</p>
+                  <p><span className="text-muted-foreground text-[10px] uppercase tracking-wide">예상 방식:</span> {reachOutForecast.channelPrimary}</p>
+                  <p className="font-semibold text-foreground/80">{reachOutForecast.punchLine}</p>
+                </div>
+              </BlurGate>
+            </div>
+          </section>
+
+          <SectionDivider />
+
+          {/* ──────────────── 섹션 6: 연락해? 말아? 게이지 ──────────────── */}
+          <section id="reunion-decision" className="scroll-mt-28">
+            <div className="flex items-start gap-3 mb-4">
+              <SectionBadge step="6" />
+              <div>
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Contact Decision</p>
+                <h2 className="text-sm font-bold text-foreground">연락해? 말아?</h2>
+              </div>
+            </div>
+
+            <div className="glass-card rounded-2xl p-5 border border-primary/15">
+              {/* 게이지 바 */}
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                   <span>기다리기</span>
                   <span>연락하기</span>
                 </div>
-                <div className="h-3 w-full rounded-full overflow-hidden flex border border-border/40">
+                <div className="relative h-4 w-full rounded-full overflow-hidden flex border border-border/40">
                   <div
-                    className={
-                      decisionHint.contactLeanPercent >= 50
-                        ? REUNION_LEAN_BAR_MUTED
-                        : REUNION_LEAN_BAR_VIBRANT
-                    }
+                    className={decisionHint.contactLeanPercent >= 50 ? LEAN_BAR_MUTED : LEAN_BAR_VIBRANT}
                     style={{ width: `${100 - decisionHint.contactLeanPercent}%` }}
                   />
                   <div
-                    className={
-                      decisionHint.contactLeanPercent >= 50
-                        ? REUNION_LEAN_BAR_VIBRANT
-                        : REUNION_LEAN_BAR_MUTED
-                    }
+                    className={decisionHint.contactLeanPercent >= 50 ? LEAN_BAR_VIBRANT : LEAN_BAR_MUTED}
                     style={{ width: `${decisionHint.contactLeanPercent}%` }}
                   />
                 </div>
-                <p className="text-xs text-center text-muted-foreground pt-1">
+                <p className="text-xs text-center text-muted-foreground">
                   {formatReunionLeanComparison(decisionHint.contactLeanPercent)}
                 </p>
               </div>
-              <ReunionBlurGate active={!premiumUnlocked} className="mt-3" minHeightClass="min-h-[4rem]">
-                <div className="space-y-3">
-                  <p className="text-xs text-center text-foreground font-semibold leading-relaxed px-0.5">
-                    {REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
-                  </p>
-                  <p className="text-xs text-muted-foreground leading-relaxed border-t border-border/50 pt-4">
-                    {decisionHint.hintLine}
-                  </p>
+
+              <p className="text-xs font-bold text-foreground text-center mb-3">
+                {REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
+              </p>
+
+              <BlurGate locked={!premiumUnlocked} hint="판단 근거는 심층 분석에서">
+                <div className="space-y-2">
+                  <p className="text-sm font-bold text-foreground leading-relaxed">{decisionHint.headline}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{decisionHint.hintLine}</p>
                 </div>
-              </ReunionBlurGate>
-            </div>
-
-            <div id="reunion-reachout" className="scroll-mt-28 mt-6 mb-2">
-              <ReunionSectionHeader
-                step="6"
-                title="상대가 먼저 쐬줄까"
-                subtitle="내가 아무것도 안 해도 상대가 먼저 연락할까."
-              />
-              <div className="glass-card rounded-2xl p-5 border border-primary/15">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                  먼저 올 추정치
-                </p>
-                <p className="text-4xl font-black text-foreground tabular-nums tracking-tight mb-1">
-                  {reachOutForecast.percent}
-                  <span className="text-2xl align-top">%</span>
-                </p>
-                <ReunionBlurGate active={!premiumUnlocked} className="mt-4" minHeightClass="min-h-[11rem]">
-                  <div className="text-sm text-foreground/90 leading-relaxed space-y-3">
-                    <p className="font-semibold text-foreground">{reachOutForecast.rationaleLine}</p>
-                    <p>
-                      <span className="text-muted-foreground text-[10px] uppercase tracking-wide block mb-1">
-                        예상 시점
-                      </span>
-                      {reachOutForecast.timingBand}
-                    </p>
-                    <p>
-                      <span className="text-muted-foreground text-[10px] uppercase tracking-wide block mb-1">
-                        올 거면 이런 방식
-                      </span>
-                      {reachOutForecast.channelPrimary}
-                    </p>
-                    <p className="text-muted-foreground">{reachOutForecast.channelSecondary}</p>
-                    <p className="text-xs text-foreground font-semibold border-t border-border/40 pt-3 leading-snug">
-                      {reachOutForecast.punchLine}
-                    </p>
-                  </div>
-                </ReunionBlurGate>
-              </div>
-            </div>
-
-            <div className="space-y-4 mt-4">
-              {premiumTeasers[0] ? (
-                <PremiumTeaserCard
-                  card={premiumTeasers[0]}
-                  unlocked={premiumUnlocked}
-                  resolvedCase={resolvedCase}
-                  fullBleedLock={!premiumUnlocked}
-                />
-              ) : null}
-              {premiumTeasers[1] ? (
-                <PremiumTeaserCard
-                  card={premiumTeasers[1]}
-                  unlocked={premiumUnlocked}
-                  resolvedCase={resolvedCase}
-                  fullBleedLock={!premiumUnlocked}
-                />
-              ) : null}
+              </BlurGate>
             </div>
           </section>
 
           <SectionDivider />
 
-          {/* 07 왜 이렇게 된 거야 */}
-          <section className="relative mb-8 pt-8">
-            <ReunionSectionHeader
-              id="reunion-scores"
-              step="7"
-              title="왜 이렇게 된 거야"
-              subtitle="지금 이 판을 뒤집을 수 있는 변수가 뭔지."
-            />
-            <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[18rem]">
-              <div className="space-y-3">
-                <div className="glass-card rounded-2xl p-5">
-                  <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
-                    <Radar className="w-4 h-4 text-primary" />
-                    지금 들이대면 왜 불리한지
-                  </h4>
-                  <p className="text-sm text-foreground/90 leading-[1.9]">{freeCore.whyAmbiguous}</p>
-                </div>
-                <div className="glass-card rounded-2xl p-5">
-                  <h4 className="text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
-                    <Scale className="w-4 h-4 text-primary" />
-                    판 바꾸는 변수
-                  </h4>
-                  <p className="text-sm text-foreground/90 leading-[1.9]">{freeCore.keyVariable}</p>
-                </div>
-              </div>
-              <div className="mt-4">
-                <ReunionTeaserLockCard
-                  title="왜 같은 연락도 어떤 날은 먹히고 어떤 날은 막히는지"
-                  teaser={reunionJourney.lockTeaserWhyVaries}
-                  body={reunionJourney.lockBodyWhyVaries}
-                  unlocked={premiumUnlocked}
-                />
-              </div>
-            </ReunionBlurGate>
-          </section>
-
-          <SectionDivider />
-
-          {/* 08 피드에 남은 신호 */}
-          <section className="relative mb-8 pt-8">
-            <ReunionSectionHeader
-              id="reunion-snapshot"
-              step="8"
-              title="피드에 남은 신호"
-              subtitle="두 계정에 남은 흔적이 말하는 것들."
-            />
-            <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[22rem]">
-              <div className="space-y-3">
-                <div className="glass-card rounded-2xl p-5 bg-primary/5 border border-primary/10">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                    지금 제일 크게 걸린 축
-                  </h4>
-                  <p className="text-sm text-foreground/90 leading-[1.9]">{signalSnapshot.conflictLine}</p>
-                </div>
-                <div className="glass-card rounded-2xl p-5">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                    <Image className="w-4 h-4 text-primary" />
-                    내 피드에서 보이는 것
-                  </h4>
-                  <p className="text-sm text-foreground/90 leading-[1.9]">{signalSnapshot.youLine}</p>
-                </div>
-                <div className="glass-card rounded-2xl p-5">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                    <Image className="w-4 h-4 text-primary opacity-80" />
-                    상대 피드에서 보이는 선
-                  </h4>
-                  <p className="text-sm text-foreground/90 leading-[1.9]">{signalSnapshot.themLine}</p>
-                </div>
-              </div>
-              <div className="glass-card rounded-2xl p-5 mt-4 border-l-4 border-l-[hsl(45,40%,35%)] bg-gradient-to-br from-[hsl(45,12%,10%)] to-card">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                  <Heart className="w-4 h-4 text-[hsl(45,70%,55%)]" />
-                  무료로 본 판, 여기까지
-                </h4>
-                <p className="text-sm text-foreground/90 leading-[1.9]">{report.finalRecommendation}</p>
-              </div>
-              <div className="space-y-4 mt-4">
-                {premiumTeasers[4] ? (
-                  <PremiumTeaserCard
-                    card={premiumTeasers[4]}
-                    unlocked={premiumUnlocked}
-                    resolvedCase={resolvedCase}
-                    fullBleedLock={!premiumUnlocked}
-                  />
-                ) : null}
-                {premiumTeasers[5] ? (
-                  <PremiumTeaserCard
-                    card={premiumTeasers[5]}
-                    unlocked={premiumUnlocked}
-                    resolvedCase={resolvedCase}
-                    fullBleedLock={!premiumUnlocked}
-                  />
-                ) : null}
-              </div>
-            </ReunionBlurGate>
-          </section>
-
-          <SectionDivider />
-
-          {/* 09 속내 분석 */}
-          <div id="reunion-premium" className="scroll-mt-28 space-y-5 pt-2">
-            <ReunionSectionHeader
-              step="9"
-              title="속내 분석"
-              subtitle="첫 문장부터 답장 확률까지. 아래서 확인."
-            />
-            <div className="rounded-2xl p-4 mb-1 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,30%,12%)] to-[hsl(35,20%,8%)] border border-[hsl(45,30%,20%)]/40">
-              <Crown className="w-8 h-8 text-[hsl(45,70%,55%)] shrink-0" />
-              <div className="min-w-0">
-                <p className="text-xs font-black text-foreground leading-snug">심층 분석 전체</p>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                  
-                </p>
+          {/* ──────────────── 유료 섹션 ──────────────── */}
+          <section id="reunion-premium" className="scroll-mt-28">
+            <div className="flex items-start gap-3 mb-4">
+              <SectionBadge step="P" />
+              <div>
+                <p className="text-[10px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium</p>
+                <h2 className="text-sm font-bold text-foreground">속내 분석</h2>
               </div>
             </div>
-            <div className="rounded-2xl p-6 bg-gradient-to-br from-[hsl(45,20%,8%)] to-[hsl(0,0%,6%)] border border-[hsl(45,40%,25%)]/40 text-center shadow-lg">
+
+            {/* CTA */}
+            <div className="rounded-2xl p-6 bg-gradient-to-br from-[hsl(45,20%,8%)] to-[hsl(0,0%,6%)] border border-[hsl(45,40%,25%)]/40 text-center mb-5">
               {premiumUnlocked ? (
                 <>
                   <Unlock className="w-5 h-5 text-[hsl(45,70%,55%)] mx-auto mb-3" />
-                  <p className="text-base font-black text-foreground mb-2 leading-tight">속내 분석 열림</p>
-                  <p className="text-sm text-muted-foreground leading-[1.8] px-1">
-                    아래 카드 본문·예시가 모두 선명하게 보입니다.
-                  </p>
+                  <p className="text-base font-black text-foreground mb-2">속내 분석 열림</p>
+                  <p className="text-sm text-muted-foreground">아래 카드가 모두 선명하게 보입니다.</p>
                 </>
               ) : (
                 <>
                   <Lock className="w-5 h-5 text-[hsl(45,70%,55%)] mx-auto mb-3" />
-                  <p className="text-base font-black text-foreground mb-2 leading-tight">{premiumGateCta.title}</p>
-                  <p className="text-sm text-muted-foreground mb-5 leading-[1.8] px-1 whitespace-pre-line">
+                  <p className="text-base font-black text-foreground mb-2">{premiumGateCta.title}</p>
+                  <p className="text-sm text-muted-foreground mb-5 leading-[1.8] whitespace-pre-line">
                     {premiumGateCta.body}
                   </p>
                   <button
@@ -1284,54 +881,29 @@ const ReunionResultPage = () => {
                       {premiumGateCta.ctaPrimary}
                     </span>
                   </button>
-                  <p className="text-xs text-muted-foreground mt-3 leading-relaxed px-1">{premiumGateCta.ctaAuxiliary}</p>
                   <p className="text-xs text-muted-foreground mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5">
                     <span className="line-through tabular-nums opacity-80">{premiumGateCta.stickyListPrice}</span>
                     <span className="font-black text-[hsl(45,72%,58%)] tabular-nums">{premiumGateCta.stickyPriceLabel}</span>
                     <span className="text-[10px]">{premiumGateCta.stickySaleNote}</span>
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-5 leading-relaxed border-t border-border/30 pt-4">
-                    {premiumGateCta.footnote}
-                  </p>
                 </>
               )}
             </div>
 
-            <div className="flex items-start gap-2">
-              {premiumUnlocked ? (
-                <Unlock className="w-4 h-4 text-[hsl(45,70%,55%)] shrink-0 mt-0.5" />
-              ) : (
-                <Lock className="w-4 h-4 text-[hsl(45,70%,55%)] shrink-0 mt-0.5" />
-              )}
-              <div>
-                <p className="text-xs font-bold text-foreground leading-snug">
-                  {premiumUnlocked ? "속내 카드 전부 열림" : "속내 카드 · 일부만 공개"}
-                </p>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-1">
-                  {premiumUnlocked
-                    ? "전체 문단이 선명하게 보입니다."
-                    : "일부만 공개된 상태입니다. 심층 분석에서 전부 나옵니다."}
-                </p>
-              </div>
-            </div>
-
-            <div id="reunion-premium-cards" className="space-y-4 scroll-mt-28 pb-4">
-              {premiumTeasers.slice(2).map((card) => (
-                <PremiumTeaserCard
-                  key={card.key}
-                  card={card}
-                  unlocked={premiumUnlocked}
-                  resolvedCase={resolvedCase}
-                  fullBleedLock={!premiumUnlocked}
-                />
+            {/* premium cards grid */}
+            <div id="reunion-premium-cards" className="scroll-mt-28 space-y-3">
+              {premiumTeasers.map((card) => (
+                <CompactPremiumCard key={card.key} card={card} unlocked={premiumUnlocked} />
               ))}
             </div>
-          </div>
+          </section>
+
         </div>
       </main>
 
       <Footer />
 
+      {/* sticky bottom bar */}
       {showStickyBar && !premiumUnlocked && (
         <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom duration-300">
           <div className="max-w-md mx-auto px-4 pb-4">
