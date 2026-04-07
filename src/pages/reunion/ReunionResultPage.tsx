@@ -160,13 +160,13 @@ function ReunionAccountAiSection({
       </div>
       <div>
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-          재회 맥락 · 접근
+          어떻게 접근해야 차단 안 당하는지
         </p>
         <p className="text-sm text-foreground/90 leading-relaxed">{analysis.approach}</p>
       </div>
       <div>
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
-          지금 읽히는 심리 리듬
+          지금 심리 상태
         </p>
         <p className="text-sm text-foreground/90 leading-relaxed">{analysis.psychState}</p>
       </div>
@@ -858,7 +858,7 @@ const ReunionResultPage = () => {
           <h1 className="text-xl font-bold text-foreground text-center leading-tight mb-1">{report.summaryTitle}</h1>
           <ReunionBlurGate active={!premiumUnlocked} className="mb-3" minHeightClass="min-h-[2.75rem]">
             <p className="text-xs sm:text-sm text-muted-foreground text-center leading-relaxed px-1">
-              공개 인스타 프로필에 남은 흐름과 반복 신호를 기준으로, 지금 둘 사이가 어떤 국면인지 먼저 읽습니다.
+              공개 피드에 남은 신호만으로 지금 둘 사이가 어디쯤인지 읽어냈습니다.
             </p>
           </ReunionBlurGate>
           <p className="text-sm text-muted-foreground text-center mb-6 leading-relaxed">
@@ -910,17 +910,17 @@ const ReunionResultPage = () => {
               id="reunion-my-type"
               step="2"
               title="내 계정 톤"
-              subtitle="지금 네 피드가 뭐라고 하는지부터 본다."
+              subtitle="네 피드가 상대한테 지금 어떻게 읽히는지."
             />
             <div className="glass-card rounded-2xl p-5 border border-primary/10 mb-3">
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                한 줄 타입
+                한 줄 요약
               </p>
               <p className="text-base font-black text-foreground leading-snug mb-3">{reunionJourney.myTypeName}</p>
               <p className="text-sm text-foreground/90 leading-[1.9] mb-4">{reunionJourney.myTypeLead}</p>
               <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[14rem]">
                 <div className="space-y-4">
-                  <ReunionAccountAiSection label="AI 인물 분석 · 내 계정" analysis={pairAi?.my ?? null} />
+                  <ReunionAccountAiSection label="내 계정이 상대한테 어떻게 읽히고 있나" analysis={pairAi?.my ?? null} />
                   <div className="space-y-2">
                     <div className="rounded-xl border border-border/50 bg-secondary/15 p-4">
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">흔적</p>
@@ -953,17 +953,17 @@ const ReunionResultPage = () => {
               id="reunion-their-type"
               step="3"
               title="상대 계정 톤"
-              subtitle="지금 상대 피드가 어떤 국면인지 본다."
+              subtitle="상대 계정이 지금 어디쯤 와 있는지."
             />
             <div className="glass-card rounded-2xl p-5 border border-primary/10 mb-3">
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                한 줄 타입
+                한 줄 요약
               </p>
               <p className="text-base font-black text-foreground leading-snug mb-3">{reunionJourney.theirTypeName}</p>
               <p className="text-sm text-foreground/90 leading-[1.9] mb-4">{reunionJourney.theirTypeLead}</p>
               <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[14rem]">
                 <div className="space-y-4">
-                  <ReunionAccountAiSection label="AI 인물 분석 · 상대 계정" analysis={pairAi?.their ?? null} />
+                  <ReunionAccountAiSection label="상대 계정에서 읽히는 것들" analysis={pairAi?.their ?? null} />
                   <div className="space-y-2">
                     <div className="rounded-xl border border-border/50 bg-secondary/15 p-4">
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-1">경계</p>
@@ -996,7 +996,7 @@ const ReunionResultPage = () => {
               id="reunion-combo"
               step="4"
               title="둘이 엮이는 방식"
-              subtitle="지금 둘 사이에서 반복되는 구조."
+              subtitle="둘 사이에서 계속 반복되는 패턴의 정체."
             />
             <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[16rem]">
               <div className="glass-card rounded-2xl p-5 bg-primary/5 border border-primary/15 mb-3">
@@ -1024,7 +1024,7 @@ const ReunionResultPage = () => {
               step="5"
               eyebrow={decisionSectionKicker}
               title="연락해? 말아?"
-              subtitle="지금 더 열릴지, 더 닫힐지."
+              subtitle="연락했을 때 반응이 올지, 아니면 완전히 차단각인지."
             />
             <p className="text-sm font-bold text-foreground leading-snug mb-4 px-0.5">{decisionSectionTitle}</p>
             <div className="glass-card rounded-2xl p-5 border border-primary/15">
@@ -1074,7 +1074,7 @@ const ReunionResultPage = () => {
               <ReunionSectionHeader
                 step="6"
                 title="상대가 먼저 쐬줄까"
-                subtitle="네가 안 쐈을 때, 상대 시그널만으로 역으로 올지."
+                subtitle="내가 아무것도 안 해도 상대가 먼저 연락할까."
               />
               <div className="glass-card rounded-2xl p-5 border border-primary/15">
                 <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
@@ -1136,7 +1136,7 @@ const ReunionResultPage = () => {
               id="reunion-scores"
               step="7"
               title="왜 이렇게 된 거야"
-              subtitle="지금 판을 바꾸는 변수."
+              subtitle="지금 이 판을 뒤집을 수 있는 변수가 뭔지."
             />
             <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[18rem]">
               <div className="space-y-3">
@@ -1174,7 +1174,7 @@ const ReunionResultPage = () => {
               id="reunion-snapshot"
               step="8"
               title="피드에 남은 신호"
-              subtitle="둘 계정에 박힌 흔적만 읽는다."
+              subtitle="두 계정에 남은 흔적이 말하는 것들."
             />
             <ReunionBlurGate active={!premiumUnlocked} minHeightClass="min-h-[22rem]">
               <div className="space-y-3">
@@ -1234,14 +1234,14 @@ const ReunionResultPage = () => {
             <ReunionSectionHeader
               step="9"
               title="속내 분석"
-              subtitle="행동 해설·첫 문장·답장 톤·위험 포인트 이어서."
+              subtitle="첫 문장부터 답장 확률까지. 아래서 확인."
             />
             <div className="rounded-2xl p-4 mb-1 flex items-center gap-3 bg-gradient-to-r from-[hsl(45,30%,12%)] to-[hsl(35,20%,8%)] border border-[hsl(45,30%,20%)]/40">
               <Crown className="w-8 h-8 text-[hsl(45,70%,55%)] shrink-0" />
               <div className="min-w-0">
-                <p className="text-xs font-black text-foreground leading-snug">심층 카드 풀세트 · 본편 프리미엄이랑 같은 골드 룩</p>
+                <p className="text-xs font-black text-foreground leading-snug">심층 분석 전체</p>
                 <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
-                  카드마다 태그·포인트만 쪼개 둠. 강조 줄은 골드.
+                  
                 </p>
               </div>
             </div>
@@ -1299,7 +1299,7 @@ const ReunionResultPage = () => {
                 <p className="text-xs text-muted-foreground leading-relaxed mt-1">
                   {premiumUnlocked
                     ? "전체 문단이 선명하게 보입니다."
-                    : "카드마다 공개된 한 요소만 선명합니다. 나머지는 잠금 해제 후 확인할 수 있습니다."}
+                    : "일부만 공개된 상태입니다. 심층 분석에서 전부 나옵니다."}
                 </p>
               </div>
             </div>
