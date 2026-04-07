@@ -828,7 +828,7 @@ const ReunionResultPage = () => {
         </Link>
         <div className="flex items-center gap-1.5 shrink-0 max-w-[45%]">
           <span className="text-xs text-ai-highlight font-medium bg-ai-highlight/10 border border-ai-highlight/20 px-2.5 py-1 rounded-full truncate">
-            @{myId}
+            {"@"}{myId}
           </span>
         </div>
       </header>
@@ -862,7 +862,7 @@ const ReunionResultPage = () => {
             </p>
           </ReunionBlurGate>
           <p className="text-sm text-muted-foreground text-center mb-6 leading-relaxed">
-            @{myId} · @{theirId} · 이별 {meta.breakupLabel} · 헤어진 지{" "}
+            {"@"}{myId} · {"@"}{theirId} · 이별 {meta.breakupLabel} · 헤어진 지{" "}
             <span className="text-foreground font-semibold">{meta.monthsSinceLabel}</span>
           </p>
 
