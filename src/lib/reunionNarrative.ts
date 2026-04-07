@@ -60,10 +60,10 @@ export function buildReunionNarrative(
 
   const myTypeTitle =
     my.emotionalResidueScore >= 62
-      ? "끝났다면서 피드로 감정 다 흘리는 사람"
+      ? "끝났다면서 피드로 감정 새는 중"
       : my.selfFocusScore >= 58
-        ? "연애 얘기는 줄이고 셀프 브랜딩에 올인하는 사람"
-        : "정리한 척하면서 인스타는 계속 들여다보는 사람";
+        ? "연애 접고 셀프 브랜딩 올인 중"
+        : "정리한 척 인스타는 계속 보는 중";
 
   const myTypeBody =
     my.emotionalResidueScore >= 62
@@ -77,10 +77,10 @@ export function buildReunionNarrative(
 
   const theirTypeTitle =
     th.avoidanceScore >= 68
-      ? "마음은 남았는데 다시 엮이는 건 사양인 사람"
+      ? "마음은 있는데 엮이긴 싫은 중"
       : th.opennessScore >= 62
-        ? "문은 덜 잠겼지만 무거운 연락은 바로 피하는 사람"
-        : "자기 리듬부터 챙기고 감정은 나중에 보는 사람";
+        ? "문 열어둔 척 무거운 건 거부"
+        : "자기 루틴 먼저 감정은 나중";
 
   const theirTypeBody =
     th.newPersonHintScore >= 58

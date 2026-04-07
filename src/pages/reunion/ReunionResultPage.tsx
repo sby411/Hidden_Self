@@ -504,6 +504,13 @@ const ReunionResultPage = () => {
           contactLeanPercent: scored.contactLeanPercent,
           scores: scored.displayScores,
         });
+        // persona가 있으면 reunionJourney 타이틀도 덮어쓰기
+        if (pairRes.myPersonaLine) {
+          merged.reunionJourney.myTypeName = pairRes.myPersonaLine;
+        }
+        if (pairRes.partnerPersonaLine) {
+          merged.reunionJourney.theirTypeName = pairRes.partnerPersonaLine;
+        }
         setPipelineReport(merged);
         setPipelineCase(scored.case);
         setPipelineRichSignals(rich);
