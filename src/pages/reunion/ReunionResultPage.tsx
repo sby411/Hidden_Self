@@ -144,15 +144,12 @@ function ReunionAccountAiSection({
 
   return (
     <div className="mt-4 space-y-3">
-      {/* 유형 카드 */}
+      {/* 나는 어떤 타입인가 / 상대는 어떤 타입인가 */}
       <div className="rounded-xl border border-ai-highlight/25 bg-ai-highlight/5 p-4">
         <p className="text-[10px] font-bold text-ai-highlight uppercase tracking-wider mb-3">
           {isMine ? "나는 어떤 타입인가" : "상대는 어떤 타입인가"}
         </p>
-        <p className="text-lg font-bold text-foreground leading-tight mb-1">
-          {analysis.accountType ?? "분석 중"}
-        </p>
-        <p className="text-sm text-foreground/70 mb-3">{analysis.impression}</p>
+        <p className="text-sm text-foreground/80 leading-[1.75] mb-3">{analysis.impression}</p>
         <div className="flex flex-wrap gap-1.5">
           {analysis.keywords.map((k, i) => (
             <span
@@ -165,14 +162,14 @@ function ReunionAccountAiSection({
         </div>
       </div>
 
-      {/* 상대 눈엔 어떻게 보이는지 / 지금 심리 상태 */}
+      {/* 상대 눈엔 어떻게 보여 / 지금 심리 상태 */}
       <div className="rounded-xl border border-border bg-card/50 p-4 space-y-3">
         <div>
           <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">
             {isMine ? "상대 눈엔 어떻게 보여" : "지금 심리 상태"}
           </p>
           <p className="text-sm text-foreground/80 leading-[1.75]">
-            {analysis.psychologyNow}
+            {analysis.psychState}
           </p>
         </div>
         <div className="border-t border-border/50 pt-3">
@@ -180,7 +177,7 @@ function ReunionAccountAiSection({
             {isMine ? "지금 내 피드가 주는 신호" : "상대가 반응하는 조건"}
           </p>
           <p className="text-sm text-foreground/80 leading-[1.75]">
-            {analysis.approachContext}
+            {analysis.approach}
           </p>
         </div>
       </div>
