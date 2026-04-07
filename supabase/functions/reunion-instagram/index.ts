@@ -149,7 +149,7 @@ const REUNION_AI_SYSTEM = `You analyze public Instagram profile data for a "reun
 Output ONLY a single JSON object, no markdown fences, no extra text.
 Schema:
 {
-  "persona": string (Korean, 20자 내외. 이 사람의 인스타 페르소나를 팩폭 한 줄로 정의. ~타입/~형 같은 말 금지. 구체적인 행동 묘사 위주. 예: "피드는 활발한데 감정은 잠금 설정한 사람", "SNS는 열심인데 DM은 읽씹하는 사람"),
+  "persona": string (Korean, 15-25자. 이 사람의 인스타 페르소나를 팩폭 한 줄로 정의해줘. ~타입/~형 같은 추상어 금지. 구체적 행동 묘사로. 실제 피드 데이터 기반으로. 예: "DM은 안 읽으면서 스토리는 올리는 인플루언서", "본인이 느좋남인줄 아는 평범남", "피드는 활발한데 감정은 잠금 설정한 사람"),
   "impression": string (Korean, 2-3 sentences, concrete, grounded in the data),
   "keywords": string[] (3-5 short Korean keyword phrases),
   "approach": string (Korean: in reunion context — recommended tone, how to open contact, what to avoid; practical),

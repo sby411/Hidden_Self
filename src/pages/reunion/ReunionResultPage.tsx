@@ -161,19 +161,26 @@ function ReunionLoadingScreen() {
   useEffect(() => {
     let raf: number;
     const start = Date.now();
-    const duration = 18_000; // 0→85% over 18 seconds (ease-out)
     const tick = () => {
       const elapsed = Date.now() - start;
-      const t = Math.min(elapsed / duration, 1);
-      const eased = 1 - (1 - t) ** 3; // cubic ease-out
-      setProgress(Math.round(eased * 85));
-      if (t < 1) raf = requestAnimationFrame(tick);
+      // Phase 1: 0→85% in 15s (cubic ease-out)
+      // Phase 2: 85→99% in next 25s (very slow crawl)
+      let value: number;
+      if (elapsed < 15_000) {
+        const t = elapsed / 15_000;
+        value = (1 - (1 - t) ** 3) * 85;
+      } else {
+        const t2 = Math.min((elapsed - 15_000) / 25_000, 1);
+        value = 85 + t2 * 14; // 85→99
+      }
+      setProgress(Math.round(Math.min(value, 99)));
+      if (value < 99) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const activeStep = Math.min(Math.floor(progress / 17), LOADING_STEPS.length - 1);
+  const activeStep = Math.min(Math.floor(progress / 20), LOADING_STEPS.length - 1);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -206,7 +213,7 @@ function ReunionLoadingScreen() {
           {/* animated progress */}
           <div className="mb-6">
             <div className="flex justify-between items-baseline text-xs mb-2">
-              <span className="text-muted-foreground">분석 중...</span>
+              <span className="text-muted-foreground">{progress >= 95 ? "거의 다 됐어요" : "분석 중..."}</span>
               <span className="text-primary font-black tabular-nums text-sm">{progress}%</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
@@ -1043,7 +1050,7 @@ const ReunionResultPage = () => {
 
             {/* premium cards grid */}
             <div id="reunion-premium-cards" className="scroll-mt-28 space-y-3">
-              {premiumTeasers.map((card) => (
+              {premiumTeasers.filter((c) => c.key !== "their-trace").map((card) => (
                 <CompactPremiumCard key={card.key} card={card} unlocked={premiumUnlocked} />
               ))}
             </div>
