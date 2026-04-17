@@ -51,13 +51,13 @@ function scrollToId(id: string) {
 }
 
 function SectionDivider() {
-  return <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-2" />;
+  return <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent my-4" />;
 }
 
 function SectionBadge({ step }: { step: string }) {
   return (
-    <div className="w-7 h-7 rounded-lg gradient-ai flex items-center justify-center text-[10px] font-black text-white shrink-0">
-      {step}
+    <div className="w-8 h-8 rounded-lg gradient-ai flex items-center justify-center text-xs font-black text-white shrink-0">
+      {step.padStart(2, "0")}
     </div>
   );
 }
@@ -429,6 +429,7 @@ const ReunionResultPage = () => {
     reunionComment: string;
     summaryLine: string;
     theirFirstMoveComment: string;
+    tensionAxis: string;
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
@@ -501,6 +502,10 @@ const ReunionResultPage = () => {
           myPrivatePenalty: Boolean(pairRes.myPrivateWarning || pairRes.my.profile.isPrivate),
           theirPrivatePenalty: Boolean(pairRes.theirPrivateWarning || pairRes.their.profile.isPrivate),
         });
+        // AI tensionAxis가 있으면 signals 덮어쓰기
+        if (pairRes.tensionAxis) {
+          rich.pairSignals.tensionAxis = pairRes.tensionAxis;
+        }
         const scored = scoreReunionFromRich(rich);
         const narrative = buildReunionNarrative(
           rich,
@@ -540,6 +545,7 @@ const ReunionResultPage = () => {
           reunionComment: pairRes.reunionComment,
           summaryLine: pairRes.summaryLine,
           theirFirstMoveComment: pairRes.theirFirstMoveComment,
+          tensionAxis: pairRes.tensionAxis,
           fromCache: pairRes.fromCache,
         });
         setIgFetchError(false);
@@ -740,18 +746,18 @@ const ReunionResultPage = () => {
             <span className="px-2.5 py-1 rounded-full bg-secondary border border-border/50 text-muted-foreground font-medium">
               @{theirId}
             </span>
-            <span className="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-bold">
+            <span className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20">
               헤어진 지 {meta.monthsSinceLabel}
             </span>
           </div>
 
           {/* ──────────────── 섹션 1: 재회 가능성 히어로 ──────────────── */}
           <section id="reunion-hero" className="scroll-mt-28">
-            <div className="flex items-start gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <SectionBadge step="1" />
               <div>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Reunion Possibility</p>
-                <h2 className="text-sm font-bold text-foreground">재회 가능성</h2>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">재회 가능성</h2>
+                <p className="text-[10px] text-muted-foreground">Reunion Possibility</p>
               </div>
             </div>
 
@@ -778,15 +784,15 @@ const ReunionResultPage = () => {
 
           {/* ──────────────── 섹션 2: 재회 추천도 ──────────────── */}
           <section id="reunion-recommend" className="scroll-mt-28">
-            <div className="flex items-start gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <SectionBadge step="2" />
               <div>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Recommendation</p>
-                <h2 className="text-sm font-bold text-foreground">재회 추천도</h2>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">재회 추천도</h2>
+                <p className="text-[10px] text-muted-foreground">Recommendation</p>
               </div>
             </div>
 
-            <div className="glass-card rounded-2xl p-5 border border-primary/10">
+            <div className="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
               <div className="flex items-center justify-between mb-3">
                 <HeartScale score={scores.reunionPossibility} />
                 <span className={`text-xs font-black px-3 py-1 rounded-full border ${recommend.color} bg-current/10`}>
@@ -816,16 +822,16 @@ const ReunionResultPage = () => {
 
           {/* ──────────────── 섹션 3: 나 / 상대 타입 카드 ──────────────── */}
           <section id="reunion-types" className="scroll-mt-28">
-            <div className="flex items-start gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <SectionBadge step="3" />
               <div>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Type Analysis</p>
-                <h2 className="text-sm font-bold text-foreground">나 vs 상대 타입</h2>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">나 vs 상대 타입</h2>
+                <p className="text-[10px] text-muted-foreground">Type Analysis</p>
               </div>
             </div>
 
             {/* 내 타입 */}
-            <div className="glass-card rounded-2xl p-5 border border-red-500/20 mb-3">
+            <div className="glass-card rounded-2xl p-5 border-l-4 border-l-primary mb-3">
               <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-2">나는 어떤 타입인가</p>
               {pairAi?.myPersonaLine ? (
                 <p className="text-base font-black text-foreground leading-snug mb-3">
@@ -839,7 +845,7 @@ const ReunionResultPage = () => {
                   {pairAi.my.keywords.map((k, i) => (
                     <span
                       key={`my-${i}`}
-                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/25 text-red-400"
+                      className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20"
                     >
                       {k}
                     </span>
@@ -862,7 +868,7 @@ const ReunionResultPage = () => {
             </div>
 
             {/* 상대 타입 */}
-            <div className="glass-card rounded-2xl p-5 border border-border/30">
+            <div className="glass-card rounded-2xl p-5 border-l-4 border-l-accent mb-3">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">상대는 어떤 타입인가</p>
               {pairAi?.partnerPersonaLine ? (
                 <p className="text-base font-black text-foreground leading-snug mb-3">
@@ -876,7 +882,7 @@ const ReunionResultPage = () => {
                   {pairAi.their.keywords.map((k, i) => (
                     <span
                       key={`their-${i}`}
-                      className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-secondary/60 border border-border/50 text-muted-foreground"
+                      className="text-xs bg-secondary/60 text-muted-foreground px-3 py-1.5 rounded-full font-semibold border border-border/50"
                     >
                       {k}
                     </span>
@@ -903,15 +909,15 @@ const ReunionResultPage = () => {
 
           {/* ──────────────── 섹션 4: 둘 사이 구조 ──────────────── */}
           <section id="reunion-combo" className="scroll-mt-28">
-            <div className="flex items-start gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <SectionBadge step="4" />
               <div>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Relationship Structure</p>
-                <h2 className="text-sm font-bold text-foreground">둘 사이 구조</h2>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">둘 사이 구조</h2>
+                <p className="text-[10px] text-muted-foreground">Relationship Structure</p>
               </div>
             </div>
 
-            <div className="glass-card rounded-2xl p-5 border border-primary/10">
+            <div className="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
               <div className="flex items-center gap-2 mb-3">
                 <Users className="w-4 h-4 text-primary" />
                 <p className="text-xs font-bold text-foreground">반복되는 패턴</p>
@@ -934,15 +940,15 @@ const ReunionResultPage = () => {
 
           {/* ──────────────── 섹션 5: 상대 먼저 연락할 확률 ──────────────── */}
           <section id="reunion-reachout" className="scroll-mt-28">
-            <div className="flex items-start gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <SectionBadge step="5" />
               <div>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Their First Move</p>
-                <h2 className="text-sm font-bold text-foreground">상대가 먼저 연락할 확률</h2>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">상대가 먼저 연락할 확률</h2>
+                <p className="text-[10px] text-muted-foreground">Their First Move</p>
               </div>
             </div>
 
-            <div className="glass-card rounded-2xl p-6 text-center border border-primary/15">
+            <div className="glass-card rounded-2xl p-6 text-center border-l-4 border-l-accent">
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                 먼저 연락 올 가능성
               </p>
@@ -978,15 +984,15 @@ const ReunionResultPage = () => {
 
           {/* ──────────────── 섹션 6: 먼저 연락할지 말지 ──────────────── */}
           <section id="reunion-decision" className="scroll-mt-28">
-            <div className="flex items-start gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               <SectionBadge step="6" />
               <div>
-                <p className="text-[10px] font-bold text-primary uppercase tracking-wider">Contact Decision</p>
-                <h2 className="text-sm font-bold text-foreground">먼저 연락할지 말지</h2>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">먼저 연락할지 말지</h2>
+                <p className="text-[10px] text-muted-foreground">Contact Decision</p>
               </div>
             </div>
 
-            <div className="glass-card rounded-2xl p-5 border border-primary/15">
+            <div className="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
               {/* 게이지 바 */}
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
@@ -1025,12 +1031,15 @@ const ReunionResultPage = () => {
 
           {/* ──────────────── 유료 섹션 ──────────────── */}
           <section id="reunion-premium" className="scroll-mt-28">
-            <div className="flex items-start gap-3 mb-4">
-              <SectionBadge step="P" />
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] flex items-center justify-center text-xs font-black text-white shrink-0">P</div>
               <div>
-                <p className="text-[10px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wider">Premium</p>
-                <h2 className="text-sm font-bold text-foreground">속내 분석</h2>
+                <h2 className="text-sm font-bold text-foreground tracking-tight">속내 분석</h2>
+                <p className="text-[10px] text-muted-foreground">Premium Deep Analysis</p>
               </div>
+              <span className="inline-flex items-center gap-1 bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto">
+                <Crown className="w-2.5 h-2.5" /> PREMIUM
+              </span>
             </div>
 
             {/* CTA */}

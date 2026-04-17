@@ -267,7 +267,8 @@ Schema:
   "partnerYearning": number (0-100. THEIR_ACCOUNT의 미련 수치. 동일 기준. 중요: myYearning은 반드시 partnerYearning보다 높아야 한다. 리포트를 돌리는 쪽이 대체로 미련이 더 크기 때문이다),
   "reunionComment": string (Korean, 2문장. 두 계정 데이터를 근거로 한 재회 가능성 코멘트. 지금 연락하면 어떤 결과가 나올지, 왜 그런지를 양쪽 피드 패턴에 근거해서 구체적으로 쓸 것. 뻔한 조언 금지. 예: "지금 네가 먼저 길게 쓰면 상대 스토리 업로드 패턴상 읽씹 확률이 높다. 상대 캡션 톤이 방어에서 내려갈 때까지 짧은 접점만 유지해라."),
   "summaryLine": string (Korean, 2~3문장. 두 사람의 관계 상태를 양쪽 계정 데이터 근거로 요약. 팔로워/게시물/캡션 톤/활동 패턴 등 실제 데이터 포인트를 언급하면서 자연스럽게 써줄 것. 예: "솔직히 말하면 지금 재회 가능성은 낮은 쪽에 가깝다. 상대 피드는 새 일상 중심으로 전환된 반면, 네 쪽은 아직 감성적 캡션이 남아 있어서 온도 차이가 크게 보인다."),
-  "theirFirstMoveComment": string (Korean, 2~3문장. 상대(THEIR_ACCOUNT)가 먼저 연락할 것 같은 시점과 방식을 계정 특성에 근거해서 예측. 게시물 빈도, 스토리 패턴, 캡션 톤, 팔로잉 변화 등 구체적 데이터 포인트 반영. 예: "상대 게시물 간격이 2~3주로 느려진 걸 보면 지금 정리 모드에 가깝다. 먼저 온다면 스토리 반응이나 이모지 정도가 먼저일 거고, 장문 DM은 기대하기 어렵다.")
+  "theirFirstMoveComment": string (Korean, 2~3문장. 상대(THEIR_ACCOUNT)가 먼저 연락할 것 같은 시점과 방식을 계정 특성에 근거해서 예측. 게시물 빈도, 스토리 패턴, 캡션 톤, 팔로잉 변화 등 구체적 데이터 포인트 반영. 예: "상대 게시물 간격이 2~3주로 느려진 걸 보면 지금 정리 모드에 가깝다. 먼저 온다면 스토리 반응이나 이모지 정도가 먼저일 거고, 장문 DM은 기대하기 어렵다."),
+  "tensionAxis": string (Korean, 1문장. 두 사람의 핵심 긴장 축을 양쪽 피드 패턴에 근거해서 구체적으로 정의. "~축" 형태로 끝낼 것. 예: "네 쪽은 감정을 계속 피드에 쏟아내는데 상대는 아예 인스타를 내려놓아서 접점 자체가 없는 축", "감성 캡션으로 신호를 보내는 쪽과 무캡션으로 방어하는 쪽이 엇갈리는 축")
 }
 Rules:
 - 자연스러운 한국어 문장으로. 단문 끊어치기 금지. 친구가 솔직하게 조언하는 말투로.
@@ -280,7 +281,7 @@ async function callClaudeCompatibility(
   myBundle: any,
   theirBundle: any,
   dataLimited: boolean,
-): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string } | null> {
+): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string; tensionAxis: string } | null> {
   const myPayload = compactBundleForPrompt(myBundle, 10);
   const theirPayload = compactBundleForPrompt(theirBundle, 10);
 
@@ -328,8 +329,9 @@ ${JSON.stringify(theirPayload)}`;
     const reunionComment = typeof parsed.reunionComment === "string" ? parsed.reunionComment.trim() : "";
     const summaryLine = typeof parsed.summaryLine === "string" ? parsed.summaryLine.trim() : "";
     const theirFirstMoveComment = typeof parsed.theirFirstMoveComment === "string" ? parsed.theirFirstMoveComment.trim() : "";
+    const tensionAxis = typeof parsed.tensionAxis === "string" ? parsed.tensionAxis.trim() : "";
     if (!compatibilityType) return null;
-    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment };
+    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment, tensionAxis };
   } catch {
     console.error("Claude compatibility JSON parse failed");
     return null;
@@ -614,6 +616,7 @@ Deno.serve(async (req) => {
             reunionComment: cached.compatibility?.reunionComment || "",
             summaryLine: cached.compatibility?.summaryLine || "",
             theirFirstMoveComment: cached.compatibility?.theirFirstMoveComment || "",
+            tensionAxis: cached.compatibility?.tensionAxis || "",
             myPrivateWarning: Boolean(cached.myPrivateWarning),
             theirPrivateWarning: Boolean(cached.theirPrivateWarning),
           }),
@@ -711,6 +714,7 @@ Deno.serve(async (req) => {
           reunionComment: compatibility?.reunionComment || "",
           summaryLine: compatibility?.summaryLine || "",
           theirFirstMoveComment: compatibility?.theirFirstMoveComment || "",
+          tensionAxis: compatibility?.tensionAxis || "",
           myPrivateWarning,
           theirPrivateWarning,
         }),

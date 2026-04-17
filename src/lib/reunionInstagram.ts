@@ -73,6 +73,7 @@ export type ReunionPairPipelineResult =
       reunionComment: string;
       summaryLine: string;
       theirFirstMoveComment: string;
+      tensionAxis: string;
       myPrivateWarning: boolean;
       theirPrivateWarning: boolean;
       fromCache: boolean;
@@ -136,6 +137,7 @@ export async function fetchReunionPairWithAnalysis(
       reunionComment: typeof data.reunionComment === "string" ? data.reunionComment : "",
       summaryLine: typeof data.summaryLine === "string" ? data.summaryLine : "",
       theirFirstMoveComment: typeof data.theirFirstMoveComment === "string" ? data.theirFirstMoveComment : "",
+      tensionAxis: typeof data.tensionAxis === "string" ? data.tensionAxis : "",
       myPrivateWarning: Boolean(data.myPrivateWarning),
       theirPrivateWarning: Boolean(data.theirPrivateWarning),
       fromCache: Boolean(data.fromCache),
