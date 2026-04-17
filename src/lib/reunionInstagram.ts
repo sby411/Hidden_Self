@@ -183,3 +183,79 @@ export async function fetchInstagramProfileForReunion(
     partial: data?.partial,
   };
 }
+
+/** 프리미엄 카드 8개 AI 생성 결과 */
+export type ReunionPremiumCards = {
+  waitUntil: string;
+  toneReply: string;
+  firstMessage: string;
+  replyStyle: string;
+  newPerson: string;
+  misunderstanding: string;
+  theirTrace: string;
+  myDestroy: string;
+};
+
+/** 프리미엄 카드 key → ReunionPremiumCards 필드 매핑 */
+export const PREMIUM_CARD_KEY_MAP: Record<string, keyof ReunionPremiumCards> = {
+  "wait-until": "waitUntil",
+  "tone-reply": "toneReply",
+  "first-message": "firstMessage",
+  "reply-style": "replyStyle",
+  "new-person": "newPerson",
+  misunderstanding: "misunderstanding",
+  "their-trace": "theirTrace",
+  "my-destroy": "myDestroy",
+};
+
+/**
+ * 프리미엄 카드 AI 생성 — 이미 확보한 pair 데이터를 body에 포함시켜 edge function 호출.
+ * Apify 재호출 없이 Claude만 호출함.
+ */
+export async function fetchReunionPremiumCards(pairData: {
+  my: ReunionScrapeBundle;
+  their: ReunionScrapeBundle;
+  myAi: ReunionAccountAiAnalysis | null;
+  theirAi: ReunionAccountAiAnalysis | null;
+  compatibility: {
+    compatibilityType: string;
+    compatibilityDesc: string;
+    myYearning: number;
+    partnerYearning: number;
+    reunionComment: string;
+    summaryLine: string;
+    theirFirstMoveComment: string;
+  };
+}): Promise<{ ok: true; cards: ReunionPremiumCards } | { ok: false; error: string }> {
+  const { data, error } = await supabase.functions.invoke("reunion-instagram", {
+    body: {
+      mode: "premium",
+      myBundle: pairData.my,
+      theirBundle: pairData.their,
+      myAiAnalysis: pairData.myAi,
+      theirAiAnalysis: pairData.theirAi,
+      compatibility: pairData.compatibility,
+    },
+  });
+
+  if (error) {
+    return { ok: false, error: error.message || "INVOKE_FAILED" };
+  }
+
+  if (data?.ok && data?.premiumCards) {
+    const c = data.premiumCards;
+    const cards: ReunionPremiumCards = {
+      waitUntil: typeof c.waitUntil === "string" ? c.waitUntil : "",
+      toneReply: typeof c.toneReply === "string" ? c.toneReply : "",
+      firstMessage: typeof c.firstMessage === "string" ? c.firstMessage : "",
+      replyStyle: typeof c.replyStyle === "string" ? c.replyStyle : "",
+      newPerson: typeof c.newPerson === "string" ? c.newPerson : "",
+      misunderstanding: typeof c.misunderstanding === "string" ? c.misunderstanding : "",
+      theirTrace: typeof c.theirTrace === "string" ? c.theirTrace : "",
+      myDestroy: typeof c.myDestroy === "string" ? c.myDestroy : "",
+    };
+    return { ok: true, cards };
+  }
+
+  return { ok: false, error: data?.error || "UNKNOWN" };
+}

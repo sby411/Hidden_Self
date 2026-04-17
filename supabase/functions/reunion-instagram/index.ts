@@ -336,6 +336,97 @@ ${JSON.stringify(theirPayload)}`;
   }
 }
 
+const PREMIUM_SYSTEM = `You generate 8 premium deep-analysis cards for a "reunion / post-breakup" product.
+You receive two Instagram account profiles (MY_ACCOUNT, THEIR_ACCOUNT), their AI persona analyses, and their compatibility analysis.
+Output ONLY a single JSON object, no markdown fences, no extra text.
+
+Each field must be 3~4 sentences of concrete, actionable advice grounded in the actual account data (posting patterns, caption tone, follower counts, activity trends, etc.).
+CRITICAL: All 8 fields must contain DIFFERENT content. No overlapping sentences or repeated advice between cards.
+
+Schema:
+{
+  "waitUntil": string (Korean. 기다린다면 언제까지가 맞는지. 상대 피드의 업로드 간격, 스토리 톤 변화, 방어 신호 완화 시점을 근거로 구체적 타이밍 제시. 2주/4주/8주 체크포인트와 그때 써도 되는 첫 문장 톤을 케이스별로.),
+  "toneReply": string (Korean. 연락한다면 먹히는 톤 vs 멀어지는 톤. 상대 캡션 스타일과 반응 패턴에서 읽히는 선호 톤 분석. 구체적 문장 예시 포함. 답장 가능성 높이는 방식과 역효과 방식 대비.),
+  "firstMessage": string (Korean. 처음 뭐라고 보내야 하는지. 상대 관심사/캡션 소재에서 뽑은 구체적 첫 문장 방향 3개. 각각 길이와 톤이 다르게. 방어형/개방형 상대 구분.),
+  "replyStyle": string (Korean. 답장이 올 가능성이 높은 방식. 상대의 소통 패턴—댓글 스타일, 캡션 길이, 이모지 사용—에서 읽히는 선호 응답 형태. 질문형 vs 공유형 vs 확인형 중 어떤 게 맞는지.),
+  "newPerson": string (Korean. 상대가 새 사람 쪽으로 기운 가능성. 태그 반복, 특정 인물 노출, 시간대별 활동 변화 등 구체적 데이터 포인트로 가능성 구간 정리. 오탐 기준도 같이.),
+  "misunderstanding": string (Korean. 이 관계에서 가장 위험한 오해 포인트. 양쪽 피드 패턴에서 읽히는 구체적 오해 시나리오. '잔상=의지', '침묵=거절' 같은 착각을 이 커플 데이터에 맞게.),
+  "theirTrace": string (Korean. 상대가 안 오는데 흔적은 남기는 이유. 팔로우 유지, 스토리 열람, 간접 반응 등의 패턴을 상대 심리와 연결. 그 흔적이 여지인지 습관인지 구분 기준.),
+  "myDestroy": string (Korean. 내가 먼저 망치는 패턴. 내 계정 활동에서 읽히는 위험 행동—연타, 간접 메시지, 스토리 확인 강박 등. 구체적으로 어떤 행동이 상대를 닫히게 만드는지.)
+}
+Rules:
+- 자연스러운 한국어 문장으로. 단문 끊어치기 금지. 친구가 솔직하게 조언하는 말투로.
+- 반드시 양쪽 계정 데이터(게시물 수, 팔로워, 캡션 톤, 활동 패턴 등)를 근거로 쓸 것. 일반론 금지.
+- 8개 카드 간 내용 중복 절대 금지. 같은 조언이 두 카드에 나오면 안 됨.
+- Do NOT infer gender. Use neutral wording.`;
+
+async function callClaudePremium(
+  apiKey: string,
+  myBundle: any,
+  theirBundle: any,
+  myAiAnalysis: any,
+  theirAiAnalysis: any,
+  compatibility: any,
+): Promise<Record<string, string> | null> {
+  const myPayload = compactBundleForPrompt(myBundle, 15);
+  const theirPayload = compactBundleForPrompt(theirBundle, 15);
+
+  const userBlock = `MY_ACCOUNT:
+${JSON.stringify(myPayload)}
+
+THEIR_ACCOUNT:
+${JSON.stringify(theirPayload)}
+
+MY_AI_ANALYSIS:
+${JSON.stringify(myAiAnalysis || {})}
+
+THEIR_AI_ANALYSIS:
+${JSON.stringify(theirAiAnalysis || {})}
+
+COMPATIBILITY:
+${JSON.stringify(compatibility || {})}`;
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL,
+      max_tokens: 2500,
+      system: PREMIUM_SYSTEM,
+      messages: [{ role: "user", content: userBlock }],
+    }),
+  });
+
+  if (!res.ok) {
+    const t = await res.text();
+    console.error("Claude premium API error:", res.status, t);
+    return null;
+  }
+
+  const json = await res.json();
+  const text = json?.content?.[0]?.text;
+  if (!text || typeof text !== "string") return null;
+
+  try {
+    const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+    const parsed = JSON.parse(trimmed);
+    const keys = ["waitUntil", "toneReply", "firstMessage", "replyStyle", "newPerson", "misunderstanding", "theirTrace", "myDestroy"];
+    const result: Record<string, string> = {};
+    for (const k of keys) {
+      result[k] = typeof parsed[k] === "string" ? parsed[k].trim() : "";
+    }
+    if (!result.waitUntil || !result.toneReply) return null;
+    return result;
+  } catch {
+    console.error("Claude premium JSON parse failed");
+    return null;
+  }
+}
+
 async function restGetCache(
   supabaseUrl: string,
   serviceKey: string,
@@ -437,6 +528,42 @@ Deno.serve(async (req) => {
       .trim();
 
     const pairMode = Boolean(myUserId && theirUserId);
+
+    // --- premium mode: 프론트에서 이미 갖고 있는 데이터로 심층 카드 생성 ---
+    if (body.mode === "premium") {
+      const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+      if (!ANTHROPIC_API_KEY) {
+        return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY is not configured" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { myBundle, theirBundle, myAiAnalysis, theirAiAnalysis, compatibility } = body;
+      if (!myBundle || !theirBundle) {
+        return new Response(JSON.stringify({ error: "myBundle and theirBundle are required for premium mode" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const premiumCards = await callClaudePremium(
+        ANTHROPIC_API_KEY,
+        myBundle,
+        theirBundle,
+        myAiAnalysis,
+        theirAiAnalysis,
+        compatibility,
+      );
+      if (!premiumCards) {
+        return new Response(JSON.stringify({ ok: false, error: "PREMIUM_AI_FAILED" }), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(
+        JSON.stringify({ ok: true, mode: "premium", premiumCards }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     if (pairMode) {
       const APIFY_TOKEN = Deno.env.get("APIFY_TOKEN");

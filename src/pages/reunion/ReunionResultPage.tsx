@@ -33,7 +33,11 @@ import {
 } from "@/lib/reunionScoring";
 import {
   fetchReunionPairWithAnalysis,
+  fetchReunionPremiumCards,
+  PREMIUM_CARD_KEY_MAP,
   type ReunionAccountAiAnalysis,
+  type ReunionPremiumCards,
+  type ReunionScrapeBundle,
 } from "@/lib/reunionInstagram";
 import { buildFallbackReunionRichSignals, buildReunionRichSignals } from "@/lib/reunionSignals";
 import type { ReunionRichSignals } from "@/lib/reunionSignals";
@@ -406,6 +410,8 @@ const ReunionResultPage = () => {
   const demoCase = parseReunionDemoParam(searchParams.get("demo"));
 
   const [premiumUnlocked, setPremiumUnlocked] = useState(false);
+  const [premiumLoading, setPremiumLoading] = useState(false);
+  const [premiumCards, setPremiumCards] = useState<ReunionPremiumCards | null>(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [pipelineReport, setPipelineReport] = useState<ReunionFullReport | null>(null);
   const [pipelineCase, setPipelineCase] = useState<ReunionDemoCase | null>(null);
@@ -426,6 +432,10 @@ const ReunionResultPage = () => {
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
+  const [pairRawData, setPairRawData] = useState<{
+    my: ReunionScrapeBundle;
+    their: ReunionScrapeBundle;
+  } | null>(null);
 
   /* ── scoring ── */
   const scoringMerge = useMemo((): ReunionScoringMerge | null => {
@@ -484,6 +494,7 @@ const ReunionResultPage = () => {
           return;
         }
 
+        setPairRawData({ my: pairRes.my, their: pairRes.their });
         const { year, month } = clampBreakupToPast(breakupYear, breakupMonth);
         const monthsSince = getMonthsSinceBreakup(year, month);
         const rich = buildReunionRichSignals(pairRes.my, pairRes.their, monthsSince, {
@@ -584,6 +595,16 @@ const ReunionResultPage = () => {
     reunionJourney,
   } = report;
 
+  const displayPremiumTeasers = useMemo(() => {
+    if (!premiumCards) return premiumTeasers;
+    return premiumTeasers.map((card) => {
+      const field = PREMIUM_CARD_KEY_MAP[card.key];
+      const aiBody = field ? premiumCards[field] : "";
+      if (aiBody) return { ...card, lockedBody: aiBody };
+      return card;
+    });
+  }, [premiumTeasers, premiumCards]);
+
   const resolvedCase: ReunionDemoCase = demoCase ?? pipelineCase ?? scoringMerge?.case ?? "mixed";
   const caseSource: "demo" | "pipeline" | "scoring" = demoCase
     ? "demo"
@@ -592,9 +613,43 @@ const ReunionResultPage = () => {
       : "scoring";
   const showIgLoading = !demoCase && igFetchLoading && !pipelineReport && !igFetchError;
 
-  const handlePremiumUnlock = () => {
-    setPremiumUnlocked(true);
-    requestAnimationFrame(() => scrollToId("reunion-premium-cards"));
+  const handlePremiumUnlock = async () => {
+    if (premiumLoading) return;
+
+    // demo 모드이거나 raw data 없으면 바로 언락 (하드코딩 fallback)
+    if (demoCase || !pairRawData || !pairAi) {
+      setPremiumUnlocked(true);
+      requestAnimationFrame(() => scrollToId("reunion-premium-cards"));
+      return;
+    }
+
+    setPremiumLoading(true);
+    try {
+      const res = await fetchReunionPremiumCards({
+        my: pairRawData.my,
+        their: pairRawData.their,
+        myAi: pairAi.my,
+        theirAi: pairAi.their,
+        compatibility: {
+          compatibilityType: pairAi.compatibilityType,
+          compatibilityDesc: pairAi.compatibilityDesc,
+          myYearning: pairAi.myYearning,
+          partnerYearning: pairAi.partnerYearning,
+          reunionComment: pairAi.reunionComment,
+          summaryLine: pairAi.summaryLine,
+          theirFirstMoveComment: pairAi.theirFirstMoveComment,
+        },
+      });
+      if (res.ok) {
+        setPremiumCards(res.cards);
+      }
+    } catch {
+      // 실패해도 기존 하드코딩 카드로 fallback
+    } finally {
+      setPremiumLoading(false);
+      setPremiumUnlocked(true);
+      requestAnimationFrame(() => scrollToId("reunion-premium-cards"));
+    }
   };
 
   useEffect(() => {
@@ -997,12 +1052,22 @@ const ReunionResultPage = () => {
                     id="reunion-unlock-premium-btn"
                     type="button"
                     onClick={handlePremiumUnlock}
-                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group"
+                    disabled={premiumLoading}
+                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] relative overflow-hidden group disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
                     <span className="relative flex items-center justify-center gap-2">
-                      <Crown className="w-4 h-4" />
-                      {premiumGateCta.ctaPrimary}
+                      {premiumLoading ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          분석 생성 중...
+                        </>
+                      ) : (
+                        <>
+                          <Crown className="w-4 h-4" />
+                          {premiumGateCta.ctaPrimary}
+                        </>
+                      )}
                     </span>
                   </button>
                   <p className="text-xs text-muted-foreground mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5">
@@ -1016,7 +1081,7 @@ const ReunionResultPage = () => {
 
             {/* premium cards grid */}
             <div id="reunion-premium-cards" className="scroll-mt-28 space-y-3">
-              {premiumTeasers.filter((c) => c.key !== "their-trace").map((card) => (
+              {displayPremiumTeasers.filter((c) => c.key !== "their-trace").map((card) => (
                 <CompactPremiumCard key={card.key} card={card} unlocked={premiumUnlocked} />
               ))}
             </div>
@@ -1045,10 +1110,17 @@ const ReunionResultPage = () => {
                 <button
                   type="button"
                   onClick={handlePremiumUnlock}
-                  className="shrink-0 h-10 px-3 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-[10px] flex flex-col items-center justify-center gap-0.5 leading-tight active:scale-[0.96] transition-all shadow-md min-w-[4.75rem]"
+                  disabled={premiumLoading}
+                  className="shrink-0 h-10 px-3 rounded-xl bg-gradient-to-r from-[hsl(45,80%,60%)] to-[hsl(35,85%,55%)] text-white font-bold text-[10px] flex flex-col items-center justify-center gap-0.5 leading-tight active:scale-[0.96] transition-all shadow-md min-w-[4.75rem] disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <Crown className="w-3 h-3 shrink-0" />
-                  <span className="tabular-nums">{premiumGateCta.stickyPriceLabel}</span>
+                  {premiumLoading ? (
+                    <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Crown className="w-3 h-3 shrink-0" />
+                      <span className="tabular-nums">{premiumGateCta.stickyPriceLabel}</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
