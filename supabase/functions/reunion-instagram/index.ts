@@ -149,7 +149,35 @@ const REUNION_AI_SYSTEM = `You analyze public Instagram profile data for a "reun
 Output ONLY a single JSON object, no markdown fences, no extra text.
 Schema:
 {
-  "persona": string (10~15자. 이 사람의 본질적 욕구나 캐릭터를 한 방에 정의. 계정 사실 나열 절대 금지. 그 사람이 보면 찔릴 정도로 날카롭게. 예시 톤: "느좋남인줄 아는 그냥남", "본인 얼굴에 취해있는 공주병", "어떻게든 여자 찍어보려는 유사 사진가", "DM 읽씹하며 스토리는 올리는 인플루언서", "인스타 팔로워로 자존감 채우는 중", "감성 코스프레하는 평범인". 계정 데이터로 이 사람의 욕구/결핍/허세를 뽑아내서 캐릭터로 정의할 것),
+  "persona": string (10~20자. 이 사람의 숨겨진 결핍/과시욕/심리를 꿰뚫어서 한 방에 정의. 계정 사실 나열 절대 금지. 읽는 순간 찔리게.
+
+반드시 아래 신호들을 조합해서 심리를 읽어낼 것:
+- 게시물 빈도/패턴 (꾸준 vs 갑자기 뚝)
+- 셀카 비율 vs 사물/풍경 비율
+- 팔로워 수 대비 게시물 수
+- 캡션 길이/스타일
+- 해시태그 패턴
+- 위치 태그
+- 하이라이트 제목
+
+신호 → 심리 → 페르소나 변환 예시:
+- 셀카 많음 + 팔로워 많음 + 광고 협업 → "예쁜 거 알면서 확인받고 싶은 것"
+- 카페/맛집 위주 + 감성 사진 → "감성 있는 척이 취미인 것"
+- 여행 사진 많음 + 일상 거의 없음 → "일상 재미없어서 여행으로 자아 충전 중"
+- 운동 인증 + 몸매 슬쩍 노출 → "관리한다고 티내고 싶은 것"
+- 해외여행 + 명품 슬쩍 + 카페 → "평범한 일상 숨기고 하이라이트만 보여주는 것"
+- 친구 사진 많음 + 항상 중심 → "무리에서 주인공이어야 직성 풀리는 것"
+- 일상 자주 올림 → "아무도 안 봐도 올려야 직성 풀리는 것"
+- 게시물 거의 없음 + 팔로잉만 많음 → "보기만 하고 존재감은 없는 그림자"
+- 운동 인증 + 근육 슬쩍 → "말 대신 몸으로 어필하려는 것"
+- 감성 사진 + 팔로워 적음 → "감성남인 척하고 싶은 것"
+- 차/장비 자랑 → "물건으로 자신감 채우는 것"
+- 감성 글귀 + 뒷모습/손 → "존재감은 남기고 싶은데 얼굴은 싫은 것"
+
+형식 자유. 끝맺음 형식 없음. 반드시 그 계정에서만 나올 수 있는 문장으로.
+절대 금지: '~하는 사람', '~인 사람', '~형', '~것', '~인 것' 으로 끝나는 문장.
+대신 이런 톤으로 끝낼 것: '~봄', '~중', '~셈', '~꼴', 또는 명사로 끝내기.
+예: '작품으로 말하고 싶은데 얼굴만 보는 게 억울한 도예과', '쇼핑몰이 곧 자아인 창업자', '일상 재미없어서 여행으로 자아 보충 중'),
   "impression": string (Korean, 2-3 sentences, concrete, grounded in the data),
   "keywords": string[] (3-5 short Korean keyword phrases),
   "approach": string (Korean: in reunion context — recommended tone, how to open contact, what to avoid; practical),
@@ -236,7 +264,10 @@ Schema:
   "compatibilityType": string (Korean, 15자 내외. 두 사람의 관계 구조를 정의하는 제목. ~관계 또는 ~사이 형태로. 예: "끌리지만 타이밍이 문제인 관계", "감정은 남아있지만 방식이 다른 관계", "한쪽만 열려있는 비대칭 관계"),
   "compatibilityDesc": string (Korean, 한 문장. 두 사람의 구체적인 관계 패턴 설명. 자연스러운 한국어로. 예: "서로 잡아당기는 힘은 있는데 지금은 둘 다 준비가 안 됐다", "마음이 없는 게 아니라 표현 방식이 달라서 계속 엇갈리는 구조다"),
   "myYearning": number (0-100. MY_ACCOUNT의 미련 수치. 피드에서 읽히는 감정 잔류, 미련, 과거 회상 정도를 종합한 점수),
-  "partnerYearning": number (0-100. THEIR_ACCOUNT의 미련 수치. 동일 기준. 중요: myYearning은 반드시 partnerYearning보다 높아야 한다. 리포트를 돌리는 쪽이 대체로 미련이 더 크기 때문이다)
+  "partnerYearning": number (0-100. THEIR_ACCOUNT의 미련 수치. 동일 기준. 중요: myYearning은 반드시 partnerYearning보다 높아야 한다. 리포트를 돌리는 쪽이 대체로 미련이 더 크기 때문이다),
+  "reunionComment": string (Korean, 2문장. 두 계정 데이터를 근거로 한 재회 가능성 코멘트. 지금 연락하면 어떤 결과가 나올지, 왜 그런지를 양쪽 피드 패턴에 근거해서 구체적으로 쓸 것. 뻔한 조언 금지. 예: "지금 네가 먼저 길게 쓰면 상대 스토리 업로드 패턴상 읽씹 확률이 높다. 상대 캡션 톤이 방어에서 내려갈 때까지 짧은 접점만 유지해라."),
+  "summaryLine": string (Korean, 2~3문장. 두 사람의 관계 상태를 양쪽 계정 데이터 근거로 요약. 팔로워/게시물/캡션 톤/활동 패턴 등 실제 데이터 포인트를 언급하면서 자연스럽게 써줄 것. 예: "솔직히 말하면 지금 재회 가능성은 낮은 쪽에 가깝다. 상대 피드는 새 일상 중심으로 전환된 반면, 네 쪽은 아직 감성적 캡션이 남아 있어서 온도 차이가 크게 보인다."),
+  "theirFirstMoveComment": string (Korean, 2~3문장. 상대(THEIR_ACCOUNT)가 먼저 연락할 것 같은 시점과 방식을 계정 특성에 근거해서 예측. 게시물 빈도, 스토리 패턴, 캡션 톤, 팔로잉 변화 등 구체적 데이터 포인트 반영. 예: "상대 게시물 간격이 2~3주로 느려진 걸 보면 지금 정리 모드에 가깝다. 먼저 온다면 스토리 반응이나 이모지 정도가 먼저일 거고, 장문 DM은 기대하기 어렵다.")
 }
 Rules:
 - 자연스러운 한국어 문장으로. 단문 끊어치기 금지. 친구가 솔직하게 조언하는 말투로.
@@ -249,7 +280,7 @@ async function callClaudeCompatibility(
   myBundle: any,
   theirBundle: any,
   dataLimited: boolean,
-): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number } | null> {
+): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string } | null> {
   const myPayload = compactBundleForPrompt(myBundle, 10);
   const theirPayload = compactBundleForPrompt(theirBundle, 10);
 
@@ -269,7 +300,7 @@ ${JSON.stringify(theirPayload)}`;
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 400,
+      max_tokens: 800,
       system: COMPATIBILITY_SYSTEM,
       messages: [{ role: "user", content: userBlock }],
     }),
@@ -294,8 +325,11 @@ ${JSON.stringify(theirPayload)}`;
     myYearning = Math.max(0, Math.min(100, myYearning));
     partnerYearning = Math.max(0, Math.min(100, partnerYearning));
     if (myYearning <= partnerYearning) { myYearning = Math.min(100, partnerYearning + 15); }
+    const reunionComment = typeof parsed.reunionComment === "string" ? parsed.reunionComment.trim() : "";
+    const summaryLine = typeof parsed.summaryLine === "string" ? parsed.summaryLine.trim() : "";
+    const theirFirstMoveComment = typeof parsed.theirFirstMoveComment === "string" ? parsed.theirFirstMoveComment.trim() : "";
     if (!compatibilityType) return null;
-    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning };
+    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment };
   } catch {
     console.error("Claude compatibility JSON parse failed");
     return null;
@@ -307,6 +341,7 @@ async function restGetCache(
   serviceKey: string,
   cacheKey: string,
 ): Promise<any | null> {
+  return null;
   const base = supabaseRestBase(supabaseUrl);
   const u = new URL(`${base}/rest/v1/reunion_pair_analysis_cache`);
   u.searchParams.set("cache_key", pgQuoted("eq", cacheKey));
@@ -449,6 +484,9 @@ Deno.serve(async (req) => {
             compatibilityDesc: cached.compatibility?.compatibilityDesc || "",
             myYearning: cached.compatibility?.myYearning ?? 65,
             partnerYearning: cached.compatibility?.partnerYearning ?? 35,
+            reunionComment: cached.compatibility?.reunionComment || "",
+            summaryLine: cached.compatibility?.summaryLine || "",
+            theirFirstMoveComment: cached.compatibility?.theirFirstMoveComment || "",
             myPrivateWarning: Boolean(cached.myPrivateWarning),
             theirPrivateWarning: Boolean(cached.theirPrivateWarning),
           }),
@@ -543,6 +581,9 @@ Deno.serve(async (req) => {
           compatibilityDesc: compatibility?.compatibilityDesc || "",
           myYearning: compatibility?.myYearning ?? 65,
           partnerYearning: compatibility?.partnerYearning ?? 35,
+          reunionComment: compatibility?.reunionComment || "",
+          summaryLine: compatibility?.summaryLine || "",
+          theirFirstMoveComment: compatibility?.theirFirstMoveComment || "",
           myPrivateWarning,
           theirPrivateWarning,
         }),

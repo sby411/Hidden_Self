@@ -27,6 +27,8 @@ export type ReunionNarrativePayload = {
   traceThem: string;
   waitWindowHint: string;
   contactToneHint: string;
+  firstMessageHint: string;
+  replyStyleHint: string;
   newPersonHint: string;
   misunderstandingRisk: string;
 };
@@ -117,6 +119,20 @@ export function buildReunionNarrative(
 
   const contactToneHint = "먹히는 방식은 짧게, 요구 대신 선택지를 주고, 답이 없어도 죄책감이 남지 않는 톤이다. 피해야 할 건 총정리, 관계 정의, 감정 폭발, 그리고 연타 메시지다.";
 
+  const firstMessageHint =
+    th.avoidanceScore >= 65
+      ? "첫 문장은 안부도 사과도 아닌, 공통 관심사에 대한 짧은 한 줄이 가장 덜 위험하다. 회피 성향이 강하면 감정이 담긴 문장 자체가 부담이 된다."
+      : th.casualReentryOpenness >= 55
+        ? "첫 문장은 가볍게 시작해도 된다. 다만 답이 오더라도 바로 감정을 꺼내지 말고, 상대가 속도를 올릴 때까지 같은 무게를 유지해야 한다."
+        : "첫 문장은 짧을수록 좋다. 안부 한 줄이면 충분하고, 거기에 사과나 감정을 섞으면 처리해야 할 과제로 느껴질 수 있다.";
+
+  const replyStyleHint =
+    th.heavyContactResistance >= 60
+      ? "답장이 올 가능성을 높이려면 상대가 한 단어로도 답할 수 있는 질문이 좋다. 선택지를 주되, 답을 강요하는 뉘앙스는 빼야 한다."
+      : my.emotionalResidueScore >= 60
+        ? "네 감정의 높이와 상대 방어 사이에 간격이 있으면 같은 말도 다르게 읽힌다. 진심보다 톤의 무게를 먼저 맞춰야 답이 올 확률이 오른다."
+        : "답장이 오려면 상대가 부담 없이 읽고 넘길 수 있어야 한다. 길이보다 요구의 크기가 답장 확률을 결정한다.";
+
   const newPersonHint = "태그나 반복적인 노출이 있더라도 확정 짓지 않는 게 좋다. 질투나 추궁으로 들어가면 방어만 두꺼워질 뿐이다.";
 
   const misunderstandingRisk = "가장 큰 오해는 잔상이 남아 있는 걸 재회 의지로 바꿔 읽는 것이다. 상대의 예의 있는 한 줄 답장을 곧바로 열림 신호로 키워서 읽는 것도 위험하다.";
@@ -143,6 +159,8 @@ export function buildReunionNarrative(
     traceThem,
     waitWindowHint,
     contactToneHint,
+    firstMessageHint,
+    replyStyleHint,
     newPersonHint,
     misunderstandingRisk,
   };
@@ -158,8 +176,8 @@ function lingeringAttachmentProxy(my: ReunionRichSignals["mySignals"]): string {
 const PREMIUM_INJECT: (keyof ReunionNarrativePayload)[] = [
   "waitWindowHint",
   "contactToneHint",
-  "contactToneHint",
-  "contactToneHint",
+  "firstMessageHint",
+  "replyStyleHint",
   "newPersonHint",
   "misunderstandingRisk",
   "theirReasonBlock",

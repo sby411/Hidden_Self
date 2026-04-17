@@ -420,6 +420,9 @@ const ReunionResultPage = () => {
     compatibilityDesc: string;
     myYearning: number;
     partnerYearning: number;
+    reunionComment: string;
+    summaryLine: string;
+    theirFirstMoveComment: string;
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
@@ -523,6 +526,9 @@ const ReunionResultPage = () => {
           compatibilityDesc: pairRes.compatibilityDesc,
           myYearning: pairRes.myYearning,
           partnerYearning: pairRes.partnerYearning,
+          reunionComment: pairRes.reunionComment,
+          summaryLine: pairRes.summaryLine,
+          theirFirstMoveComment: pairRes.theirFirstMoveComment,
           fromCache: pairRes.fromCache,
         });
         setIgFetchError(false);
@@ -709,7 +715,7 @@ const ReunionResultPage = () => {
                   />
                 </div>
               </div>
-              <HookQuote text={report.summaryLine} />
+              <HookQuote text={pairAi?.summaryLine || report.summaryLine} />
             </div>
           </section>
 
@@ -899,9 +905,15 @@ const ReunionResultPage = () => {
               </div>
               <BlurGate locked={!premiumUnlocked} hint="시점·방식은 심층 분석에서">
                 <div className="space-y-2 text-xs text-foreground/70 leading-relaxed">
-                  <p><span className="text-muted-foreground text-[10px] uppercase tracking-wide">예상 시점:</span> {reachOutForecast.timingBand}</p>
-                  <p><span className="text-muted-foreground text-[10px] uppercase tracking-wide">예상 방식:</span> {reachOutForecast.channelPrimary}</p>
-                  <p className="font-semibold text-foreground/80">{reachOutForecast.punchLine}</p>
+                  {pairAi?.theirFirstMoveComment ? (
+                    <p className="font-semibold text-foreground/80">{pairAi.theirFirstMoveComment}</p>
+                  ) : (
+                    <>
+                      <p><span className="text-muted-foreground text-[10px] uppercase tracking-wide">예상 시점:</span> {reachOutForecast.timingBand}</p>
+                      <p><span className="text-muted-foreground text-[10px] uppercase tracking-wide">예상 방식:</span> {reachOutForecast.channelPrimary}</p>
+                      <p className="font-semibold text-foreground/80">{reachOutForecast.punchLine}</p>
+                    </>
+                  )}
                 </div>
               </BlurGate>
             </div>
@@ -942,7 +954,7 @@ const ReunionResultPage = () => {
               </div>
 
               <p className="text-xs font-bold text-foreground text-center mb-3">
-                {REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
+                {pairAi?.reunionComment || REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
               </p>
 
               <BlurGate locked={!premiumUnlocked} hint="판단 근거는 심층 분석에서">
