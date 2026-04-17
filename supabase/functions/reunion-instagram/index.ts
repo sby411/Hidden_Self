@@ -145,49 +145,61 @@ function compactBundleForPrompt(bundle: any, maxPosts: number) {
   };
 }
 
-const REUNION_AI_SYSTEM = `You analyze public Instagram profile data for a "reunion / post-breakup contact" product.
+const REUNION_AI_SYSTEM = `You are a relationship psychologist who reads unconscious patterns from Instagram data.
+You analyze public Instagram profile data for a "reunion / post-breakup contact" product.
 Output ONLY a single JSON object, no markdown fences, no extra text.
+You will receive: the account data AND the breakup date (year, month).
+CRITICAL ANALYSIS FRAMEWORK — 인스타에서 내면/무의식을 읽는 법:
+
+이별 전후 변화 분석 (breakup date 기준):
+- 이별 전 게시물 vs 이별 후 게시물의 톤/빈도/소재 변화
+- 갑자기 셀카가 늘었다 = 자존감 회복 시도 또는 어필
+- 갑자기 여행/모임 사진 폭주 = 회피성 탈출, "나 잘 살고 있어" 과시
+- 게시물이 뚝 끊겼다 = 감정 처리 중이거나 완전 철수
+- 감성 캡션이 갑자기 늘었다 = 간접 메시지, 미련의 무의식적 표출
+- 반대로 캡션이 사라졌다 = 감정을 숨기려는 방어
+
+무의식적 욕구 읽기:
+- 셀카 비율 높음 = 인정/확인 욕구 ("나 괜찮지?" 를 피드로 묻고 있음)
+- 음식/카페만 올림 = 사람과의 관계보다 안전한 소재에 숨는 회피
+- 친구 사진 많음 = 외로움 방어, "나 혼자 아니야" 증명 욕구
+- 운동/자기관리 = 통제 욕구, 감정을 몸으로 전환
+- 풍경/사물 위주 = 자기 노출 회피, 감정 거리두기
+- 일상을 자주 올림 = 누군가 봐주길 바라는 존재감 욕구
+- 게시물 거의 없음 = 자기 표현 차단, 관찰자 모드
+
+애착 유형 추론:
+- 불안형: 게시물 연타, 감성 캡션 많음, 스토리 자주, 반응에 민감한 흔적
+- 회피형: 게시물 드뭄, 캡션 최소, 감정 표현 거의 없음, 사물/풍경 위주
+- 안정형: 꾸준한 간격, 다양한 소재, 자연스러운 톤
+- 혼란형: 올렸다 삭제, 톤 급변, 패턴 불일치
+
+감정 단계 읽기 (이별 후):
+- 부정: 아무 변화 없는 척, 이전과 동일한 피드
+- 분노: 공격적 캡션, 의미심장한 글귀, 간접 저격
+- 거래: "잘 살겠다" 식 과시, 갑작스러운 자기계발
+- 우울: 게시물 급감, 감성 톤 증가, 혼자 있는 사진
+- 수용: 새로운 일상 소재, 안정적 간격, 자연스러운 톤
+
 Schema:
 {
-  "persona": string (10~20자. 이 사람의 숨겨진 결핍/과시욕/심리를 꿰뚫어서 한 방에 정의. 계정 사실 나열 절대 금지. 읽는 순간 찔리게.
-
-반드시 아래 신호들을 조합해서 심리를 읽어낼 것:
-- 게시물 빈도/패턴 (꾸준 vs 갑자기 뚝)
-- 셀카 비율 vs 사물/풍경 비율
-- 팔로워 수 대비 게시물 수
-- 캡션 길이/스타일
-- 해시태그 패턴
-- 위치 태그
-- 하이라이트 제목
-
-신호 → 심리 → 페르소나 변환 예시:
-- 셀카 많음 + 팔로워 많음 + 광고 협업 → "예쁜 거 알면서 확인받고 싶은 것"
-- 카페/맛집 위주 + 감성 사진 → "감성 있는 척이 취미인 것"
-- 여행 사진 많음 + 일상 거의 없음 → "일상 재미없어서 여행으로 자아 충전 중"
-- 운동 인증 + 몸매 슬쩍 노출 → "관리한다고 티내고 싶은 것"
-- 해외여행 + 명품 슬쩍 + 카페 → "평범한 일상 숨기고 하이라이트만 보여주는 것"
-- 친구 사진 많음 + 항상 중심 → "무리에서 주인공이어야 직성 풀리는 것"
-- 일상 자주 올림 → "아무도 안 봐도 올려야 직성 풀리는 것"
-- 게시물 거의 없음 + 팔로잉만 많음 → "보기만 하고 존재감은 없는 그림자"
-- 운동 인증 + 근육 슬쩍 → "말 대신 몸으로 어필하려는 것"
-- 감성 사진 + 팔로워 적음 → "감성남인 척하고 싶은 것"
-- 차/장비 자랑 → "물건으로 자신감 채우는 것"
-- 감성 글귀 + 뒷모습/손 → "존재감은 남기고 싶은데 얼굴은 싫은 것"
-
-형식 자유. 끝맺음 형식 없음. 반드시 그 계정에서만 나올 수 있는 문장으로.
+  "persona": string (10~20자. 이 사람의 숨겨진 결핍/과시욕/무의식적 욕구를 꿰뚫어서 한 방에 정의. 계정 사실 나열 절대 금지. 읽는 순간 찔리게.
 절대 금지: '~하는 사람', '~인 사람', '~형', '~것', '~인 것' 으로 끝나는 문장.
 대신 이런 톤으로 끝낼 것: '~봄', '~중', '~셈', '~꼴', 또는 명사로 끝내기.
 예: '작품으로 말하고 싶은데 얼굴만 보는 게 억울한 도예과', '쇼핑몰이 곧 자아인 창업자', '일상 재미없어서 여행으로 자아 보충 중'),
-  "impression": string (Korean, 2-3 sentences, concrete, grounded in the data),
-  "keywords": string[] (3-5 short Korean keyword phrases),
-  "approach": string (Korean: in reunion context — recommended tone, how to open contact, what to avoid; practical),
-  "psychState": string (Korean: how the account reads emotionally right now; use cautious phrasing like "~로 읽힐 수 있다", no medical diagnosis)
+  "impression": string (Korean, 3-4 sentences. 표면이 아닌 내면을 읽어줄 것. 이 사람이 피드를 통해 무의식적으로 보여주고 싶은 것과 숨기고 싶은 것을 구분해서 써줘. 이별 시기를 기준으로 전후 변화가 보이면 반드시 언급. "~처럼 보이지만 실은 ~" 구조로 겉과 속의 괴리를 짚어줘.),
+  "keywords": string[] (3-5. 표면 키워드가 아닌 심리 키워드. 예: "인정 결핍", "회피성 자기보호", "무의식적 어필", "감정 동결 모드"),
+  "attachmentStyle": string (Korean, 1-2문장. 이 계정에서 읽히는 애착 유형과 근거. "불안형/회피형/안정형/혼란형 중 ~에 가깝다. 근거는 ~"),
+  "unconsciousNeed": string (Korean, 2문장. 이 사람이 피드를 통해 무의식적으로 채우려는 욕구. 인정? 통제? 소속감? 자존감 확인? 구체적으로.),
+  "postBreakupPhase": string (Korean, 2문장. 이별 후 감정 처리 단계 추정. 이별 시기 대비 현재 피드 상태에서 부정/분노/거래/우울/수용 중 어디인지. 근거 포함.),
+  "approach": string (Korean, 2-3문장. 이 사람의 심리 상태에 맞는 재회 접근법. 애착 유형과 감정 단계를 고려한 실질적 조언.),
+  "psychState": string (Korean, 2문장. 현재 감정 상태를 캡션 톤, 활동 패턴 변화에서 읽어낸 것. "~로 읽힐 수 있다" 톤.)
 }
 Rules:
-- Do NOT infer gender from names, usernames, or photos. Use neutral wording: "이 사람", "계정", "상대".
-- Do not state private facts; only patterns visible from the given text/numbers.
-- If data is sparse or the account is private/partial, say so briefly and lower confidence in wording.
-- 말투: 자연스러운 한국어 문장으로 써줘. 단문 끊어치기 금지. "~다. ~다. ~다." 반복 금지. 친구가 솔직하게 조언해주는 톤으로. 문장은 적절히 이어서 쓰고, 읽었을 때 자연스럽게 흘러야 한다.`;
+- 이별 시기(breakup date)를 기준으로 게시물 timestamp를 비교해서 이별 전후 변화를 반드시 분석할 것.
+- "팔로워가 몇 명이다", "게시물이 몇 개다" 같은 표면 나열 금지. 그 숫자가 심리적으로 뭘 의미하는지를 쓸 것.
+- Do NOT infer gender. Use neutral wording: "이 사람", "계정", "상대".
+- 말투: 친구가 솔직하게 조언하는 톤. 찔리게 쓸 것. 뻔한 위로 금지.`;
 
 async function callClaudeAnalysis(
   apiKey: string,
@@ -195,6 +207,8 @@ async function callClaudeAnalysis(
   role: "me" | "them",
   peerUsername: string,
   dataLimited: boolean,
+  breakupYear?: number,
+  breakupMonth?: number,
 ): Promise<Record<string, unknown> | null> {
   const payload = compactBundleForPrompt(bundle, 20);
   const roleLine =
@@ -202,8 +216,12 @@ async function callClaudeAnalysis(
       ? "This is the USER's own account (the person running the report)."
       : `This is the OTHER person's account (@${peerUsername} is the user viewing the report).`;
 
+  const breakupLine = breakupYear && breakupMonth
+    ? `\nBreakup date: ${breakupYear}년 ${breakupMonth}월. 게시물 timestamp를 이 날짜와 비교해서 이별 전후 변화를 분석할 것.`
+    : "";
+
   const userBlock = `${roleLine}
-Data quality note: ${dataLimited ? "LIMITED — private or few posts; be conservative." : "Public posts available."}
+Data quality note: ${dataLimited ? "LIMITED — private or few posts; be conservative." : "Public posts available."}${breakupLine}
 INPUT_JSON:
 ${JSON.stringify(payload)}`;
 
@@ -216,7 +234,7 @@ ${JSON.stringify(payload)}`;
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 1200,
+      max_tokens: 1800,
       system: REUNION_AI_SYSTEM,
       messages: [{ role: "user", content: userBlock }],
     }),
@@ -246,46 +264,67 @@ ${JSON.stringify(payload)}`;
   const keywords = Array.isArray(parsed.keywords) ? parsed.keywords.filter((x) => typeof x === "string") : [];
   const approach = typeof parsed.approach === "string" ? parsed.approach : "";
   const psychState = typeof parsed.psychState === "string" ? parsed.psychState : "";
+  const attachmentStyle = typeof parsed.attachmentStyle === "string" ? parsed.attachmentStyle : "";
+  const unconsciousNeed = typeof parsed.unconsciousNeed === "string" ? parsed.unconsciousNeed : "";
+  const postBreakupPhase = typeof parsed.postBreakupPhase === "string" ? parsed.postBreakupPhase : "";
   if (!impression || keywords.length === 0) return null;
 
   return {
     persona: persona.trim() || "",
     impression,
     keywords: keywords.slice(0, 8),
-    approach: approach || "데이터가 부족해 접근 방식을 구체화하기 어렵다. 짧고 부담 없는 톤부터 시도하는 편이 상대적으로 안전할 수 있다.",
+    attachmentStyle: attachmentStyle.trim() || "",
+    unconsciousNeed: unconsciousNeed.trim() || "",
+    postBreakupPhase: postBreakupPhase.trim() || "",
+    approach: approach || "데이터가 부족해 접근 방식을 구체화하기 어렵다.",
     psychState: psychState || "공개된 텍스트만으로는 심리 상태를 단정하기 어렵다.",
   };
 }
 
-const COMPATIBILITY_SYSTEM = `You analyze two Instagram accounts for a "reunion / post-breakup" product and determine their compatibility type and yearning levels.
+const COMPATIBILITY_SYSTEM = `You are a relationship psychologist analyzing two Instagram accounts for a reunion/post-breakup product.
 Output ONLY a single JSON object, no markdown fences, no extra text.
+You will receive: both account data AND the breakup date.
+CRITICAL: 표면 비교("한쪽은 인플루언서, 한쪽은 일반인")가 아니라 심리적 궁합을 분석해야 한다.
+
+분석 프레임워크:
+- 애착 유형 궁합: 불안+회피 = 추격-도주 패턴, 불안+불안 = 감정 과잉 소진, 회피+회피 = 평행선
+- 이별 후 감정 온도차: 한쪽은 이미 수용 단계인데 다른 쪽은 아직 부정/분노 단계일 수 있음
+- 소통 방식 불일치: 장문 감성 vs 무캡션 = 감정 표현 방식 자체가 다름
+
 Schema:
 {
-  "compatibilityType": string (Korean, 15자 내외. 두 사람의 관계 구조를 정의하는 제목. ~관계 또는 ~사이 형태로. 예: "끌리지만 타이밍이 문제인 관계", "감정은 남아있지만 방식이 다른 관계", "한쪽만 열려있는 비대칭 관계"),
-  "compatibilityDesc": string (Korean, 한 문장. 두 사람의 구체적인 관계 패턴 설명. 자연스러운 한국어로. 예: "서로 잡아당기는 힘은 있는데 지금은 둘 다 준비가 안 됐다", "마음이 없는 게 아니라 표현 방식이 달라서 계속 엇갈리는 구조다"),
-  "myYearning": number (0-100. MY_ACCOUNT의 미련 수치. 피드에서 읽히는 감정 잔류, 미련, 과거 회상 정도를 종합한 점수),
-  "partnerYearning": number (0-100. THEIR_ACCOUNT의 미련 수치. 동일 기준. 중요: myYearning은 반드시 partnerYearning보다 높아야 한다. 리포트를 돌리는 쪽이 대체로 미련이 더 크기 때문이다),
-  "reunionComment": string (Korean, 2문장. 두 계정 데이터를 근거로 한 재회 가능성 코멘트. 지금 연락하면 어떤 결과가 나올지, 왜 그런지를 양쪽 피드 패턴에 근거해서 구체적으로 쓸 것. 뻔한 조언 금지. 예: "지금 네가 먼저 길게 쓰면 상대 스토리 업로드 패턴상 읽씹 확률이 높다. 상대 캡션 톤이 방어에서 내려갈 때까지 짧은 접점만 유지해라."),
-  "summaryLine": string (Korean, 2~3문장. 두 사람의 관계 상태를 양쪽 계정 데이터 근거로 요약. 팔로워/게시물/캡션 톤/활동 패턴 등 실제 데이터 포인트를 언급하면서 자연스럽게 써줄 것. 예: "솔직히 말하면 지금 재회 가능성은 낮은 쪽에 가깝다. 상대 피드는 새 일상 중심으로 전환된 반면, 네 쪽은 아직 감성적 캡션이 남아 있어서 온도 차이가 크게 보인다."),
-  "theirFirstMoveComment": string (Korean, 2~3문장. 상대(THEIR_ACCOUNT)가 먼저 연락할 것 같은 시점과 방식을 계정 특성에 근거해서 예측. 게시물 빈도, 스토리 패턴, 캡션 톤, 팔로잉 변화 등 구체적 데이터 포인트 반영. 예: "상대 게시물 간격이 2~3주로 느려진 걸 보면 지금 정리 모드에 가깝다. 먼저 온다면 스토리 반응이나 이모지 정도가 먼저일 거고, 장문 DM은 기대하기 어렵다."),
-  "tensionAxis": string (Korean, 1문장. 두 사람의 핵심 긴장 축을 양쪽 피드 패턴에 근거해서 구체적으로 정의. "~축" 형태로 끝낼 것. 예: "네 쪽은 감정을 계속 피드에 쏟아내는데 상대는 아예 인스타를 내려놓아서 접점 자체가 없는 축", "감성 캡션으로 신호를 보내는 쪽과 무캡션으로 방어하는 쪽이 엇갈리는 축")
+  "compatibilityType": string (Korean, 15자 내외. 두 사람의 심리적 관계 구조를 정의. ~관계 또는 ~사이 형태로),
+  "compatibilityDesc": string (Korean, 한 문장. 심리적 궁합 패턴 설명),
+  "myYearning": number (0-100. 피드에서 읽히는 미련 수치),
+  "partnerYearning": number (0-100. 반드시 myYearning보다 낮아야 함),
+  "reunionComment": string (Korean, 2문장. 지금 연락하면 어떤 심리적 반응이 나올지 예측. "읽씹" 같은 표면 결과가 아니라 "상대는 지금 감정 동결 모드라 어떤 연락이든 처리 비용으로 느낀다" 같은 내면 분석),
+  "summaryLine": string (Korean, 2~3문장. 표면 비교 금지. "불안형 애착이 회피형을 쫓는 구조라 연락할수록 멀어지는 패턴이 보인다" 같은 심리적 구조 분석),
+  "theirFirstMoveComment": string (Korean, 2~3문장. 상대의 애착 유형과 감정 단계에 근거해서 먼저 연락할 시점/방식 예측),
+  "tensionAxis": string (Korean, 1문장. 두 사람의 핵심 심리적 긴장 구조. "~축" 으로 끝낼 것. 예: "확인받고 싶은 쪽과 확인해주기 싫은 쪽이 엇갈리는 축")
 }
 Rules:
-- 자연스러운 한국어 문장으로. 단문 끊어치기 금지. 친구가 솔직하게 조언하는 말투로.
-- Do NOT infer gender. Use neutral wording.
-- Base analysis only on visible public data patterns.
-- myYearning must always be > partnerYearning. Typical range: myYearning 55-85, partnerYearning 20-55.`;
+- 이별 시기를 기준으로 전후 변화를 반드시 언급.
+- 표면 데이터("팔로워 수", "계정 종류") 비교 금지. 심리적 의미를 읽어낼 것.
+- myYearning must always be > partnerYearning. Typical range: myYearning 55-85, partnerYearning 20-55.
+- 말투: 친구가 팩폭하는 톤. 뻔한 위로 금지.
+- Do NOT infer gender. Use neutral wording.`;
 
 async function callClaudeCompatibility(
   apiKey: string,
   myBundle: any,
   theirBundle: any,
   dataLimited: boolean,
+  breakupYear?: number,
+  breakupMonth?: number,
 ): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string; tensionAxis: string } | null> {
   const myPayload = compactBundleForPrompt(myBundle, 10);
   const theirPayload = compactBundleForPrompt(theirBundle, 10);
 
-  const userBlock = `Data quality: ${dataLimited ? "LIMITED — some accounts are private or have few posts." : "Public posts available for both."}
+  const breakupLine = breakupYear && breakupMonth
+    ? `\nBreakup date: ${breakupYear}년 ${breakupMonth}월. 게시물 timestamp를 이 날짜와 비교해서 이별 전후 변화를 분석할 것.`
+    : "";
+
+  const userBlock = `Data quality: ${dataLimited ? "LIMITED — some accounts are private or have few posts." : "Public posts available for both."}${breakupLine}
 MY_ACCOUNT:
 ${JSON.stringify(myPayload)}
 
@@ -301,7 +340,7 @@ ${JSON.stringify(theirPayload)}`;
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 800,
+      max_tokens: 1200,
       system: COMPATIBILITY_SYSTEM,
       messages: [{ role: "user", content: userBlock }],
     }),
@@ -319,6 +358,7 @@ ${JSON.stringify(theirPayload)}`;
   try {
     const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
     const parsed = JSON.parse(trimmed);
+    console.log("[reunion-compatibility] parsed:", JSON.stringify({ tensionAxis: parsed.tensionAxis, compatibilityType: parsed.compatibilityType }));
     const compatibilityType = typeof parsed.compatibilityType === "string" ? parsed.compatibilityType.trim() : "";
     const compatibilityDesc = typeof parsed.compatibilityDesc === "string" ? parsed.compatibilityDesc.trim() : "";
     let myYearning = typeof parsed.myYearning === "number" ? Math.round(parsed.myYearning) : 65;
@@ -338,28 +378,27 @@ ${JSON.stringify(theirPayload)}`;
   }
 }
 
-const PREMIUM_SYSTEM = `You generate 8 premium deep-analysis cards for a "reunion / post-breakup" product.
-You receive two Instagram account profiles (MY_ACCOUNT, THEIR_ACCOUNT), their AI persona analyses, and their compatibility analysis.
+const PREMIUM_SYSTEM = `You are a relationship psychologist generating 8 premium deep-analysis cards for a reunion/post-breakup product.
+You receive: two Instagram accounts, their AI persona analyses, compatibility analysis, AND the breakup date.
 Output ONLY a single JSON object, no markdown fences, no extra text.
 
-Each field must be 3~4 sentences of concrete, actionable advice grounded in the actual account data (posting patterns, caption tone, follower counts, activity trends, etc.).
-CRITICAL: All 8 fields must contain DIFFERENT content. No overlapping sentences or repeated advice between cards.
+CRITICAL: 표면 데이터 나열이 아닌 심리 분석 기반으로 써야 한다. 8개 카드 간 내용 중복 절대 금지.
 
 Schema:
 {
-  "waitUntil": string (Korean. 기다린다면 언제까지가 맞는지. 상대 피드의 업로드 간격, 스토리 톤 변화, 방어 신호 완화 시점을 근거로 구체적 타이밍 제시. 2주/4주/8주 체크포인트와 그때 써도 되는 첫 문장 톤을 케이스별로.),
-  "toneReply": string (Korean. 연락한다면 먹히는 톤 vs 멀어지는 톤. 상대 캡션 스타일과 반응 패턴에서 읽히는 선호 톤 분석. 구체적 문장 예시 포함. 답장 가능성 높이는 방식과 역효과 방식 대비.),
-  "firstMessage": string (Korean. 처음 뭐라고 보내야 하는지. 상대 관심사/캡션 소재에서 뽑은 구체적 첫 문장 방향 3개. 각각 길이와 톤이 다르게. 방어형/개방형 상대 구분.),
-  "replyStyle": string (Korean. 답장이 올 가능성이 높은 방식. 상대의 소통 패턴—댓글 스타일, 캡션 길이, 이모지 사용—에서 읽히는 선호 응답 형태. 질문형 vs 공유형 vs 확인형 중 어떤 게 맞는지.),
-  "newPerson": string (Korean. 상대가 새 사람 쪽으로 기운 가능성. 태그 반복, 특정 인물 노출, 시간대별 활동 변화 등 구체적 데이터 포인트로 가능성 구간 정리. 오탐 기준도 같이.),
-  "misunderstanding": string (Korean. 이 관계에서 가장 위험한 오해 포인트. 양쪽 피드 패턴에서 읽히는 구체적 오해 시나리오. '잔상=의지', '침묵=거절' 같은 착각을 이 커플 데이터에 맞게.),
-  "theirTrace": string (Korean. 상대가 안 오는데 흔적은 남기는 이유. 팔로우 유지, 스토리 열람, 간접 반응 등의 패턴을 상대 심리와 연결. 그 흔적이 여지인지 습관인지 구분 기준.),
-  "myDestroy": string (Korean. 내가 먼저 망치는 패턴. 내 계정 활동에서 읽히는 위험 행동—연타, 간접 메시지, 스토리 확인 강박 등. 구체적으로 어떤 행동이 상대를 닫히게 만드는지.)
+  "waitUntil": string (Korean, 3~4문장. 상대의 현재 감정 처리 단계(부정/분노/거래/우울/수용)에서 언제 수용으로 넘어갈지, 피드 신호로 어떻게 판단하는지. 단순히 "몇 주 기다려라"가 아니라 "상대 캡션 톤이 이렇게 바뀌면 그때가 타이밍이다"는 식의 심리적 전환 신호 기준.),
+  "toneReply": string (Korean, 3~4문장. 상대의 애착 유형에 맞는 톤 전략. 회피형이면 감정 표현 자체가 부담이니 정보성 톤으로, 불안형이면 확인해주는 톤으로 등. 상대 캡션 스타일에서 읽히는 소통 선호를 근거로.),
+  "firstMessage": string (Korean, 3~4문장. 상대의 무의식적 관심사와 현재 감정 단계에 맞는 첫 문장. 상대 최근 게시물 소재에서 뽑되, 그 소재가 상대에게 심리적으로 어떤 의미인지까지 고려.),
+  "replyStyle": string (Korean, 3~4문장. 상대의 소통 패턴에서 읽히는 심리적 선호. 짧은 답 = 처리 비용 최소화 욕구, 이모지만 = 감정 노출 회피, 읽씹 = 대화 자체가 부담. 각 패턴별 대응 전략.),
+  "newPerson": string (Korean, 3~4문장. 새 사람 가능성을 심리적 맥락에서 분석. 리바운드인지 진짜 넘어간 건지. 이별 후 빠르게 새 사람이 보이면 회피형 특유의 감정 대체 패턴일 수 있음.),
+  "misunderstanding": string (Korean, 3~4문장. 이 커플의 애착 유형 조합에서 가장 위험한 심리적 오해. 불안형이 회피형의 침묵을 "관심 없음"으로 읽는 것, 회피형이 불안형의 연타를 "집착"으로 읽는 것 등.),
+  "theirTrace": string (Korean, 3~4문장. 상대가 흔적을 남기는 심리적 이유. 팔로우 유지 = 연결고리 완전 차단하기 싫은 무의식, 스토리만 봄 = 궁금하지만 직접 접근은 부담. 어떤 게 여지이고 어떤 게 습관인지 심리적으로 구분.),
+  "myDestroy": string (Korean, 3~4문장. 내 애착 유형에서 나오는 자기파괴 패턴. 불안형이면: 확인 강박, 연타, 간접 메시지, 상대 반응 과잉 해석. 회피형이면: 먼저 연락하고 싶은데 자존심이 막음. 내 피드에서 읽히는 구체적 패턴.)
 }
 Rules:
-- 자연스러운 한국어 문장으로. 단문 끊어치기 금지. 친구가 솔직하게 조언하는 말투로.
-- 반드시 양쪽 계정 데이터(게시물 수, 팔로워, 캡션 톤, 활동 패턴 등)를 근거로 쓸 것. 일반론 금지.
-- 8개 카드 간 내용 중복 절대 금지. 같은 조언이 두 카드에 나오면 안 됨.
+- 말투: 친구가 팩폭하는 톤. 뻔한 위로 금지. 찔리게 쓸 것.
+- 이별 시기를 기준으로 전후 변화를 반드시 언급.
+- 표면 데이터 나열 금지. 심리적 의미를 읽어낼 것.
 - Do NOT infer gender. Use neutral wording.`;
 
 async function callClaudePremium(
@@ -369,11 +408,17 @@ async function callClaudePremium(
   myAiAnalysis: any,
   theirAiAnalysis: any,
   compatibility: any,
+  breakupYear?: number,
+  breakupMonth?: number,
 ): Promise<Record<string, string> | null> {
   const myPayload = compactBundleForPrompt(myBundle, 15);
   const theirPayload = compactBundleForPrompt(theirBundle, 15);
 
-  const userBlock = `MY_ACCOUNT:
+  const breakupLine = breakupYear && breakupMonth
+    ? `Breakup date: ${breakupYear}년 ${breakupMonth}월. 게시물 timestamp를 이 날짜와 비교해서 이별 전후 변화를 분석할 것.\n\n`
+    : "";
+
+  const userBlock = `${breakupLine}MY_ACCOUNT:
 ${JSON.stringify(myPayload)}
 
 THEIR_ACCOUNT:
@@ -521,6 +566,8 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json();
     const resultsLimit = Math.min(8, Math.max(1, Number(body.resultsLimit) || 8));
+    const breakupYear = typeof body.breakupYear === "number" ? body.breakupYear : undefined;
+    const breakupMonth = typeof body.breakupMonth === "number" ? body.breakupMonth : undefined;
 
     const myUserId = String(body.myUserId || body.myId || "")
       .replace(/^@/, "")
@@ -554,6 +601,8 @@ Deno.serve(async (req) => {
         myAiAnalysis,
         theirAiAnalysis,
         compatibility,
+        breakupYear,
+        breakupMonth,
       );
       if (!premiumCards) {
         return new Response(JSON.stringify({ ok: false, error: "PREMIUM_AI_FAILED" }), {
@@ -672,8 +721,8 @@ Deno.serve(async (req) => {
         theirPrivateWarning || (theirBundle.stats?.postCountReturned ?? 0) < 4;
 
       const [myAiAnalysis, theirAiAnalysis] = await Promise.all([
-        callClaudeAnalysis(ANTHROPIC_API_KEY, myBundle, "me", theirUserId, myLimited),
-        callClaudeAnalysis(ANTHROPIC_API_KEY, theirBundle, "them", myUserId, theirLimited),
+        callClaudeAnalysis(ANTHROPIC_API_KEY, myBundle, "me", theirUserId, myLimited, breakupYear, breakupMonth),
+        callClaudeAnalysis(ANTHROPIC_API_KEY, theirBundle, "them", myUserId, theirLimited, breakupYear, breakupMonth),
       ]);
 
       const compatibility = await callClaudeCompatibility(
@@ -681,6 +730,8 @@ Deno.serve(async (req) => {
         myBundle,
         theirBundle,
         myLimited || theirLimited,
+        breakupYear,
+        breakupMonth,
       );
 
       const expiresAt = new Date(Date.now() + CACHE_TTL_MS).toISOString();

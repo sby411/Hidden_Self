@@ -484,7 +484,7 @@ const ReunionResultPage = () => {
 
     (async () => {
       try {
-        const pairRes = await fetchReunionPairWithAnalysis(myId, theirId);
+        const pairRes = await fetchReunionPairWithAnalysis(myId, theirId, 24, breakupYear, breakupMonth);
         if (cancelled) return;
         if (!pairRes.ok) {
           setPipelineReport(null);
@@ -646,6 +646,8 @@ const ReunionResultPage = () => {
           summaryLine: pairAi.summaryLine,
           theirFirstMoveComment: pairAi.theirFirstMoveComment,
         },
+        breakupYear,
+        breakupMonth,
       });
       console.log("[PREMIUM] result:", JSON.stringify(res).substring(0, 500));
       if (res.ok) {

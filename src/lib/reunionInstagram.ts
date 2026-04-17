@@ -53,6 +53,9 @@ export type ReunionAccountAiAnalysis = {
   persona: string;
   impression: string;
   keywords: string[];
+  attachmentStyle: string;
+  unconsciousNeed: string;
+  postBreakupPhase: string;
   approach: string;
   psychState: string;
 };
@@ -88,11 +91,17 @@ function parseAiAnalysis(raw: unknown): ReunionAccountAiAnalysis | null {
   const keywords = Array.isArray(o.keywords) ? o.keywords.filter((x): x is string => typeof x === "string") : [];
   const approach = typeof o.approach === "string" ? o.approach : "";
   const psychState = typeof o.psychState === "string" ? o.psychState : "";
+  const attachmentStyle = typeof o.attachmentStyle === "string" ? o.attachmentStyle : "";
+  const unconsciousNeed = typeof o.unconsciousNeed === "string" ? o.unconsciousNeed : "";
+  const postBreakupPhase = typeof o.postBreakupPhase === "string" ? o.postBreakupPhase : "";
   if (!impression.trim() || keywords.length === 0) return null;
   return {
     persona: persona.trim(),
     impression: impression.trim(),
     keywords: keywords.slice(0, 8),
+    attachmentStyle: attachmentStyle.trim(),
+    unconsciousNeed: unconsciousNeed.trim(),
+    postBreakupPhase: postBreakupPhase.trim(),
     approach: approach.trim() || "데이터가 부족해 접근 방식을 구체화하기 어렵다.",
     psychState: psychState.trim() || "공개 데이터만으로는 심리 상태를 단정하기 어렵다.",
   };
@@ -106,13 +115,15 @@ export async function fetchReunionPairWithAnalysis(
   myUserId: string,
   theirUserId: string,
   resultsLimit = 24,
+  breakupYear?: number,
+  breakupMonth?: number,
 ): Promise<ReunionPairPipelineResult> {
   const my = myUserId.replace(/^@/, "").trim();
   const their = theirUserId.replace(/^@/, "").trim();
   if (!my || !their) return { ok: false, error: "EMPTY_USERNAME" };
 
   const { data, error } = await supabase.functions.invoke("reunion-instagram", {
-    body: { myUserId: my, theirUserId: their, resultsLimit },
+    body: { myUserId: my, theirUserId: their, resultsLimit, breakupYear, breakupMonth },
   });
 
   if (error) {
@@ -228,10 +239,14 @@ export async function fetchReunionPremiumCards(pairData: {
     summaryLine: string;
     theirFirstMoveComment: string;
   };
+  breakupYear?: number;
+  breakupMonth?: number;
 }): Promise<{ ok: true; cards: ReunionPremiumCards } | { ok: false; error: string }> {
   const { data, error } = await supabase.functions.invoke("reunion-instagram", {
     body: {
       mode: "premium",
+      breakupYear: pairData.breakupYear,
+      breakupMonth: pairData.breakupMonth,
       myBundle: pairData.my,
       theirBundle: pairData.their,
       myAiAnalysis: pairData.myAi,
