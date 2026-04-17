@@ -104,7 +104,10 @@ const ReunionLandingPage = () => {
                 내 계정과 상대 계정을 <span className="text-danger-highlight">각각 읽고</span>, 그다음 관계를 봅니다.
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                특히 상대의 관계 개방도와 재접촉 여지를 신호로 정리합니다. 사주·타로가 아닌{" "}
+                특히 상대의 관계 개방도와 재접촉 여지를 신호로 정리합니다.
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                사주·타로가 아닌{" "}
                 <span className="font-semibold text-foreground">인스타그램 기반 분석</span>입니다.
               </p>
             </div>

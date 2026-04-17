@@ -631,6 +631,7 @@ const ReunionResultPage = () => {
 
     setPremiumLoading(true);
     try {
+      console.log("[PREMIUM] calling fetchReunionPremiumCards, pairRawData:", !!pairRawData, "pairAi:", !!pairAi);
       const res = await fetchReunionPremiumCards({
         my: pairRawData.my,
         their: pairRawData.their,
@@ -646,10 +647,13 @@ const ReunionResultPage = () => {
           theirFirstMoveComment: pairAi.theirFirstMoveComment,
         },
       });
+      console.log("[PREMIUM] result:", JSON.stringify(res).substring(0, 500));
       if (res.ok) {
+        console.log("[PREMIUM] AI cards loaded successfully");
         setPremiumCards(res.cards);
       }
-    } catch {
+    } catch (err) {
+      console.error("[PREMIUM] error:", err);
       // 실패해도 기존 하드코딩 카드로 fallback
     } finally {
       setPremiumLoading(false);
@@ -1009,18 +1013,18 @@ const ReunionResultPage = () => {
                     style={{ width: `${decisionHint.contactLeanPercent}%` }}
                   />
                 </div>
-                <p className="text-xs text-center text-muted-foreground">
+                <p className="text-[10px] text-center text-muted-foreground/70">
                   {formatReunionLeanComparison(decisionHint.contactLeanPercent)}
                 </p>
               </div>
 
-              <p className="text-xs font-bold text-foreground text-center mb-3">
+              <p className="text-sm text-foreground/90 leading-relaxed mb-3">
                 {pairAi?.reunionComment || REUNION_LEAN_HINT_BY_CASE[resolvedCase]}
               </p>
 
               <BlurGate locked={!premiumUnlocked} hint="판단 근거는 심층 분석에서">
                 <div className="space-y-2">
-                  <p className="text-sm font-bold text-foreground leading-relaxed">{decisionHint.headline}</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed">{decisionHint.headline}</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">{decisionHint.hintLine}</p>
                 </div>
               </BlurGate>
