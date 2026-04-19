@@ -51,7 +51,7 @@ const AdminDashboard = () => {
       return;
     }
 
-    if (!authLoading && user && !isAdmin) {
+    if (!authLoading && user && isAdmin === false) {
       toast.error("관리자 권한이 없습니다.");
       navigate("/admin/login", { replace: true });
     }
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
     );
   }
 
-  if (!user || !isAdmin) return null;
+  if (!user || isAdmin !== true) return null;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
