@@ -73,7 +73,7 @@ const PremiumPage = () => {
       // PC에서는 navigator.share가 없거나 작동하지 않음 → 바로 링크 복사
       if (navigator.share && isMobile) {
         await navigator.share({
-          title: "LOVE DNA | 내 인스타로 보는 꼬이는 남자 유형",
+          title: "HiddenSelf | 내 인스타로 보는 꼬이는 남자 유형",
           text: `내 인스타 vibe로 보니 나한테 꼬이는 유형은 '${result.title}'이래. 너도 해봐!`,
           url: window.location.href,
         });

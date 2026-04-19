@@ -167,7 +167,7 @@ function ReunionLoadingScreen() {
             <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold tracking-tight text-foreground leading-tight">LOVE DNA</span>
+            <span className="text-sm font-bold tracking-tight text-foreground leading-tight">HiddenSelf</span>
             <span className="text-[9px] text-muted-foreground font-medium truncate">재회 시그널 리포트</span>
           </div>
         </Link>
@@ -715,7 +715,7 @@ const ReunionResultPage = () => {
             <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold tracking-tight text-foreground leading-tight">LOVE DNA</span>
+            <span className="text-sm font-bold tracking-tight text-foreground leading-tight">HiddenSelf</span>
             <span className="text-[9px] text-muted-foreground font-medium truncate">재회 시그널 리포트</span>
           </div>
         </Link>

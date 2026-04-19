@@ -45,7 +45,7 @@ const LandingPage = () => {
             <Scan className="w-3.5 h-3.5 text-white" />
           </div>
           <span className="text-sm font-bold tracking-tight text-foreground">
-            LOVE DNA
+            HiddenSelf
           </span>
         </Link>
       </header>

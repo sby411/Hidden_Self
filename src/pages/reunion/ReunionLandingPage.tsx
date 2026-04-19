@@ -76,7 +76,7 @@ const ReunionLandingPage = () => {
             <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
               <Scan className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="text-sm font-bold tracking-tight text-foreground">LOVE DNA</span>
+            <span className="text-sm font-bold tracking-tight text-foreground">HiddenSelf</span>
           </div>
           <span className="text-[10px] text-muted-foreground pl-8 font-medium">재회 시그널 리포트</span>
         </Link>

@@ -11,7 +11,7 @@ const ServiceHubPage = () => {
           <div className="w-6 h-6 rounded-md gradient-ai flex items-center justify-center">
             <Scan className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="text-sm font-bold tracking-tight text-foreground">LOVE DNA</span>
+          <span className="text-sm font-bold tracking-tight text-foreground">HiddenSelf</span>
         </div>
       </header>
 
@@ -26,7 +26,7 @@ const ServiceHubPage = () => {
               서비스 선택
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground mb-4">
-              LOVE DNA
+              HiddenSelf
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-xl mx-auto leading-relaxed">
               인스타그램 기반 연애 분석 리포트 서비스
