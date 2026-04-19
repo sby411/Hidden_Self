@@ -300,7 +300,10 @@ Schema:
   "reunionComment": string (Korean, 2문장. 지금 연락하면 어떤 심리적 반응이 나올지 예측. "읽씹" 같은 표면 결과가 아니라 "상대는 지금 감정 동결 모드라 어떤 연락이든 처리 비용으로 느낀다" 같은 내면 분석),
   "summaryLine": string (Korean, 2~3문장. 표면 비교 금지. "불안형 애착이 회피형을 쫓는 구조라 연락할수록 멀어지는 패턴이 보인다" 같은 심리적 구조 분석),
   "theirFirstMoveComment": string (Korean, 2~3문장. 상대의 애착 유형과 감정 단계에 근거해서 먼저 연락할 시점/방식 예측),
-  "tensionAxis": string (Korean, 1문장. 두 사람의 핵심 심리적 긴장 구조. "~축" 으로 끝낼 것. 예: "확인받고 싶은 쪽과 확인해주기 싫은 쪽이 엇갈리는 축")
+  "tensionAxis": string (Korean, 1문장. 두 사람의 핵심 심리적 긴장 구조. "~축" 으로 끝낼 것. 예: "확인받고 싶은 쪽과 확인해주기 싫은 쪽이 엇갈리는 축"),
+  "relationshipLoop": string (Korean, 4~5문장. 이 커플이 반복하는 관계 악순환 시나리오를 단계별로 서술. "너가 ~할수록 → 상대는 ~하고 → 결국 ~되는" 구조로. 반드시 양쪽의 애착 유형과 감정 처리 방식에 근거.),
+  "brutalTruth": string (Korean, 2~3문장. 이 관계의 핵심 문제를 한 방에 찌르는 팩폭. 읽는 사람이 불편하지만 인정할 수밖에 없는 수준. 위로 금지. 양쪽 피드 데이터에서 읽히는 심리적 근거 포함.),
+  "loveStyle": object (두 사람의 연애 체질 태그 비교. {"my": ["감정 표현형", "의미 부여형", "붙잡는 타입"], "their": ["감정 차단형", "흔적 삭제형", "도망가는 타입"]}. 각각 2~3개의 연애 체질 태그. 피드 데이터에서 읽히는 연애 스타일을 심리적으로 정의. 예시 태그: "확인 중독형", "감정 냉동형", "의미 과잉 부여형", "존재감 소멸형", "통제 욕구형", "자존심 방어형", "미련 포장형", "감정 도피형")
 }
 Rules:
 - 이별 시기를 기준으로 전후 변화를 반드시 언급.
@@ -316,7 +319,7 @@ async function callClaudeCompatibility(
   dataLimited: boolean,
   breakupYear?: number,
   breakupMonth?: number,
-): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string; tensionAxis: string } | null> {
+): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string; tensionAxis: string; relationshipLoop: string; brutalTruth: string; loveStyle: { my: string[]; their: string[] } } | null> {
   const myPayload = compactBundleForPrompt(myBundle, 10);
   const theirPayload = compactBundleForPrompt(theirBundle, 10);
 
@@ -340,7 +343,7 @@ ${JSON.stringify(theirPayload)}`;
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 1200,
+      max_tokens: 2000,
       system: COMPATIBILITY_SYSTEM,
       messages: [{ role: "user", content: userBlock }],
     }),
@@ -370,8 +373,17 @@ ${JSON.stringify(theirPayload)}`;
     const summaryLine = typeof parsed.summaryLine === "string" ? parsed.summaryLine.trim() : "";
     const theirFirstMoveComment = typeof parsed.theirFirstMoveComment === "string" ? parsed.theirFirstMoveComment.trim() : "";
     const tensionAxis = typeof parsed.tensionAxis === "string" ? parsed.tensionAxis.trim() : "";
+    const relationshipLoop = typeof parsed.relationshipLoop === "string" ? parsed.relationshipLoop.trim() : "";
+    const brutalTruth = typeof parsed.brutalTruth === "string" ? parsed.brutalTruth.trim() : "";
+    let loveStyle: { my: string[]; their: string[] } = { my: [], their: [] };
+    try {
+      const ls = typeof parsed.loveStyle === "string" ? JSON.parse(parsed.loveStyle) : parsed.loveStyle;
+      if (ls && Array.isArray(ls.my) && Array.isArray(ls.their)) {
+        loveStyle = { my: ls.my.filter((x: unknown) => typeof x === "string"), their: ls.their.filter((x: unknown) => typeof x === "string") };
+      }
+    } catch { /* loveStyle parse failed, use empty */ }
     if (!compatibilityType) return null;
-    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment, tensionAxis };
+    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment, tensionAxis, relationshipLoop, brutalTruth, loveStyle };
   } catch {
     console.error("Claude compatibility JSON parse failed");
     return null;
@@ -666,6 +678,9 @@ Deno.serve(async (req) => {
             summaryLine: cached.compatibility?.summaryLine || "",
             theirFirstMoveComment: cached.compatibility?.theirFirstMoveComment || "",
             tensionAxis: cached.compatibility?.tensionAxis || "",
+            relationshipLoop: cached.compatibility?.relationshipLoop || "",
+            brutalTruth: cached.compatibility?.brutalTruth || "",
+            loveStyle: cached.compatibility?.loveStyle || { my: [], their: [] },
             myPrivateWarning: Boolean(cached.myPrivateWarning),
             theirPrivateWarning: Boolean(cached.theirPrivateWarning),
           }),
@@ -766,6 +781,9 @@ Deno.serve(async (req) => {
           summaryLine: compatibility?.summaryLine || "",
           theirFirstMoveComment: compatibility?.theirFirstMoveComment || "",
           tensionAxis: compatibility?.tensionAxis || "",
+          relationshipLoop: compatibility?.relationshipLoop || "",
+          brutalTruth: compatibility?.brutalTruth || "",
+          loveStyle: compatibility?.loveStyle || { my: [], their: [] },
           myPrivateWarning,
           theirPrivateWarning,
         }),

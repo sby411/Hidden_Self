@@ -430,6 +430,9 @@ const ReunionResultPage = () => {
     summaryLine: string;
     theirFirstMoveComment: string;
     tensionAxis: string;
+    relationshipLoop: string;
+    brutalTruth: string;
+    loveStyle: { my: string[]; their: string[] };
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
@@ -546,6 +549,9 @@ const ReunionResultPage = () => {
           summaryLine: pairRes.summaryLine,
           theirFirstMoveComment: pairRes.theirFirstMoveComment,
           tensionAxis: pairRes.tensionAxis,
+          relationshipLoop: pairRes.relationshipLoop,
+          brutalTruth: pairRes.brutalTruth,
+          loveStyle: pairRes.loveStyle,
           fromCache: pairRes.fromCache,
         });
         setIgFetchError(false);
@@ -820,6 +826,58 @@ const ReunionResultPage = () => {
                 {pairAi.compatibilityDesc ? (
                   <p className="text-sm text-foreground/70 leading-relaxed">{pairAi.compatibilityDesc}</p>
                 ) : null}
+              </div>
+            ) : null}
+
+            {/* 연애 체질 비교 */}
+            {pairAi?.loveStyle && (pairAi.loveStyle.my.length > 0 || pairAi.loveStyle.their.length > 0) ? (
+              <div className="mt-3 glass-card rounded-2xl p-5">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-4">연애 체질 비교</p>
+                <div className="flex items-start gap-3">
+                  <div className="flex-1 text-center">
+                    <p className="text-[10px] font-bold text-primary uppercase tracking-wider mb-2">나</p>
+                    <div className="flex flex-wrap justify-center gap-1.5">
+                      {pairAi.loveStyle.my.map((tag, i) => (
+                        <span key={`my-ls-${i}`} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full font-semibold border border-primary/20">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <span className="text-muted-foreground font-black text-sm pt-5 shrink-0">vs</span>
+                  <div className="flex-1 text-center">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">상대</p>
+                    <div className="flex flex-wrap justify-center gap-1.5">
+                      {pairAi.loveStyle.their.map((tag, i) => (
+                        <span key={`their-ls-${i}`} className="text-xs bg-secondary/60 text-muted-foreground px-3 py-1.5 rounded-full font-semibold border border-border/50">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {/* 반복되는 악순환 */}
+            {pairAi?.relationshipLoop ? (
+              <div className="mt-3 glass-card rounded-2xl p-5 border-l-4 border-l-accent">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-lg leading-none">🔄</span>
+                  <p className="text-xs font-bold text-foreground">반복되는 악순환</p>
+                </div>
+                <p className="text-sm text-foreground/90 leading-relaxed">{pairAi.relationshipLoop}</p>
+              </div>
+            ) : null}
+
+            {/* 진짜 문제 */}
+            {pairAi?.brutalTruth ? (
+              <div className="mt-3 glass-card rounded-2xl p-5 border-l-4 border-l-destructive bg-destructive/5">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-lg leading-none">💣</span>
+                  <p className="text-xs font-bold text-foreground">이 관계의 진짜 문제</p>
+                </div>
+                <p className="text-sm font-semibold text-foreground leading-relaxed">{pairAi.brutalTruth}</p>
               </div>
             ) : null}
           </section>

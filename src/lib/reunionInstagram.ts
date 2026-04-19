@@ -77,6 +77,9 @@ export type ReunionPairPipelineResult =
       summaryLine: string;
       theirFirstMoveComment: string;
       tensionAxis: string;
+      relationshipLoop: string;
+      brutalTruth: string;
+      loveStyle: { my: string[]; their: string[] };
       myPrivateWarning: boolean;
       theirPrivateWarning: boolean;
       fromCache: boolean;
@@ -149,6 +152,11 @@ export async function fetchReunionPairWithAnalysis(
       summaryLine: typeof data.summaryLine === "string" ? data.summaryLine : "",
       theirFirstMoveComment: typeof data.theirFirstMoveComment === "string" ? data.theirFirstMoveComment : "",
       tensionAxis: typeof data.tensionAxis === "string" ? data.tensionAxis : "",
+      relationshipLoop: typeof data.relationshipLoop === "string" ? data.relationshipLoop : "",
+      brutalTruth: typeof data.brutalTruth === "string" ? data.brutalTruth : "",
+      loveStyle: data.loveStyle && Array.isArray(data.loveStyle?.my) && Array.isArray(data.loveStyle?.their)
+        ? { my: data.loveStyle.my.filter((x: unknown) => typeof x === "string"), their: data.loveStyle.their.filter((x: unknown) => typeof x === "string") }
+        : { my: [], their: [] },
       myPrivateWarning: Boolean(data.myPrivateWarning),
       theirPrivateWarning: Boolean(data.theirPrivateWarning),
       fromCache: Boolean(data.fromCache),
