@@ -46,12 +46,15 @@ const AdminDashboard = () => {
   const [resultTypes, setResultTypes] = useState<string[]>([]);
 
   useEffect(() => {
+    console.log('[GUARD]', { authLoading, user: !!user, isAdmin });
     if (!authLoading && !user) {
+      console.log('[GUARD] → redirect: no user');
       navigate("/admin/login", { replace: true });
       return;
     }
 
     if (!authLoading && user && isAdmin === false) {
+      console.log('[GUARD] → redirect: isAdmin === false');
       toast.error("관리자 권한이 없습니다.");
       navigate("/admin/login", { replace: true });
     }

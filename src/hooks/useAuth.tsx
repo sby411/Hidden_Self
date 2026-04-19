@@ -41,40 +41,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, nextSession) => {
+        console.log('[AUTH] onAuthStateChange:', _event, { hasSession: !!nextSession, userId: nextSession?.user?.id });
         setSession(nextSession);
         setUser(nextSession?.user ?? null);
 
         if (!nextSession?.user) {
+          console.log('[AUTH] setIsAdmin:', false, '(no session)');
           setIsAdmin(false);
+          console.log('[AUTH] setLoading:', false, '(no session)');
           setLoading(false);
           return;
         }
 
+        console.log('[AUTH] setLoading:', true, '(checkAdmin starting)');
         setLoading(true);
         void checkAdmin(nextSession.user.id)
-          .then((admin) => setIsAdmin(admin))
-          .finally(() => setLoading(false));
+          .then((admin) => {
+            console.log('[AUTH] setIsAdmin:', admin, '(checkAdmin resolved)');
+            setIsAdmin(admin);
+          })
+          .finally(() => {
+            console.log('[AUTH] setLoading:', false, '(checkAdmin done)');
+            setLoading(false);
+          });
       }
     );
 
     void supabase.auth.getSession()
       .then(async ({ data: { session: currentSession } }) => {
+        console.log('[AUTH] getSession:', { hasSession: !!currentSession, userId: currentSession?.user?.id });
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
 
         if (!currentSession?.user) {
+          console.log('[AUTH] setIsAdmin:', false, '(getSession no user)');
           setIsAdmin(false);
+          console.log('[AUTH] setLoading:', false, '(getSession no user)');
           setLoading(false);
           return;
         }
 
         const admin = await checkAdmin(currentSession.user.id);
+        console.log('[AUTH] setIsAdmin:', admin, '(getSession checkAdmin)');
         setIsAdmin(admin);
+        console.log('[AUTH] setLoading:', false, '(getSession done)');
         setLoading(false);
       })
       .catch((err) => {
         console.error("getSession error:", err);
+        console.log('[AUTH] setIsAdmin:', false, '(getSession error)');
         setIsAdmin(false);
+        console.log('[AUTH] setLoading:', false, '(getSession error)');
         setLoading(false);
       });
 
