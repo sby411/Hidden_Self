@@ -11,7 +11,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
-  const { signIn, signOut, user, loading: authLoading } = useAuth();
+  const { signIn, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   // 로그인 페이지 진입 시 기존 세션 강제 로그아웃
@@ -19,7 +19,7 @@ const AdminLogin = () => {
     if (authLoading) return;
 
     if (user) {
-      signOut().then(() => setReady(true));
+      navigate("/admin", { replace: true });
     } else {
       setReady(true);
     }
