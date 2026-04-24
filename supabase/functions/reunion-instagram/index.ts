@@ -268,7 +268,7 @@ ${JSON.stringify(payload)}`;
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 1800,
+      max_tokens: 8192,
       system: REUNION_AI_SYSTEM,
       messages: [{ role: "user", content: userBlock }],
     }),
@@ -281,6 +281,10 @@ ${JSON.stringify(payload)}`;
   }
 
   const json = await res.json();
+  if (json?.stop_reason === "max_tokens") {
+    console.error("[reunion] Claude response truncated (stop_reason=max_tokens)");
+    return null;
+  }
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
 
@@ -372,7 +376,7 @@ ${JSON.stringify(theirPayload)}`;
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 2000,
+      max_tokens: 8192,
       system: COMPATIBILITY_SYSTEM,
       messages: [{ role: "user", content: userBlock }],
     }),
@@ -384,6 +388,10 @@ ${JSON.stringify(theirPayload)}`;
   }
 
   const json = await res.json();
+  if (json?.stop_reason === "max_tokens") {
+    console.error("[reunion] Claude response truncated (stop_reason=max_tokens)");
+    return null;
+  }
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
 
@@ -480,7 +488,7 @@ ${JSON.stringify(compatibility || {})}`;
     },
     body: JSON.stringify({
       model: CLAUDE_MODEL,
-      max_tokens: 2500,
+      max_tokens: 8192,
       system: PREMIUM_SYSTEM,
       messages: [{ role: "user", content: userBlock }],
     }),
@@ -493,6 +501,10 @@ ${JSON.stringify(compatibility || {})}`;
   }
 
   const json = await res.json();
+  if (json?.stop_reason === "max_tokens") {
+    console.error("[reunion] Claude response truncated (stop_reason=max_tokens)");
+    return null;
+  }
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
 

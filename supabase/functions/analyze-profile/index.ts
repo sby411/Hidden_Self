@@ -397,7 +397,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL,
-        max_tokens: 4096,
+        max_tokens: 8192,
         system: SYSTEM_PROMPT,
         messages: [{ role: "user", content: userPrompt }],
       }),
@@ -419,6 +419,16 @@ Deno.serve(async (req) => {
     }
 
     const aiJson = await aiRes.json();
+
+    // Detect truncated response before attempting parse
+    if (aiJson?.stop_reason === "max_tokens") {
+      console.error("Claude response truncated (stop_reason=max_tokens). Increase max_tokens.");
+      return new Response(
+        JSON.stringify({ error: "AI 분석에 실패했어요. 다시 시도해주세요." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const aiText = aiJson?.content?.[0]?.text;
     if (!aiText || typeof aiText !== "string") {
       console.error("Claude empty response");
