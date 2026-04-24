@@ -9,6 +9,8 @@ const corsHeaders = {
 const APIFY_ACTOR_URL =
   "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items";
 
+const CLAUDE_MODEL = Deno.env.get("ATTRACTION_CLAUDE_MODEL") ?? "claude-sonnet-4-5";
+
 const SYSTEM_PROMPT = `너는 인스타그램 계정을 보고 '어떤 남자들이 자주 끌리는지'를 분석하는 연애 패턴 분석가다.
 
 목표는 단순 성격 묘사가 아니라, 이 계정이 남자들에게 어떤 식으로 해석되고 소비되는지, 그리고 왜 특정 유형의 남자들이 반복적으로 붙는지를 날카롭고 현실적으로 설명하는 것이다.
@@ -169,7 +171,11 @@ Section 10: 피하는 방법 (avoidGuide) - 힘든 남자를 피하기 위한 �
 - 근거 없는 과장 금지
 - MBTI식 일반론 금지
 - attractionStats 주어 명확히: 끌림 확률은 "남성이 당신에게 끌리는" 방향, 에겐력/테토력은 "당신이 주는 이미지"
-- harshTruth는 한 문장이되, 뾰족하고 잔인하며 핵심을 찌르는 문장이어야 한다`;
+- harshTruth는 한 문장이되, 뾰족하고 잔인하며 핵심을 찌르는 문장이어야 한다
+
+[중요: 출력 규칙]
+Respond with ONLY valid JSON. No markdown, no code fences, no explanation, no text before or after the JSON.
+절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라. 순수 JSON만 출력하라.`;
 
 function buildUserPrompt(userId: string, profile: any, posts: any[]) {
   const postSummaries = posts
@@ -319,10 +325,10 @@ Deno.serve(async (req) => {
 
     console.log("Cache MISS for:", userId);
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
+    const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!ANTHROPIC_API_KEY) {
       return new Response(
-        JSON.stringify({ error: "LOVABLE_API_KEY is not configured" }),
+        JSON.stringify({ error: "ANTHROPIC_API_KEY is not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -379,212 +385,78 @@ Deno.serve(async (req) => {
 
     const userPrompt = buildUserPrompt(userId, instagramData.profile, instagramData.posts);
 
-    // Helper: call AI gateway with retry
-    async function callAI(attempt: number): Promise<any> {
-      const model = attempt === 1 ? "google/gemini-3-flash-preview" : "google/gemini-2.5-flash";
-      console.log(`AI attempt ${attempt} with model: ${model}`);
+    // Call Anthropic Claude API directly
+    console.log(`Calling Claude (${CLAUDE_MODEL}) for:`, userId);
 
-      const response = await fetch(
-        "https://ai.gateway.lovable.dev/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model,
-            messages: [
-              { role: "system", content: SYSTEM_PROMPT },
-              { role: "user", content: userPrompt },
-            ],
-            tools: [
-              {
-                type: "function",
-                function: {
-                  name: "generate_analysis",
-                  description: "Generate Instagram attraction analysis report",
-                  parameters: {
-                    type: "object",
-                    properties: {
-                      instaImpression: { type: "string" },
-                      vibeKeywords: { type: "array", items: { type: "string" } },
-                      perceivedAccessibility: { type: "string" },
-                      attractedType: {
-                        type: "object",
-                        properties: {
-                          name: { type: "string" },
-                          emoji: { type: "string" },
-                          approach: { type: "string" },
-                          earlyBehavior: { type: "string" },
-                          feelings: { type: "string" },
-                        },
-                        required: ["name", "emoji", "approach", "earlyBehavior", "feelings"],
-                      },
-                      attractionStats: {
-                        type: "object",
-                        properties: {
-                          olderAttraction: { type: "number" },
-                          sameAgeAttraction: { type: "number" },
-                          youngerAttraction: { type: "number" },
-                          aegenPower: { type: "number" },
-                          tetoPower: { type: "number" },
-                        },
-                        required: ["olderAttraction", "sameAgeAttraction", "youngerAttraction", "aegenPower", "tetoPower"],
-                      },
-                      psychTriggers: { type: "array", items: { type: "string" } },
-                      decisiveMoment: { type: "string" },
-                      datingPattern: {
-                        type: "object",
-                        properties: {
-                          beginning: { type: "string" },
-                          middle: { type: "string" },
-                          turningPoint: { type: "string" },
-                        },
-                        required: ["beginning", "middle", "turningPoint"],
-                      },
-                      risks: { type: "array", items: { type: "string" } },
-                      goodMatch: {
-                        type: "object",
-                        properties: {
-                          type: { type: "string" },
-                          emoji: { type: "string" },
-                          personality: { type: "string" },
-                          whyGoodFit: { type: "string" },
-                          behaviors: { type: "string" },
-                        },
-                        required: ["type", "emoji", "personality", "whyGoodFit", "behaviors"],
-                      },
-                      badMatch: {
-                        type: "object",
-                        properties: {
-                          type: { type: "string" },
-                          emoji: { type: "string" },
-                          personality: { type: "string" },
-                          whyRepeated: { type: "string" },
-                          problems: { type: "string" },
-                        },
-                        required: ["type", "emoji", "personality", "whyRepeated", "problems"],
-                      },
-                      redFlags: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            label: { type: "string" },
-                            description: { type: "string" },
-                            emoji: { type: "string" },
-                          },
-                          required: ["label", "description", "emoji"],
-                        },
-                      },
-                      actionGuide: {
-                        type: "object",
-                        properties: {
-                          styling: { type: "array", items: { type: "string" } },
-                          responseStyle: { type: "array", items: { type: "string" } },
-                          datingBehavior: { type: "array", items: { type: "string" } },
-                        },
-                        required: ["styling", "responseStyle", "datingBehavior"],
-                      },
-                      avoidGuide: {
-                        type: "object",
-                        properties: {
-                          firstMeeting: { type: "array", items: { type: "string" } },
-                          earlyWarnings: { type: "array", items: { type: "string" } },
-                          instaHabits: { type: "array", items: { type: "string" } },
-                        },
-                        required: ["firstMeeting", "earlyWarnings", "instaHabits"],
-                      },
-                      harshTruth: { type: "string" },
-                      premiumTeasers: { type: "array", items: { type: "string" } },
-                      confidence: { type: "number" },
-                      obsessionRate: { type: "number" },
-                      relationshipScore: { type: "number" },
-                    },
-                    required: [
-                      "instaImpression", "vibeKeywords", "perceivedAccessibility", "attractedType",
-                      "attractionStats", "psychTriggers", "decisiveMoment",
-                      "datingPattern", "risks", "goodMatch", "badMatch",
-                      "redFlags", "harshTruth", "premiumTeasers", "confidence", "obsessionRate", "relationshipScore",
-                      "actionGuide", "avoidGuide",
-                    ],
-                  },
-                },
-              },
-            ],
-            tool_choice: { type: "function", function: { name: "generate_analysis" } },
-          }),
-        }
+    const aiRes = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 4096,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: userPrompt }],
+      }),
+    });
+
+    if (!aiRes.ok) {
+      const errText = await aiRes.text();
+      console.error("Claude API error:", aiRes.status, errText);
+      if (aiRes.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "요청이 너무 많아요. 잠시 후 다시 시도해주세요." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      return new Response(
+        JSON.stringify({ error: "AI 분석에 실패했어요. 다시 시도해주세요." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
-
-      if (!response.ok) {
-        const errText = await response.text();
-        console.error(`AI gateway error (attempt ${attempt}):`, response.status, errText);
-        if (response.status === 429) {
-          throw new Error("RATE_LIMITED");
-        }
-        if (response.status === 402) {
-          throw new Error("CREDITS_EXHAUSTED");
-        }
-        throw new Error(`AI_ERROR_${response.status}`);
-      }
-
-      const data = await response.json();
-
-      // Check if response body itself contains an error
-      if (data.error) {
-        console.error(`AI response error (attempt ${attempt}):`, JSON.stringify(data.error));
-        throw new Error(`AI_RESPONSE_ERROR: ${data.error.message || JSON.stringify(data.error)}`);
-      }
-
-      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
-      if (!toolCall) {
-        // Try to extract from message content as fallback
-        const content = data.choices?.[0]?.message?.content;
-        if (content) {
-          console.log("No tool call but got content, trying to parse as JSON");
-          const jsonMatch = content.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-          }
-        }
-        console.error(`No tool call in response (attempt ${attempt}):`, JSON.stringify(data).slice(0, 500));
-        throw new Error("NO_TOOL_CALL");
-      }
-
-      return JSON.parse(toolCall.function.arguments);
     }
 
-    // Try up to 2 times with different models
+    const aiJson = await aiRes.json();
+    const aiText = aiJson?.content?.[0]?.text;
+    if (!aiText || typeof aiText !== "string") {
+      console.error("Claude empty response");
+      return new Response(
+        JSON.stringify({ error: "AI 분석에 실패했어요. 다시 시도해주세요." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     let analysis: any = null;
-    let lastError: string = "";
-
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        analysis = await callAI(attempt);
-        break;
-      } catch (err: any) {
-        lastError = err.message || "Unknown error";
-        console.error(`Attempt ${attempt} failed:`, lastError);
-
-        if (lastError === "RATE_LIMITED") {
-          return new Response(
-            JSON.stringify({ error: "요청이 너무 많아요. 잠시 후 다시 시도해주세요." }),
-            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    try {
+      // Strip markdown code fences (```json ... ``` or ``` ... ```)
+      const cleaned = aiText
+        .trim()
+        .replace(/^```(?:json)?\s*\n?/i, '')
+        .replace(/\n?```\s*$/i, '')
+        .trim();
+      analysis = JSON.parse(cleaned);
+    } catch (parseErr1) {
+      // Fallback: extract first top-level JSON object
+      const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          analysis = JSON.parse(jsonMatch[0]);
+        } catch (parseErr2) {
+          console.error(
+            "Claude JSON parse failed (both attempts):",
+            "\n  Error 1:", parseErr1 instanceof Error ? parseErr1.message : parseErr1,
+            "\n  Error 2:", parseErr2 instanceof Error ? parseErr2.message : parseErr2,
+            "\n  Raw response (first 500 chars):", aiText.slice(0, 500),
           );
         }
-        if (lastError === "CREDITS_EXHAUSTED") {
-          return new Response(
-            JSON.stringify({ error: "서비스 일시 중단. 잠시 후 다시 시도해주세요." }),
-            { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        if (attempt < 2) {
-          console.log("Retrying with fallback model...");
-          await new Promise(r => setTimeout(r, 1000));
-        }
+      } else {
+        console.error(
+          "Claude JSON parse failed (no JSON object found):",
+          "\n  Error:", parseErr1 instanceof Error ? parseErr1.message : parseErr1,
+          "\n  Raw response (first 500 chars):", aiText.slice(0, 500),
+        );
       }
     }
 

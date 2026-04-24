@@ -26,6 +26,39 @@ function supabaseRestBase(supabaseUrl: string): string {
   return supabaseUrl.replace(/\/+$/, "");
 }
 
+/** Strip markdown code fences and parse JSON, with fallback regex extraction */
+function parseClaudeJson(raw: string, label: string): any | null {
+  try {
+    const cleaned = raw
+      .trim()
+      .replace(/^```(?:json)?\s*\n?/i, '')
+      .replace(/\n?```\s*$/i, '')
+      .trim();
+    return JSON.parse(cleaned);
+  } catch (err1) {
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch (err2) {
+        console.error(
+          `[${label}] Claude JSON parse failed (both attempts):`,
+          "\n  Error 1:", err1 instanceof Error ? err1.message : err1,
+          "\n  Error 2:", err2 instanceof Error ? err2.message : err2,
+          "\n  Raw (first 500 chars):", raw.slice(0, 500),
+        );
+      }
+    } else {
+      console.error(
+        `[${label}] Claude JSON parse failed (no JSON object found):`,
+        "\n  Error:", err1 instanceof Error ? err1.message : err1,
+        "\n  Raw (first 500 chars):", raw.slice(0, 500),
+      );
+    }
+    return null;
+  }
+}
+
 function extractMentions(caption: string): string[] {
   if (!caption) return [];
   const m = caption.match(/@[\w.]+/g);
@@ -147,7 +180,7 @@ function compactBundleForPrompt(bundle: any, maxPosts: number) {
 
 const REUNION_AI_SYSTEM = `You are a relationship psychologist who reads unconscious patterns from Instagram data.
 You analyze public Instagram profile data for a "reunion / post-breakup contact" product.
-Output ONLY a single JSON object, no markdown fences, no extra text.
+Output ONLY a single JSON object. No markdown, no code fences (\`\`\`), no explanation, no text before or after the JSON.
 You will receive: the account data AND the breakup date (year, month).
 CRITICAL ANALYSIS FRAMEWORK — 인스타에서 내면/무의식을 읽는 법:
 
@@ -199,7 +232,8 @@ Rules:
 - 이별 시기(breakup date)를 기준으로 게시물 timestamp를 비교해서 이별 전후 변화를 반드시 분석할 것.
 - "팔로워가 몇 명이다", "게시물이 몇 개다" 같은 표면 나열 금지. 그 숫자가 심리적으로 뭘 의미하는지를 쓸 것.
 - Do NOT infer gender. Use neutral wording: "이 사람", "계정", "상대".
-- 말투: 친구가 솔직하게 조언하는 톤. 찔리게 쓸 것. 뻔한 위로 금지.`;
+- 말투: 친구가 솔직하게 조언하는 톤. 찔리게 쓸 것. 뻔한 위로 금지.
+- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.`;
 
 async function callClaudeAnalysis(
   apiKey: string,
@@ -250,14 +284,8 @@ ${JSON.stringify(payload)}`;
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
 
-  let parsed: Record<string, unknown>;
-  try {
-    const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
-    parsed = JSON.parse(trimmed);
-  } catch {
-    console.error("Claude JSON parse failed:", text.slice(0, 200));
-    return null;
-  }
+  const parsed = parseClaudeJson(text, "reunion-analysis") as Record<string, unknown> | null;
+  if (!parsed) return null;
 
   const persona = typeof parsed.persona === "string" ? parsed.persona : "";
   const impression = typeof parsed.impression === "string" ? parsed.impression : "";
@@ -282,7 +310,7 @@ ${JSON.stringify(payload)}`;
 }
 
 const COMPATIBILITY_SYSTEM = `You are a relationship psychologist analyzing two Instagram accounts for a reunion/post-breakup product.
-Output ONLY a single JSON object, no markdown fences, no extra text.
+Output ONLY a single JSON object. No markdown, no code fences (\`\`\`), no explanation, no text before or after the JSON.
 You will receive: both account data AND the breakup date.
 CRITICAL: 표면 비교("한쪽은 인플루언서, 한쪽은 일반인")가 아니라 심리적 궁합을 분석해야 한다.
 
@@ -310,7 +338,8 @@ Rules:
 - 표면 데이터("팔로워 수", "계정 종류") 비교 금지. 심리적 의미를 읽어낼 것.
 - myYearning must always be > partnerYearning. Typical range: myYearning 55-85, partnerYearning 20-55.
 - 말투: 친구가 팩폭하는 톤. 뻔한 위로 금지.
-- Do NOT infer gender. Use neutral wording.`;
+- Do NOT infer gender. Use neutral wording.
+- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.`;
 
 async function callClaudeCompatibility(
   apiKey: string,
@@ -358,41 +387,37 @@ ${JSON.stringify(theirPayload)}`;
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
 
+  const parsed = parseClaudeJson(text, "reunion-compatibility") as Record<string, any> | null;
+  if (!parsed) return null;
+
+  console.log("[reunion-compatibility] parsed:", JSON.stringify({ tensionAxis: parsed.tensionAxis, compatibilityType: parsed.compatibilityType }));
+  const compatibilityType = typeof parsed.compatibilityType === "string" ? parsed.compatibilityType.trim() : "";
+  const compatibilityDesc = typeof parsed.compatibilityDesc === "string" ? parsed.compatibilityDesc.trim() : "";
+  let myYearning = typeof parsed.myYearning === "number" ? Math.round(parsed.myYearning) : 65;
+  let partnerYearning = typeof parsed.partnerYearning === "number" ? Math.round(parsed.partnerYearning) : 35;
+  myYearning = Math.max(0, Math.min(100, myYearning));
+  partnerYearning = Math.max(0, Math.min(100, partnerYearning));
+  if (myYearning <= partnerYearning) { myYearning = Math.min(100, partnerYearning + 15); }
+  const reunionComment = typeof parsed.reunionComment === "string" ? parsed.reunionComment.trim() : "";
+  const summaryLine = typeof parsed.summaryLine === "string" ? parsed.summaryLine.trim() : "";
+  const theirFirstMoveComment = typeof parsed.theirFirstMoveComment === "string" ? parsed.theirFirstMoveComment.trim() : "";
+  const tensionAxis = typeof parsed.tensionAxis === "string" ? parsed.tensionAxis.trim() : "";
+  const relationshipLoop = typeof parsed.relationshipLoop === "string" ? parsed.relationshipLoop.trim() : "";
+  const brutalTruth = typeof parsed.brutalTruth === "string" ? parsed.brutalTruth.trim() : "";
+  let loveStyle: { my: string[]; their: string[] } = { my: [], their: [] };
   try {
-    const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
-    const parsed = JSON.parse(trimmed);
-    console.log("[reunion-compatibility] parsed:", JSON.stringify({ tensionAxis: parsed.tensionAxis, compatibilityType: parsed.compatibilityType }));
-    const compatibilityType = typeof parsed.compatibilityType === "string" ? parsed.compatibilityType.trim() : "";
-    const compatibilityDesc = typeof parsed.compatibilityDesc === "string" ? parsed.compatibilityDesc.trim() : "";
-    let myYearning = typeof parsed.myYearning === "number" ? Math.round(parsed.myYearning) : 65;
-    let partnerYearning = typeof parsed.partnerYearning === "number" ? Math.round(parsed.partnerYearning) : 35;
-    myYearning = Math.max(0, Math.min(100, myYearning));
-    partnerYearning = Math.max(0, Math.min(100, partnerYearning));
-    if (myYearning <= partnerYearning) { myYearning = Math.min(100, partnerYearning + 15); }
-    const reunionComment = typeof parsed.reunionComment === "string" ? parsed.reunionComment.trim() : "";
-    const summaryLine = typeof parsed.summaryLine === "string" ? parsed.summaryLine.trim() : "";
-    const theirFirstMoveComment = typeof parsed.theirFirstMoveComment === "string" ? parsed.theirFirstMoveComment.trim() : "";
-    const tensionAxis = typeof parsed.tensionAxis === "string" ? parsed.tensionAxis.trim() : "";
-    const relationshipLoop = typeof parsed.relationshipLoop === "string" ? parsed.relationshipLoop.trim() : "";
-    const brutalTruth = typeof parsed.brutalTruth === "string" ? parsed.brutalTruth.trim() : "";
-    let loveStyle: { my: string[]; their: string[] } = { my: [], their: [] };
-    try {
-      const ls = typeof parsed.loveStyle === "string" ? JSON.parse(parsed.loveStyle) : parsed.loveStyle;
-      if (ls && Array.isArray(ls.my) && Array.isArray(ls.their)) {
-        loveStyle = { my: ls.my.filter((x: unknown) => typeof x === "string"), their: ls.their.filter((x: unknown) => typeof x === "string") };
-      }
-    } catch { /* loveStyle parse failed, use empty */ }
-    if (!compatibilityType) return null;
-    return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment, tensionAxis, relationshipLoop, brutalTruth, loveStyle };
-  } catch {
-    console.error("Claude compatibility JSON parse failed");
-    return null;
-  }
+    const ls = typeof parsed.loveStyle === "string" ? JSON.parse(parsed.loveStyle) : parsed.loveStyle;
+    if (ls && Array.isArray(ls.my) && Array.isArray(ls.their)) {
+      loveStyle = { my: ls.my.filter((x: unknown) => typeof x === "string"), their: ls.their.filter((x: unknown) => typeof x === "string") };
+    }
+  } catch { /* loveStyle parse failed, use empty */ }
+  if (!compatibilityType) return null;
+  return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment, tensionAxis, relationshipLoop, brutalTruth, loveStyle };
 }
 
 const PREMIUM_SYSTEM = `You are a relationship psychologist generating 8 premium deep-analysis cards for a reunion/post-breakup product.
 You receive: two Instagram accounts, their AI persona analyses, compatibility analysis, AND the breakup date.
-Output ONLY a single JSON object, no markdown fences, no extra text.
+Output ONLY a single JSON object. No markdown, no code fences (\`\`\`), no explanation, no text before or after the JSON.
 
 CRITICAL: 표면 데이터 나열이 아닌 심리 분석 기반으로 써야 한다. 8개 카드 간 내용 중복 절대 금지.
 
@@ -411,7 +436,8 @@ Rules:
 - 말투: 친구가 팩폭하는 톤. 뻔한 위로 금지. 찔리게 쓸 것.
 - 이별 시기를 기준으로 전후 변화를 반드시 언급.
 - 표면 데이터 나열 금지. 심리적 의미를 읽어낼 것.
-- Do NOT infer gender. Use neutral wording.`;
+- Do NOT infer gender. Use neutral wording.
+- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.`;
 
 async function callClaudePremium(
   apiKey: string,
@@ -470,20 +496,16 @@ ${JSON.stringify(compatibility || {})}`;
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
 
-  try {
-    const trimmed = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
-    const parsed = JSON.parse(trimmed);
-    const keys = ["waitUntil", "toneReply", "firstMessage", "replyStyle", "newPerson", "misunderstanding", "theirTrace", "myDestroy"];
-    const result: Record<string, string> = {};
-    for (const k of keys) {
-      result[k] = typeof parsed[k] === "string" ? parsed[k].trim() : "";
-    }
-    if (!result.waitUntil || !result.toneReply) return null;
-    return result;
-  } catch {
-    console.error("Claude premium JSON parse failed");
-    return null;
+  const parsed = parseClaudeJson(text, "reunion-premium") as Record<string, any> | null;
+  if (!parsed) return null;
+
+  const keys = ["waitUntil", "toneReply", "firstMessage", "replyStyle", "newPerson", "misunderstanding", "theirTrace", "myDestroy"];
+  const result: Record<string, string> = {};
+  for (const k of keys) {
+    result[k] = typeof parsed[k] === "string" ? parsed[k].trim() : "";
   }
+  if (!result.waitUntil || !result.toneReply) return null;
+  return result;
 }
 
 async function restGetCache(
