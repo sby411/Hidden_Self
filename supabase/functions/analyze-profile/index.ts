@@ -386,22 +386,40 @@ Deno.serve(async (req) => {
     const userPrompt = buildUserPrompt(userId, instagramData.profile, instagramData.posts);
 
     // Call Anthropic Claude API directly
-    console.log(`Calling Claude (${CLAUDE_MODEL}) for:`, userId);
+    const claudeT0 = Date.now();
+    console.log(`[analyze] Claude call START (${CLAUDE_MODEL}) for:`, userId);
 
-    const aiRes = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 8192,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: "user", content: userPrompt }],
-      }),
-    });
+    const claudeAbort = new AbortController();
+    const claudeTimer = setTimeout(() => claudeAbort.abort(), 120_000); // 120s fetch timeout
+
+    let aiRes: Response;
+    try {
+      aiRes = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model: CLAUDE_MODEL,
+          max_tokens: 8192,
+          system: SYSTEM_PROMPT,
+          messages: [{ role: "user", content: userPrompt }],
+        }),
+        signal: claudeAbort.signal,
+      });
+    } catch (fetchErr: any) {
+      clearTimeout(claudeTimer);
+      const elapsed = Date.now() - claudeT0;
+      console.error(`[analyze] Claude fetch failed after ${elapsed}ms:`, fetchErr?.name, fetchErr?.message);
+      return new Response(
+        JSON.stringify({ error: "AI 분석 시간이 초과됐어요. 다시 시도해주세요." }),
+        { status: 504, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    clearTimeout(claudeTimer);
+    console.log(`[analyze] Claude response received in ${Date.now() - claudeT0}ms, status=${aiRes.status}`);
 
     if (!aiRes.ok) {
       const errText = await aiRes.text();
@@ -422,7 +440,7 @@ Deno.serve(async (req) => {
 
     // Detect truncated response before attempting parse
     if (aiJson?.stop_reason === "max_tokens") {
-      console.error("Claude response truncated (stop_reason=max_tokens). Increase max_tokens.");
+      console.error("[analyze] Claude response truncated (stop_reason=max_tokens)");
       return new Response(
         JSON.stringify({ error: "AI 분석에 실패했어요. 다시 시도해주세요." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -431,12 +449,13 @@ Deno.serve(async (req) => {
 
     const aiText = aiJson?.content?.[0]?.text;
     if (!aiText || typeof aiText !== "string") {
-      console.error("Claude empty response");
+      console.error("[analyze] Claude empty response, stop_reason:", aiJson?.stop_reason);
       return new Response(
         JSON.stringify({ error: "AI 분석에 실패했어요. 다시 시도해주세요." }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+    console.log(`[analyze] Claude text length: ${aiText.length} chars`);
 
     let analysis: any = null;
     try {

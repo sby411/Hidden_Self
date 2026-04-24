@@ -259,20 +259,36 @@ Data quality note: ${dataLimited ? "LIMITED — private or few posts; be conserv
 INPUT_JSON:
 ${JSON.stringify(payload)}`;
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: 8192,
-      system: REUNION_AI_SYSTEM,
-      messages: [{ role: "user", content: userBlock }],
-    }),
-  });
+  const t0 = Date.now();
+  console.log(`[reunion-analysis] Claude call START for: ${bundle.profile?.username || "?"}`);
+
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), 120_000);
+
+  let res: Response;
+  try {
+    res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 8192,
+        system: REUNION_AI_SYSTEM,
+        messages: [{ role: "user", content: userBlock }],
+      }),
+      signal: abort.signal,
+    });
+  } catch (fetchErr: any) {
+    clearTimeout(timer);
+    console.error(`[reunion-analysis] Claude fetch failed after ${Date.now() - t0}ms:`, fetchErr?.name, fetchErr?.message);
+    return null;
+  }
+  clearTimeout(timer);
+  console.log(`[reunion-analysis] Claude response in ${Date.now() - t0}ms, status=${res.status}`);
 
   if (!res.ok) {
     const t = await res.text();
@@ -282,11 +298,12 @@ ${JSON.stringify(payload)}`;
 
   const json = await res.json();
   if (json?.stop_reason === "max_tokens") {
-    console.error("[reunion] Claude response truncated (stop_reason=max_tokens)");
+    console.error("[reunion-analysis] Claude response truncated (stop_reason=max_tokens)");
     return null;
   }
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
+  console.log(`[reunion-analysis] Claude text length: ${text.length} chars`);
 
   const parsed = parseClaudeJson(text, "reunion-analysis") as Record<string, unknown> | null;
   if (!parsed) return null;
@@ -367,20 +384,36 @@ ${JSON.stringify(myPayload)}
 THEIR_ACCOUNT:
 ${JSON.stringify(theirPayload)}`;
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: 8192,
-      system: COMPATIBILITY_SYSTEM,
-      messages: [{ role: "user", content: userBlock }],
-    }),
-  });
+  const t0 = Date.now();
+  console.log("[reunion-compatibility] Claude call START");
+
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), 120_000);
+
+  let res: Response;
+  try {
+    res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 8192,
+        system: COMPATIBILITY_SYSTEM,
+        messages: [{ role: "user", content: userBlock }],
+      }),
+      signal: abort.signal,
+    });
+  } catch (fetchErr: any) {
+    clearTimeout(timer);
+    console.error(`[reunion-compatibility] Claude fetch failed after ${Date.now() - t0}ms:`, fetchErr?.name, fetchErr?.message);
+    return null;
+  }
+  clearTimeout(timer);
+  console.log(`[reunion-compatibility] Claude response in ${Date.now() - t0}ms, status=${res.status}`);
 
   if (!res.ok) {
     console.error("Claude compatibility API error:", res.status);
@@ -389,11 +422,12 @@ ${JSON.stringify(theirPayload)}`;
 
   const json = await res.json();
   if (json?.stop_reason === "max_tokens") {
-    console.error("[reunion] Claude response truncated (stop_reason=max_tokens)");
+    console.error("[reunion-compatibility] Claude response truncated (stop_reason=max_tokens)");
     return null;
   }
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
+  console.log(`[reunion-compatibility] Claude text length: ${text.length} chars`);
 
   const parsed = parseClaudeJson(text, "reunion-compatibility") as Record<string, any> | null;
   if (!parsed) return null;
@@ -479,20 +513,36 @@ ${JSON.stringify(theirAiAnalysis || {})}
 COMPATIBILITY:
 ${JSON.stringify(compatibility || {})}`;
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: CLAUDE_MODEL,
-      max_tokens: 8192,
-      system: PREMIUM_SYSTEM,
-      messages: [{ role: "user", content: userBlock }],
-    }),
-  });
+  const t0 = Date.now();
+  console.log("[reunion-premium] Claude call START");
+
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), 120_000);
+
+  let res: Response;
+  try {
+    res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 8192,
+        system: PREMIUM_SYSTEM,
+        messages: [{ role: "user", content: userBlock }],
+      }),
+      signal: abort.signal,
+    });
+  } catch (fetchErr: any) {
+    clearTimeout(timer);
+    console.error(`[reunion-premium] Claude fetch failed after ${Date.now() - t0}ms:`, fetchErr?.name, fetchErr?.message);
+    return null;
+  }
+  clearTimeout(timer);
+  console.log(`[reunion-premium] Claude response in ${Date.now() - t0}ms, status=${res.status}`);
 
   if (!res.ok) {
     const t = await res.text();
@@ -502,11 +552,12 @@ ${JSON.stringify(compatibility || {})}`;
 
   const json = await res.json();
   if (json?.stop_reason === "max_tokens") {
-    console.error("[reunion] Claude response truncated (stop_reason=max_tokens)");
+    console.error("[reunion-premium] Claude response truncated (stop_reason=max_tokens)");
     return null;
   }
   const text = json?.content?.[0]?.text;
   if (!text || typeof text !== "string") return null;
+  console.log(`[reunion-premium] Claude text length: ${text.length} chars`);
 
   const parsed = parseClaudeJson(text, "reunion-premium") as Record<string, any> | null;
   if (!parsed) return null;
