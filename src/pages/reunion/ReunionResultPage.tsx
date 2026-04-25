@@ -822,20 +822,12 @@ const ReunionResultPage = () => {
               <p className="text-sm font-bold text-foreground/90 leading-relaxed">
                 {recommend.line}
               </p>
-            </div>
 
-            {/* 추천 근거 (유료) */}
-            {pairAi?.recommendReasons && pairAi.recommendReasons.length > 0 ? (
-              <div className="mt-3">
-                {premiumUnlocked ? (
-                  <div className="rounded-2xl border-2 border-[hsl(45,50%,40%)]/50 shadow-[0_0_18px_hsl(45,50%,40%,0.12)] bg-gradient-to-br from-[hsl(45,20%,8%)] to-card p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-lg leading-none">🔎</span>
-                      <h4 className="text-xs font-black text-foreground">왜 이 판단이 나왔는가</h4>
-                      <span className="text-[9px] font-black bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-2 py-0.5 rounded-full border border-[hsl(45,40%,30%)]/40">
-                        UNLOCKED
-                      </span>
-                    </div>
+              {/* 추천 근거 (유료) — BlurGate 통합 */}
+              {pairAi?.recommendReasons && pairAi.recommendReasons.length > 0 ? (
+                <BlurGate locked={!premiumUnlocked} hint="판단 근거는 심층 분석에서">
+                  <div className="mt-4 pt-4 border-t border-border/30">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">판단 근거</p>
                     <div className="space-y-2">
                       {pairAi.recommendReasons.map((reason, i) => (
                         <div key={i} className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
@@ -849,25 +841,9 @@ const ReunionResultPage = () => {
                       ))}
                     </div>
                   </div>
-                ) : (
-                  <div className="rounded-2xl border border-[hsl(45,40%,25%)]/35 bg-card/40 p-4 max-h-28 overflow-hidden relative">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-lg leading-none">🔎</span>
-                      <h4 className="text-xs font-black text-foreground">왜 이 판단이 나왔는가</h4>
-                    </div>
-                    <p className="text-[11px] text-foreground/60 leading-relaxed">
-                      이 추천도가 나온 심리적 근거 {pairAi.recommendReasons.length}가지를 심층 분석에서 확인할 수 있습니다.
-                    </p>
-                    <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-card/95 to-transparent flex items-end justify-center pb-2">
-                      <div className="flex items-center gap-1 rounded-full bg-card/90 border border-[hsl(45,40%,28%)]/50 px-2.5 py-1">
-                        <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
-                        <span className="text-[9px] font-bold text-[hsl(45,70%,52%)]">잠금</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : null}
+                </BlurGate>
+              ) : null}
+            </div>
 
             {/* 궁합 유형 카드 */}
             {pairAi?.compatibilityType ? (
