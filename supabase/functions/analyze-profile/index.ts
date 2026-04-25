@@ -9,7 +9,7 @@ const corsHeaders = {
 const APIFY_ACTOR_URL =
   "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items";
 
-const CLAUDE_MODEL = Deno.env.get("ATTRACTION_CLAUDE_MODEL") ?? "claude-sonnet-4-5";
+const CLAUDE_MODEL = Deno.env.get("ATTRACTION_CLAUDE_MODEL") ?? "claude-sonnet-4-6";
 
 const SYSTEM_PROMPT = `너는 인스타그램 계정을 보고 '어떤 남자들이 자주 끌리는지'를 분석하는 연애 패턴 분석가다.
 
