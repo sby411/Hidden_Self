@@ -10,6 +10,7 @@ import {
   Check,
   X,
   Copy,
+  ArrowDown,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import {
@@ -45,6 +46,9 @@ import {
   type ToneReplyData,
   type ReplyStyleData,
   type NewPersonData,
+  type WaitUntilData,
+  type MisunderstandingData,
+  type MyDestroyData,
 } from "@/lib/reunionInstagram";
 import { buildFallbackReunionRichSignals, buildReunionRichSignals } from "@/lib/reunionSignals";
 import type { ReunionRichSignals } from "@/lib/reunionSignals";
@@ -352,6 +356,9 @@ function CompactPremiumCard({
   const toneData = card.key === "tone-reply" ? parseToneReplyData(card.lockedBody) : null;
   const replyData = card.key === "reply-style" ? parseReplyStyleData(card.lockedBody) : null;
   const newPersonData = card.key === "new-person" ? parseNewPersonData(card.lockedBody) : null;
+  const waitData = card.key === "wait-until" ? parseWaitUntilData(card.lockedBody) : null;
+  const misreadData = card.key === "misunderstanding" ? parseMisunderstandingData(card.lockedBody) : null;
+  const destroyData = card.key === "my-destroy" ? parseMyDestroyData(card.lockedBody) : null;
 
   if (!unlocked) {
     return (
@@ -400,6 +407,12 @@ function CompactPremiumCard({
         <ReplyStyleCard data={replyData} />
       ) : newPersonData ? (
         <NewPersonCard data={newPersonData} />
+      ) : waitData ? (
+        <WaitUntilCard data={waitData} />
+      ) : misreadData ? (
+        <MisunderstandingCard data={misreadData} />
+      ) : destroyData ? (
+        <MyDestroyCard data={destroyData} />
       ) : (
         <>
           {card.visibleSummary ? (
@@ -674,6 +687,184 @@ function NewPersonCard({ data }: { data: NewPersonData }) {
         <div className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
           <p className="text-[10px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wide mb-1">💡 결론</p>
           <p className="text-[11px] leading-relaxed text-foreground/80 font-semibold">{data.conclusion}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── waitUntil structured card ───────────────────────────── */
+
+function parseWaitUntilData(raw: string): WaitUntilData | null {
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    if (obj && typeof obj.recommendedDuration === "string") return obj as WaitUntilData;
+  } catch { /* not JSON */ }
+  return null;
+}
+
+const TIMING_SCALE_STEPS = ["immediate", "early", "moderate", "late", "too_late"] as const;
+const TIMING_SCALE_LABELS: Record<string, string> = {
+  immediate: "지금 즉시",
+  early: "1주 이내",
+  moderate: "적정",
+  late: "더 기다려",
+  too_late: "너무 늦음",
+};
+
+function WaitUntilCard({ data }: { data: WaitUntilData }) {
+  const activeIdx = TIMING_SCALE_STEPS.indexOf(data.timingScale as any);
+
+  return (
+    <div className="space-y-4">
+      {/* 추천 기간 */}
+      <div className="text-center">
+        <p className="text-3xl font-black text-foreground mb-1">{data.recommendedDuration}</p>
+        <p className="text-xs text-muted-foreground">{TIMING_SCALE_LABELS[data.timingScale] || data.timingScale}</p>
+      </div>
+
+      {/* 5단계 점 게이지 */}
+      <div className="flex items-center justify-center gap-2">
+        {TIMING_SCALE_STEPS.map((step, i) => (
+          <div key={step} className="flex flex-col items-center gap-1">
+            <div className={`w-3 h-3 rounded-full ${i === activeIdx ? "bg-primary ring-2 ring-primary/30" : "bg-muted/40"}`} />
+            <span className={`text-[8px] ${i === activeIdx ? "text-primary font-bold" : "text-muted-foreground"}`}>
+              {TIMING_SCALE_LABELS[step]?.slice(0, 3) || ""}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* 적정 이유 */}
+      {data.supportingReasons.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">🔍 이 시점이 적정인 이유</p>
+          <div className="space-y-1.5">
+            {data.supportingReasons.map((reason, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <Check className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                <p className="text-[11px] text-foreground/80 leading-relaxed">{reason}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 조정 신호 */}
+      {data.adjustmentSignals.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">⚠️ 신호 변화 시 조정</p>
+          <div className="space-y-1.5">
+            {data.adjustmentSignals.map((sig, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="text-amber-400 text-xs mt-0.5 shrink-0">⚠</span>
+                <p className="text-[11px] text-foreground/70 leading-relaxed">
+                  {sig.condition} → <span className="font-bold text-foreground/90">{sig.action}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── misunderstanding structured card ────────────────────── */
+
+function parseMisunderstandingData(raw: string): MisunderstandingData | null {
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    if (obj && typeof obj.coreMisconception === "string") return obj as MisunderstandingData;
+  } catch { /* not JSON */ }
+  return null;
+}
+
+function MisunderstandingCard({ data }: { data: MisunderstandingData }) {
+  return (
+    <div className="space-y-4">
+      {/* 핵심 오해 */}
+      <div className="rounded-lg p-3 border border-red-500/20 bg-red-500/5 text-center">
+        <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-1">🧨 핵심 오해</p>
+        <p className="text-sm font-black text-foreground leading-relaxed">"{data.coreMisconception}"</p>
+      </div>
+
+      {/* 송수신 미스매치 */}
+      {data.signalMismatch.youSend && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">📡 송수신 미스매치</p>
+          <div className="space-y-1">
+            <div className="rounded-lg p-2.5 border border-blue-500/20 bg-blue-500/5">
+              <p className="text-[9px] font-bold text-blue-400 mb-0.5">📤 내가 보내는 신호</p>
+              <p className="text-[11px] text-foreground/80 font-semibold">{data.signalMismatch.youSend}</p>
+            </div>
+            <div className="flex justify-center">
+              <ArrowDown className="w-4 h-4 text-muted-foreground" />
+            </div>
+            <div className="rounded-lg p-2.5 border border-red-500/20 bg-red-500/5">
+              <p className="text-[9px] font-bold text-red-400 mb-0.5">📥 상대가 받는 신호</p>
+              <p className="text-[11px] text-foreground/80 font-semibold">{data.signalMismatch.theyReceive}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 결과 */}
+      {data.consequences.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">🔍 이 오해가 만드는 결과</p>
+          <div className="space-y-1.5">
+            {data.consequences.map((c, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <X className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
+                <p className="text-[11px] text-foreground/70 leading-relaxed">{c}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── myDestroy structured card ──────────────────────────── */
+
+function parseMyDestroyData(raw: string): MyDestroyData | null {
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    if (obj && Array.isArray(obj.trapPatterns)) return obj as MyDestroyData;
+  } catch { /* not JSON */ }
+  return null;
+}
+
+function MyDestroyCard({ data }: { data: MyDestroyData }) {
+  return (
+    <div className="space-y-4">
+      {/* 함정 리스트 */}
+      {data.trapPatterns.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">⚠️ 자주 빠지는 함정</p>
+          <div className="space-y-2">
+            {data.trapPatterns.map((trap, i) => (
+              <div key={i} className="rounded-lg p-2.5 border border-red-500/15 bg-red-500/5">
+                <p className="text-[11px] font-bold text-foreground/90 mb-0.5">
+                  <span className="text-red-400 mr-1.5">✗</span>{trap.pattern}
+                </p>
+                <p className="text-[10px] text-foreground/50 leading-relaxed pl-4">→ {trap.warning}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 핵심 통찰 */}
+      {data.coreInsight && (
+        <div className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
+          <p className="text-[10px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wide mb-1">💡 핵심</p>
+          <p className="text-[11px] leading-relaxed text-foreground/80 font-semibold">{data.coreInsight}</p>
         </div>
       )}
     </div>

@@ -234,6 +234,27 @@ export type NewPersonData = {
   conclusion: string;
 };
 
+/** waitUntil 카드 구조화 데이터 */
+export type WaitUntilData = {
+  recommendedDuration: string;
+  timingScale: string;
+  supportingReasons: string[];
+  adjustmentSignals: Array<{ condition: string; action: string }>;
+};
+
+/** misunderstanding 카드 구조화 데이터 */
+export type MisunderstandingData = {
+  coreMisconception: string;
+  signalMismatch: { youSend: string; theyReceive: string };
+  consequences: string[];
+};
+
+/** myDestroy 카드 구조화 데이터 */
+export type MyDestroyData = {
+  trapPatterns: Array<{ pattern: string; warning: string }>;
+  coreInsight: string;
+};
+
 /** firstMessage 카드 구조화 데이터 */
 export type FirstMessageData = {
   recommendedMessage: string;
@@ -314,14 +335,14 @@ export async function fetchReunionPremiumCards(pairData: {
       return "";
     };
     const cards: ReunionPremiumCards = {
-      waitUntil: typeof c.waitUntil === "string" ? c.waitUntil : "",
+      waitUntil: stringify(c.waitUntil),
       toneReply: stringify(c.toneReply),
       firstMessage: stringify(c.firstMessage),
       replyStyle: stringify(c.replyStyle),
       newPerson: stringify(c.newPerson),
-      misunderstanding: typeof c.misunderstanding === "string" ? c.misunderstanding : "",
+      misunderstanding: stringify(c.misunderstanding),
       theirTrace: typeof c.theirTrace === "string" ? c.theirTrace : "",
-      myDestroy: typeof c.myDestroy === "string" ? c.myDestroy : "",
+      myDestroy: stringify(c.myDestroy),
     };
     return { ok: true, cards };
   }
