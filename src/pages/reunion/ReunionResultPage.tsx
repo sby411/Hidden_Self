@@ -103,11 +103,15 @@ function HeartScale({ score }: { score: number }) {
   );
 }
 
-function reunionRecommendLabel(score: number) {
-  if (score >= 71) return { tag: "추천", color: "text-green-400", line: "지금이 타이밍이다. 방법만 잘 고르면 된다" };
-  if (score >= 51) return { tag: "가능", color: "text-primary", line: "여지는 있다. 단, 방법을 골라야 한다" };
-  if (score >= 31) return { tag: "중립", color: "text-amber-400", line: "반반이다. 잘못 건들면 끝장날 수 있다" };
-  return { tag: "비추", color: "text-red-400", line: "솔직히 재회는 추천하지 않는다" };
+function reunionRecommendLabel(score: number, dynamicLine?: string) {
+  const fallback =
+    score >= 71 ? "지금이 타이밍이다. 방법만 잘 고르면 된다"
+    : score >= 51 ? "여지는 있다. 단, 방법을 골라야 한다"
+    : score >= 31 ? "반반이다. 잘못 건들면 끝장날 수 있다"
+    : "솔직히 재회는 추천하지 않는다";
+  const tag = score >= 71 ? "추천" : score >= 51 ? "가능" : score >= 31 ? "중립" : "비추";
+  const color = score >= 71 ? "text-green-400" : score >= 51 ? "text-primary" : score >= 31 ? "text-amber-400" : "text-red-400";
+  return { tag, color, line: dynamicLine || fallback };
 }
 
 /** 도발 따옴표 훅 */
@@ -433,6 +437,8 @@ const ReunionResultPage = () => {
     relationshipLoop: string;
     brutalTruth: string;
     loveStyle: { my: string[]; their: string[] };
+    recommendLabel: string;
+    recommendReasons: Array<{ title: string; body: string }>;
     fromCache: boolean;
   } | null>(null);
   const [pipelineRichSignals, setPipelineRichSignals] = useState<ReunionRichSignals | null>(null);
@@ -552,6 +558,8 @@ const ReunionResultPage = () => {
           relationshipLoop: pairRes.relationshipLoop,
           brutalTruth: pairRes.brutalTruth,
           loveStyle: pairRes.loveStyle,
+          recommendLabel: pairRes.recommendLabel,
+          recommendReasons: pairRes.recommendReasons,
           fromCache: pairRes.fromCache,
         });
         setIgFetchError(false);
@@ -693,7 +701,7 @@ const ReunionResultPage = () => {
     console.log("[REUNION partnerPersonaLine]", pairAi?.partnerPersonaLine);
   }, [caseSource, resolvedCase, scores, decisionHint.contactLeanPercent, pairAi]);
 
-  const recommend = reunionRecommendLabel(scores.reunionPossibility);
+  const recommend = reunionRecommendLabel(scores.reunionPossibility, pairAi?.recommendLabel || undefined);
 
   /* ── loading screen ── */
   if (showIgLoading) {
@@ -815,6 +823,51 @@ const ReunionResultPage = () => {
                 {recommend.line}
               </p>
             </div>
+
+            {/* 추천 근거 (유료) */}
+            {pairAi?.recommendReasons && pairAi.recommendReasons.length > 0 ? (
+              <div className="mt-3">
+                {premiumUnlocked ? (
+                  <div className="rounded-2xl border-2 border-[hsl(45,50%,40%)]/50 shadow-[0_0_18px_hsl(45,50%,40%,0.12)] bg-gradient-to-br from-[hsl(45,20%,8%)] to-card p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-lg leading-none">🔎</span>
+                      <h4 className="text-xs font-black text-foreground">왜 이 판단이 나왔는가</h4>
+                      <span className="text-[9px] font-black bg-[hsl(45,70%,55%)]/20 text-[hsl(45,70%,55%)] px-2 py-0.5 rounded-full border border-[hsl(45,40%,30%)]/40">
+                        UNLOCKED
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      {pairAi.recommendReasons.map((reason, i) => (
+                        <div key={i} className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
+                          <p className="text-[9px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wide mb-1">
+                            근거 {i + 1} · {reason.title}
+                          </p>
+                          <p className="text-[11px] leading-relaxed text-foreground/80">
+                            <HighlightedText text={reason.body} />
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-[hsl(45,40%,25%)]/35 bg-card/40 p-4 max-h-28 overflow-hidden relative">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg leading-none">🔎</span>
+                      <h4 className="text-xs font-black text-foreground">왜 이 판단이 나왔는가</h4>
+                    </div>
+                    <p className="text-[11px] text-foreground/60 leading-relaxed">
+                      이 추천도가 나온 심리적 근거 {pairAi.recommendReasons.length}가지를 심층 분석에서 확인할 수 있습니다.
+                    </p>
+                    <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-card/95 to-transparent flex items-end justify-center pb-2">
+                      <div className="flex items-center gap-1 rounded-full bg-card/90 border border-[hsl(45,40%,28%)]/50 px-2.5 py-1">
+                        <Lock className="w-3 h-3 text-[hsl(45,70%,55%)]" />
+                        <span className="text-[9px] font-bold text-[hsl(45,70%,52%)]">잠금</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : null}
 
             {/* 궁합 유형 카드 */}
             {pairAi?.compatibilityType ? (

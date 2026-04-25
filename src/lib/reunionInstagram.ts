@@ -80,6 +80,8 @@ export type ReunionPairPipelineResult =
       relationshipLoop: string;
       brutalTruth: string;
       loveStyle: { my: string[]; their: string[] };
+      recommendLabel: string;
+      recommendReasons: Array<{ title: string; body: string }>;
       myPrivateWarning: boolean;
       theirPrivateWarning: boolean;
       fromCache: boolean;
@@ -157,6 +159,10 @@ export async function fetchReunionPairWithAnalysis(
       loveStyle: data.loveStyle && Array.isArray(data.loveStyle?.my) && Array.isArray(data.loveStyle?.their)
         ? { my: data.loveStyle.my.filter((x: unknown) => typeof x === "string"), their: data.loveStyle.their.filter((x: unknown) => typeof x === "string") }
         : { my: [], their: [] },
+      recommendLabel: typeof data.recommendLabel === "string" ? data.recommendLabel : "",
+      recommendReasons: Array.isArray(data.recommendReasons)
+        ? data.recommendReasons.filter((r: any) => r && typeof r.title === "string" && typeof r.body === "string").slice(0, 5)
+        : [],
       myPrivateWarning: Boolean(data.myPrivateWarning),
       theirPrivateWarning: Boolean(data.theirPrivateWarning),
       fromCache: Boolean(data.fromCache),

@@ -352,7 +352,9 @@ Schema:
   "tensionAxis": string (Korean, 1문장. 두 사람의 핵심 심리적 긴장 구조. "~축" 으로 끝낼 것. 예: "확인받고 싶은 쪽과 확인해주기 싫은 쪽이 엇갈리는 축"),
   "relationshipLoop": string (Korean, 4~5문장. 이 커플이 반복하는 관계 악순환 시나리오를 단계별로 서술. "너가 ~할수록 → 상대는 ~하고 → 결국 ~되는" 구조로. 반드시 양쪽의 애착 유형과 감정 처리 방식에 근거.),
   "brutalTruth": string (Korean, 2~3문장. 이 관계의 핵심 문제를 한 방에 찌르는 팩폭. 읽는 사람이 불편하지만 인정할 수밖에 없는 수준. 위로 금지. 양쪽 피드 데이터에서 읽히는 심리적 근거 포함.),
-  "loveStyle": object (두 사람의 연애 체질 태그 비교. {"my": ["감정 표현형", "의미 부여형", "붙잡는 타입"], "their": ["감정 차단형", "흔적 삭제형", "도망가는 타입"]}. 각각 2~3개의 연애 체질 태그. 피드 데이터에서 읽히는 연애 스타일을 심리적으로 정의. 예시 태그: "확인 중독형", "감정 냉동형", "의미 과잉 부여형", "존재감 소멸형", "통제 욕구형", "자존심 방어형", "미련 포장형", "감정 도피형")
+  "loveStyle": object (두 사람의 연애 체질 태그 비교. {"my": ["감정 표현형", "의미 부여형", "붙잡는 타입"], "their": ["감정 차단형", "흔적 삭제형", "도망가는 타입"]}. 각각 2~3개의 연애 체질 태그. 피드 데이터에서 읽히는 연애 스타일을 심리적으로 정의. 예시 태그: "확인 중독형", "감정 냉동형", "의미 과잉 부여형", "존재감 소멸형", "통제 욕구형", "자존심 방어형", "미련 포장형", "감정 도피형"),
+  "recommendLabel": string (Korean, 한 줄. 이 두 사람의 재회 가능성을 한 문장으로 요약. 일반적 템플릿("반반이다", "여지는 있다" 등) 흉내내지 말 것. 반드시 두 계정의 구체 데이터와 심리 분석 맥락을 반영한 고유한 표현이어야 한다. 예: "회피형이 먼저 돌아올 리 없고, 불안형이 참을 리도 없다", "둘 다 미련은 있는데 자존심이 더 크다"),
+  "recommendReasons": array of objects (3-4개. 왜 이 재회 추천도/카피가 나왔는지 핵심 근거. 각 항목: {"title": "포인트 제목 (8자 이내)", "body": "1-2문장. 두 계정 데이터에서 도출한 구체 관찰 + 재회 가능성에 미치는 영향. 일반론 금지."}. 예: {"title": "감정 온도차", "body": "이별 후 한쪽은 게시물 폭주, 다른 쪽은 침묵. 감정 처리 속도가 달라서 지금 연락하면 타이밍이 안 맞는다."})
 }
 Rules:
 - 이별 시기를 기준으로 전후 변화를 반드시 언급.
@@ -369,7 +371,7 @@ async function callClaudeCompatibility(
   dataLimited: boolean,
   breakupYear?: number,
   breakupMonth?: number,
-): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string; tensionAxis: string; relationshipLoop: string; brutalTruth: string; loveStyle: { my: string[]; their: string[] } } | null> {
+): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string; tensionAxis: string; relationshipLoop: string; brutalTruth: string; loveStyle: { my: string[]; their: string[] }; recommendLabel: string; recommendReasons: Array<{ title: string; body: string }> } | null> {
   const myPayload = compactBundleForPrompt(myBundle, 10);
   const theirPayload = compactBundleForPrompt(theirBundle, 10);
 
@@ -453,8 +455,16 @@ ${JSON.stringify(theirPayload)}`;
       loveStyle = { my: ls.my.filter((x: unknown) => typeof x === "string"), their: ls.their.filter((x: unknown) => typeof x === "string") };
     }
   } catch { /* loveStyle parse failed, use empty */ }
+  const recommendLabel = typeof parsed.recommendLabel === "string" ? parsed.recommendLabel.trim() : "";
+  let recommendReasons: Array<{ title: string; body: string }> = [];
+  if (Array.isArray(parsed.recommendReasons)) {
+    recommendReasons = parsed.recommendReasons
+      .filter((r: any) => r && typeof r.title === "string" && typeof r.body === "string")
+      .map((r: any) => ({ title: r.title.trim(), body: r.body.trim() }))
+      .slice(0, 5);
+  }
   if (!compatibilityType) return null;
-  return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment, tensionAxis, relationshipLoop, brutalTruth, loveStyle };
+  return { compatibilityType, compatibilityDesc, myYearning, partnerYearning, reunionComment, summaryLine, theirFirstMoveComment, tensionAxis, relationshipLoop, brutalTruth, loveStyle, recommendLabel, recommendReasons };
 }
 
 const PREMIUM_SYSTEM = `You are a relationship psychologist generating 8 premium deep-analysis cards for a reunion/post-breakup product.
@@ -766,6 +776,8 @@ Deno.serve(async (req) => {
             relationshipLoop: cached.compatibility?.relationshipLoop || "",
             brutalTruth: cached.compatibility?.brutalTruth || "",
             loveStyle: cached.compatibility?.loveStyle || { my: [], their: [] },
+            recommendLabel: cached.compatibility?.recommendLabel || "",
+            recommendReasons: cached.compatibility?.recommendReasons || [],
             myPrivateWarning: Boolean(cached.myPrivateWarning),
             theirPrivateWarning: Boolean(cached.theirPrivateWarning),
           }),
@@ -869,6 +881,8 @@ Deno.serve(async (req) => {
           relationshipLoop: compatibility?.relationshipLoop || "",
           brutalTruth: compatibility?.brutalTruth || "",
           loveStyle: compatibility?.loveStyle || { my: [], their: [] },
+          recommendLabel: compatibility?.recommendLabel || "",
+          recommendReasons: compatibility?.recommendReasons || [],
           myPrivateWarning,
           theirPrivateWarning,
         }),
