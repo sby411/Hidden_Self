@@ -43,6 +43,8 @@ import {
   type ReunionScrapeBundle,
   type FirstMessageData,
   type ToneReplyData,
+  type ReplyStyleData,
+  type NewPersonData,
 } from "@/lib/reunionInstagram";
 import { buildFallbackReunionRichSignals, buildReunionRichSignals } from "@/lib/reunionSignals";
 import type { ReunionRichSignals } from "@/lib/reunionSignals";
@@ -348,6 +350,8 @@ function CompactPremiumCard({
   const points = splitLockedBodyToPoints(card.lockedBody);
   const firstMsgData = card.key === "first-message" ? parseFirstMessageData(card.lockedBody) : null;
   const toneData = card.key === "tone-reply" ? parseToneReplyData(card.lockedBody) : null;
+  const replyData = card.key === "reply-style" ? parseReplyStyleData(card.lockedBody) : null;
+  const newPersonData = card.key === "new-person" ? parseNewPersonData(card.lockedBody) : null;
 
   if (!unlocked) {
     return (
@@ -392,6 +396,10 @@ function CompactPremiumCard({
         <FirstMessageCard data={firstMsgData} />
       ) : toneData ? (
         <ToneReplyCard data={toneData} />
+      ) : replyData ? (
+        <ReplyStyleCard data={replyData} />
+      ) : newPersonData ? (
+        <NewPersonCard data={newPersonData} />
       ) : (
         <>
           {card.visibleSummary ? (
@@ -539,6 +547,135 @@ function ToneReplyCard({ data }: { data: ToneReplyData }) {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ── replyStyle structured card ──────────────────────────── */
+
+function parseReplyStyleData(raw: string): ReplyStyleData | null {
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    if (obj && typeof obj.probabilityPercent === "number") return obj as ReplyStyleData;
+  } catch { /* not JSON */ }
+  return null;
+}
+
+function ReplyStyleCard({ data }: { data: ReplyStyleData }) {
+  const pctColor = data.probabilityPercent >= 60 ? "text-green-400" : data.probabilityPercent >= 35 ? "text-amber-400" : "text-red-400";
+  const barColor = data.probabilityPercent >= 60 ? "from-green-500 to-green-400" : data.probabilityPercent >= 35 ? "from-amber-500 to-amber-400" : "from-red-500 to-red-400";
+
+  return (
+    <div className="space-y-4">
+      {/* 게이지 */}
+      <div>
+        <div className="flex items-end gap-2 mb-2">
+          <p className={`text-3xl font-black tabular-nums ${pctColor}`}>{data.probabilityPercent}%</p>
+          <p className="text-xs font-bold text-muted-foreground pb-1">{data.probabilityLabel}</p>
+        </div>
+        <div className="h-2 rounded-full bg-muted/30 overflow-hidden">
+          <div className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all`} style={{ width: `${data.probabilityPercent}%` }} />
+        </div>
+      </div>
+
+      {/* 답장 패턴 예측 */}
+      {data.expectedPattern.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">⏰ 답장 패턴 예측</p>
+          <div className="space-y-1.5">
+            {data.expectedPattern.map((p, i) => (
+              <div key={i} className="flex items-start gap-2">
+                {p.type === "good" ? (
+                  <Check className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                ) : (
+                  <X className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
+                )}
+                <p className="text-[11px] text-foreground/80 leading-relaxed">
+                  <span className="font-bold">{p.label}</span> — {p.detail}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 행동 가이드 */}
+      {data.actionGuide.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">💡 답장 왔을 때</p>
+          <div className="space-y-1.5">
+            {data.actionGuide.map((guide, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="text-[10px] text-muted-foreground mt-0.5 shrink-0">•</span>
+                <p className="text-[11px] text-foreground/70 leading-relaxed">{guide}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── newPerson structured card ──────────────────────────── */
+
+function parseNewPersonData(raw: string): NewPersonData | null {
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    if (obj && typeof obj.probabilityPercent === "number") return obj as NewPersonData;
+  } catch { /* not JSON */ }
+  return null;
+}
+
+function NewPersonCard({ data }: { data: NewPersonData }) {
+  const pctColor = data.probabilityPercent >= 60 ? "text-red-400" : data.probabilityPercent >= 35 ? "text-amber-400" : "text-green-400";
+  const barColor = data.probabilityPercent >= 60 ? "from-red-500 to-red-400" : data.probabilityPercent >= 35 ? "from-amber-500 to-amber-400" : "from-green-500 to-green-400";
+
+  const signalIcon = (type: string) => {
+    if (type === "absent") return <Check className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />;
+    if (type === "present") return <X className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />;
+    return <span className="text-amber-400 text-xs mt-0.5 shrink-0">⚠</span>;
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* 게이지 */}
+      <div>
+        <div className="flex items-end gap-2 mb-2">
+          <p className={`text-3xl font-black tabular-nums ${pctColor}`}>{data.probabilityPercent}%</p>
+          <p className="text-xs font-bold text-muted-foreground pb-1">{data.probabilityLabel}</p>
+        </div>
+        <div className="h-2 rounded-full bg-muted/30 overflow-hidden">
+          <div className={`h-full rounded-full bg-gradient-to-r ${barColor} transition-all`} style={{ width: `${data.probabilityPercent}%` }} />
+        </div>
+      </div>
+
+      {/* 시그널 체크 */}
+      {data.signals.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">🔍 시그널 체크</p>
+          <div className="space-y-1.5">
+            {data.signals.map((s, i) => (
+              <div key={i} className="flex items-start gap-2">
+                {signalIcon(s.type)}
+                <p className="text-[11px] text-foreground/80 leading-relaxed">
+                  <span className="font-bold">{s.label}</span> — {s.note}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 결론 */}
+      {data.conclusion && (
+        <div className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
+          <p className="text-[10px] font-bold text-[hsl(45,70%,55%)] uppercase tracking-wide mb-1">💡 결론</p>
+          <p className="text-[11px] leading-relaxed text-foreground/80 font-semibold">{data.conclusion}</p>
+        </div>
+      )}
     </div>
   );
 }

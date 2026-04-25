@@ -538,8 +538,18 @@ Schema:
     "messageReasons": string[] (3개. 왜 이 메시지가 먹히는지 핵심 근거. 각 1줄. 상대 피드 데이터와 심리 분석에 근거.),
     "avoidMessages": string[] (3개. 같은 상황에서 절대 보내면 안 되는 함정 메시지. 실제 사람들이 자주 보내려는 것들. 짧게.)
   }),
-  "replyStyle": string (Korean, 3~4문장. 상대의 소통 패턴에서 읽히는 심리적 선호. 짧은 답 = 처리 비용 최소화 욕구, 이모지만 = 감정 노출 회피, 읽씹 = 대화 자체가 부담. 각 패턴별 대응 전략.),
-  "newPerson": string (Korean, 3~4문장. 새 사람 가능성을 심리적 맥락에서 분석. 리바운드인지 진짜 넘어간 건지. 이별 후 빠르게 새 사람이 보이면 회피형 특유의 감정 대체 패턴일 수 있음.),
+  "replyStyle": object ({
+    "probabilityPercent": number (0-100. 답장 확률. 상대 engagement 패턴, 애착 유형, 감정 단계 종합.),
+    "probabilityLabel": string ("매우 낮음"/"낮음"/"보통"/"높음"/"매우 높음" 중 하나),
+    "expectedPattern": array of 3-4 objects. 답장 형태 예측. 각: {"type": "good" 또는 "bad", "label": "짧은 키워드 (3-5자)", "detail": "한 줄 설명"},
+    "actionGuide": string[] (3개. 답장 받았을 때 해야/하지 말아야 할 행동. 짧은 명령조.)
+  }),
+  "newPerson": object ({
+    "probabilityPercent": number (0-100. 새 사람 시그널 종합 점수.),
+    "probabilityLabel": string ("매우 낮음"/"낮음"/"보통"/"높음"/"매우 높음" 중 하나),
+    "signals": array of 3-4 objects. 각: {"type": "absent"(시그널 없음) 또는 "present"(시그널 있음) 또는 "warning"(변수), "label": "시그널 이름 (4-8자)", "note": "한 줄 관찰/설명"},
+    "conclusion": string (Korean, 1-2문장. 종합 판단 + 행동 함의.)
+  }),
   "misunderstanding": string (Korean, 3~4문장. 이 커플의 애착 유형 조합에서 가장 위험한 심리적 오해. 불안형이 회피형의 침묵을 "관심 없음"으로 읽는 것, 회피형이 불안형의 연타를 "집착"으로 읽는 것 등.),
   "theirTrace": string (Korean, 3~4문장. 상대가 흔적을 남기는 심리적 이유. 팔로우 유지 = 연결고리 완전 차단하기 싫은 무의식, 스토리만 봄 = 궁금하지만 직접 접근은 부담. 어떤 게 여지이고 어떤 게 습관인지 심리적으로 구분.),
   "myDestroy": string (Korean, 3~4문장. 내 애착 유형에서 나오는 자기파괴 패턴. 불안형이면: 확인 강박, 연타, 간접 메시지, 상대 반응 과잉 해석. 회피형이면: 먼저 연락하고 싶은데 자존심이 막음. 내 피드에서 읽히는 구체적 패턴.)
@@ -629,7 +639,7 @@ ${JSON.stringify(compatibility || {})}`;
   const parsed = parseClaudeJson(text, "reunion-premium") as Record<string, any> | null;
   if (!parsed) return null;
 
-  const stringKeys = ["waitUntil", "replyStyle", "newPerson", "misunderstanding", "theirTrace", "myDestroy"];
+  const stringKeys = ["waitUntil", "misunderstanding", "theirTrace", "myDestroy"];
   const result: Record<string, any> = {};
   for (const k of stringKeys) {
     result[k] = typeof parsed[k] === "string" ? parsed[k].trim() : "";
@@ -661,6 +671,40 @@ ${JSON.stringify(compatibility || {})}`;
     });
   } else {
     result.firstMessage = typeof fm === "string" ? fm.trim() : "";
+  }
+
+  // replyStyle: structured object or fallback to string
+  const rs = parsed.replyStyle;
+  if (rs && typeof rs === "object" && typeof rs.probabilityPercent === "number") {
+    result.replyStyle = JSON.stringify({
+      probabilityPercent: Math.max(0, Math.min(100, Math.round(rs.probabilityPercent))),
+      probabilityLabel: typeof rs.probabilityLabel === "string" ? rs.probabilityLabel.trim() : "보통",
+      expectedPattern: Array.isArray(rs.expectedPattern) ? rs.expectedPattern.filter((p: any) => p?.label).map((p: any) => ({
+        type: p.type === "bad" ? "bad" : "good",
+        label: typeof p.label === "string" ? p.label.trim() : "",
+        detail: typeof p.detail === "string" ? p.detail.trim() : "",
+      })).slice(0, 5) : [],
+      actionGuide: Array.isArray(rs.actionGuide) ? rs.actionGuide.filter((x: any) => typeof x === "string").slice(0, 5) : [],
+    });
+  } else {
+    result.replyStyle = typeof rs === "string" ? rs.trim() : "";
+  }
+
+  // newPerson: structured object or fallback to string
+  const np = parsed.newPerson;
+  if (np && typeof np === "object" && typeof np.probabilityPercent === "number") {
+    result.newPerson = JSON.stringify({
+      probabilityPercent: Math.max(0, Math.min(100, Math.round(np.probabilityPercent))),
+      probabilityLabel: typeof np.probabilityLabel === "string" ? np.probabilityLabel.trim() : "보통",
+      signals: Array.isArray(np.signals) ? np.signals.filter((s: any) => s?.label).map((s: any) => ({
+        type: ["absent", "present", "warning"].includes(s.type) ? s.type : "absent",
+        label: typeof s.label === "string" ? s.label.trim() : "",
+        note: typeof s.note === "string" ? s.note.trim() : "",
+      })).slice(0, 6) : [],
+      conclusion: typeof np.conclusion === "string" ? np.conclusion.trim() : "",
+    });
+  } else {
+    result.newPerson = typeof np === "string" ? np.trim() : "";
   }
 
   if (!result.waitUntil || !result.toneReply) return null;

@@ -218,6 +218,22 @@ export type ToneReplyData = {
   blockingTones: ToneItem[];
 };
 
+/** replyStyle 카드 구조화 데이터 */
+export type ReplyStyleData = {
+  probabilityPercent: number;
+  probabilityLabel: string;
+  expectedPattern: Array<{ type: "good" | "bad"; label: string; detail: string }>;
+  actionGuide: string[];
+};
+
+/** newPerson 카드 구조화 데이터 */
+export type NewPersonData = {
+  probabilityPercent: number;
+  probabilityLabel: string;
+  signals: Array<{ type: "absent" | "present" | "warning"; label: string; note: string }>;
+  conclusion: string;
+};
+
 /** firstMessage 카드 구조화 데이터 */
 export type FirstMessageData = {
   recommendedMessage: string;
