@@ -191,7 +191,7 @@ function ReunionLoadingScreen() {
           {/* animated progress */}
           <div className="mb-6">
             <div className="flex justify-between items-baseline text-xs mb-2">
-              <span className="text-muted-foreground">{progress >= 95 ? "거의 다 됐어요" : "분석 중..."}</span>
+              <span className="text-muted-foreground">{progress >= 95 ? "리포트 생성 중..." : "분석 중..."}</span>
               <span className="text-primary font-black tabular-nums text-sm">{progress}%</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">

@@ -269,7 +269,7 @@ const ResultPage = () => {
     { text: "당신에게 끌리는 유형 찾는 중...", target: 70 },
     { text: "연애 패턴 분석 중...", target: 82 },
     { text: "AI가 흥미로운 패턴을 발견했습니다…", target: 90 },
-    { text: "거의 다 끝났어요...", target: 96 },
+    { text: "리포트 생성 중...", target: 96 },
   ], []);
 
   const [loadingProgress, setLoadingProgress] = useState(0);
