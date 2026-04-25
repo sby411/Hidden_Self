@@ -305,12 +305,20 @@ export async function fetchReunionPremiumCards(pairData: {
 
   if (data?.ok && data?.premiumCards) {
     const c = data.premiumCards;
+    // Structured cards (firstMessage, toneReply, replyStyle, newPerson) arrive as
+    // JSON-stringified strings from the backend, but may also arrive as objects
+    // if the transport layer auto-parses them. Normalize to string for the components.
+    const stringify = (v: unknown): string => {
+      if (typeof v === "string") return v;
+      if (v && typeof v === "object") return JSON.stringify(v);
+      return "";
+    };
     const cards: ReunionPremiumCards = {
       waitUntil: typeof c.waitUntil === "string" ? c.waitUntil : "",
-      toneReply: typeof c.toneReply === "string" ? c.toneReply : "",
-      firstMessage: typeof c.firstMessage === "string" ? c.firstMessage : "",
-      replyStyle: typeof c.replyStyle === "string" ? c.replyStyle : "",
-      newPerson: typeof c.newPerson === "string" ? c.newPerson : "",
+      toneReply: stringify(c.toneReply),
+      firstMessage: stringify(c.firstMessage),
+      replyStyle: stringify(c.replyStyle),
+      newPerson: stringify(c.newPerson),
       misunderstanding: typeof c.misunderstanding === "string" ? c.misunderstanding : "",
       theirTrace: typeof c.theirTrace === "string" ? c.theirTrace : "",
       myDestroy: typeof c.myDestroy === "string" ? c.myDestroy : "",
