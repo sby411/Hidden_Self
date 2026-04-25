@@ -529,9 +529,9 @@ Schema:
 {
   "waitUntil": string (Korean, 3~4문장. 상대의 현재 감정 처리 단계(부정/분노/거래/우울/수용)에서 언제 수용으로 넘어갈지, 피드 신호로 어떻게 판단하는지. 단순히 "몇 주 기다려라"가 아니라 "상대 캡션 톤이 이렇게 바뀌면 그때가 타이밍이다"는 식의 심리적 전환 신호 기준.),
   "toneReply": object ({
-    "workingTones": array of 2 objects. 먹히는 톤 카테고리. 각: {"label": "짧은 톤 이름 (예: 정보성 톤, 관심사 매개 톤)", "example": "그 톤의 예시 문장 1줄. firstMessage의 recommendedMessage와 절대 겹치지 않게. 짧고 일반화 가능한 형태.", "why": "왜 먹히는지 한 줄. 상대 애착 유형과 소통 선호에 근거."},
-    "blockingTones": array of 2 objects. 멀어지게 만드는 톤 카테고리. 같은 구조: {"label": "톤 이름", "example": "예시 문장", "why": "왜 역효과인지 한 줄"}.
-    원칙: 이 카드는 톤/카테고리 원칙을 다룸. 구체적 추천 메시지는 firstMessage 카드에서 다루니 여기서는 톤 카테고리 단위 비교만.
+    "workingTones": array of 2 objects. 먹히는 톤 카테고리. 각: {"label": "짧은 톤 이름 (예: 정보성 톤, 관심사 매개 톤)", "characteristic": "이 톤이 어떤 형태/패턴인지 한 줄 설명. 구체 메시지 예시는 절대 넣지 말 것 (firstMessage 카드와 겹침 방지). 대신 '~한 형태', '~한 구조'처럼 메시지의 형식적 특징을 서술.", "why": "왜 먹히는지 한 줄. 상대 애착 유형과 소통 선호에 근거."},
+    "blockingTones": array of 2 objects. 멀어지게 만드는 톤 카테고리. 같은 구조: {"label": "톤 이름", "characteristic": "이 톤의 형식적 특징 한 줄", "why": "왜 역효과인지 한 줄"}.
+    원칙: tone 카드는 카테고리/원칙을 다루고, firstMessage 카드는 구체 메시지를 다룸. 두 카드의 콘텐츠가 절대 겹치지 않게. tone에서는 메시지 형식의 일반화된 패턴만 설명.
   }),
   "firstMessage": object ({
     "recommendedMessage": string (Korean, 20자 내외. 따옴표 없이 그대로 보낼 수 있는 단 하나의 첫 문장. 상대 최근 게시물 소재에서 추출한 구체적 소재 활용. 감정 표현이 아닌 경험/정보 질문 형태가 이상적.),
@@ -640,7 +640,7 @@ ${JSON.stringify(compatibility || {})}`;
   if (tr && typeof tr === "object" && Array.isArray(tr.workingTones)) {
     const mapTone = (t: any) => ({
       label: typeof t?.label === "string" ? t.label.trim() : "",
-      example: typeof t?.example === "string" ? t.example.trim() : "",
+      characteristic: typeof t?.characteristic === "string" ? t.characteristic.trim() : "",
       why: typeof t?.why === "string" ? t.why.trim() : "",
     });
     result.toneReply = JSON.stringify({

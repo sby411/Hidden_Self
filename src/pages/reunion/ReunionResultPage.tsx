@@ -517,7 +517,7 @@ function ToneReplyCard({ data }: { data: ToneReplyData }) {
               <span className="inline-block text-[9px] font-black text-green-400 bg-green-400/15 px-2 py-0.5 rounded-full border border-green-500/25 mb-1.5">
                 {tone.label}
               </span>
-              <p className="text-[11px] text-foreground/90 leading-relaxed font-semibold mb-0.5">"{tone.example}"</p>
+              <p className="text-[11px] text-foreground/90 leading-relaxed font-semibold mb-0.5">{tone.characteristic}</p>
               <p className="text-[10px] text-foreground/50 leading-relaxed">💡 {tone.why}</p>
             </div>
           ))}
@@ -533,7 +533,7 @@ function ToneReplyCard({ data }: { data: ToneReplyData }) {
               <span className="inline-block text-[9px] font-black text-red-400 bg-red-400/15 px-2 py-0.5 rounded-full border border-red-500/25 mb-1.5">
                 {tone.label}
               </span>
-              <p className="text-[11px] text-foreground/60 leading-relaxed font-semibold line-through decoration-red-400/30 mb-0.5">"{tone.example}"</p>
+              <p className="text-[11px] text-foreground/60 leading-relaxed font-semibold mb-0.5">{tone.characteristic}</p>
               <p className="text-[10px] text-foreground/40 leading-relaxed">⚠️ {tone.why}</p>
             </div>
           ))}
