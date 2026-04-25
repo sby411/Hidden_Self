@@ -211,6 +211,13 @@ export async function fetchInstagramProfileForReunion(
   };
 }
 
+/** toneReply 카드 구조화 데이터 */
+export type ToneItem = { label: string; example: string; why: string };
+export type ToneReplyData = {
+  workingTones: ToneItem[];
+  blockingTones: ToneItem[];
+};
+
 /** firstMessage 카드 구조화 데이터 */
 export type FirstMessageData = {
   recommendedMessage: string;

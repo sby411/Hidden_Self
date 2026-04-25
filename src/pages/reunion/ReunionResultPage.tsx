@@ -42,6 +42,7 @@ import {
   type ReunionPremiumCards,
   type ReunionScrapeBundle,
   type FirstMessageData,
+  type ToneReplyData,
 } from "@/lib/reunionInstagram";
 import { buildFallbackReunionRichSignals, buildReunionRichSignals } from "@/lib/reunionSignals";
 import type { ReunionRichSignals } from "@/lib/reunionSignals";
@@ -346,6 +347,7 @@ function CompactPremiumCard({
   const hook = PREMIUM_HOOKS[card.key] ?? card.visibleSummary;
   const points = splitLockedBodyToPoints(card.lockedBody);
   const firstMsgData = card.key === "first-message" ? parseFirstMessageData(card.lockedBody) : null;
+  const toneData = card.key === "tone-reply" ? parseToneReplyData(card.lockedBody) : null;
 
   if (!unlocked) {
     return (
@@ -385,9 +387,11 @@ function CompactPremiumCard({
         ))}
       </div>
 
-      {/* firstMessage: structured card */}
+      {/* structured cards */}
       {firstMsgData ? (
         <FirstMessageCard data={firstMsgData} />
+      ) : toneData ? (
+        <ToneReplyCard data={toneData} />
       ) : (
         <>
           {card.visibleSummary ? (
@@ -486,6 +490,55 @@ function FirstMessageCard({ data }: { data: FirstMessageData }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── toneReply structured card ───────────────────────────── */
+
+function parseToneReplyData(raw: string): ToneReplyData | null {
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    if (obj && Array.isArray(obj.workingTones)) return obj as ToneReplyData;
+  } catch { /* not JSON */ }
+  return null;
+}
+
+function ToneReplyCard({ data }: { data: ToneReplyData }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* 먹히는 톤 */}
+      <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-3">
+        <p className="text-[10px] font-bold text-green-400 uppercase tracking-wider mb-3">✅ 먹히는 톤</p>
+        <div className="space-y-3">
+          {data.workingTones.map((tone, i) => (
+            <div key={i}>
+              <span className="inline-block text-[9px] font-black text-green-400 bg-green-400/15 px-2 py-0.5 rounded-full border border-green-500/25 mb-1.5">
+                {tone.label}
+              </span>
+              <p className="text-[11px] text-foreground/90 leading-relaxed font-semibold mb-0.5">"{tone.example}"</p>
+              <p className="text-[10px] text-foreground/50 leading-relaxed">💡 {tone.why}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 멀어지는 톤 */}
+      <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 opacity-80">
+        <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider mb-3">❌ 멀어지는 톤</p>
+        <div className="space-y-3">
+          {data.blockingTones.map((tone, i) => (
+            <div key={i}>
+              <span className="inline-block text-[9px] font-black text-red-400 bg-red-400/15 px-2 py-0.5 rounded-full border border-red-500/25 mb-1.5">
+                {tone.label}
+              </span>
+              <p className="text-[11px] text-foreground/60 leading-relaxed font-semibold line-through decoration-red-400/30 mb-0.5">"{tone.example}"</p>
+              <p className="text-[10px] text-foreground/40 leading-relaxed">⚠️ {tone.why}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
