@@ -7,6 +7,9 @@ import {
   Crown,
   Sparkles,
   Users,
+  Check,
+  X,
+  Copy,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import {
@@ -38,6 +41,7 @@ import {
   type ReunionAccountAiAnalysis,
   type ReunionPremiumCards,
   type ReunionScrapeBundle,
+  type FirstMessageData,
 } from "@/lib/reunionInstagram";
 import { buildFallbackReunionRichSignals, buildReunionRichSignals } from "@/lib/reunionSignals";
 import type { ReunionRichSignals } from "@/lib/reunionSignals";
@@ -341,6 +345,7 @@ function CompactPremiumCard({
   const meta = PREMIUM_CARD_META[card.key] ?? { emoji: "📌", tags: ["💎 심층"] };
   const hook = PREMIUM_HOOKS[card.key] ?? card.visibleSummary;
   const points = splitLockedBodyToPoints(card.lockedBody);
+  const firstMsgData = card.key === "first-message" ? parseFirstMessageData(card.lockedBody) : null;
 
   if (!unlocked) {
     return (
@@ -379,21 +384,108 @@ function CompactPremiumCard({
           </span>
         ))}
       </div>
-      {card.visibleSummary ? (
-        <p className="text-xs text-foreground/90 leading-relaxed font-semibold border-l-2 border-[hsl(45,70%,55%)]/50 pl-2.5 mb-3">
-          {card.visibleSummary}
-        </p>
-      ) : null}
-      <div className="space-y-2">
-        {points.map((para, i) => (
-          <div key={i} className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
-            <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1">포인트 {i + 1}</p>
-            <p className="text-[11px] leading-relaxed text-foreground/80">
-              <HighlightedText text={para} />
+
+      {/* firstMessage: structured card */}
+      {firstMsgData ? (
+        <FirstMessageCard data={firstMsgData} />
+      ) : (
+        <>
+          {card.visibleSummary ? (
+            <p className="text-xs text-foreground/90 leading-relaxed font-semibold border-l-2 border-[hsl(45,70%,55%)]/50 pl-2.5 mb-3">
+              {card.visibleSummary}
             </p>
+          ) : null}
+          <div className="space-y-2">
+            {points.map((para, i) => (
+              <div key={i} className="rounded-lg p-2.5 border border-[hsl(45,30%,20%)]/35 bg-[hsl(45,15%,12%)]/55">
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wide mb-1">포인트 {i + 1}</p>
+                <p className="text-[11px] leading-relaxed text-foreground/80">
+                  <HighlightedText text={para} />
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ── firstMessage structured card ────────────────────────── */
+
+function parseFirstMessageData(raw: string): FirstMessageData | null {
+  if (!raw) return null;
+  try {
+    const obj = JSON.parse(raw);
+    if (obj && typeof obj.recommendedMessage === "string") return obj as FirstMessageData;
+  } catch { /* not JSON, plain text fallback */ }
+  return null;
+}
+
+function FirstMessageCard({ data }: { data: FirstMessageData }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(data.recommendedMessage);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard failed */ }
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* 말풍선 미리보기 */}
+      <div className="flex justify-end">
+        <div className="relative max-w-[85%]">
+          <div
+            className="rounded-2xl rounded-tr-sm px-4 py-3 bg-[hsl(45,50%,50%)] text-[hsl(45,10%,10%)] shadow-md cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={handleCopy}
+          >
+            <p className="text-sm font-bold leading-relaxed">{data.recommendedMessage}</p>
+          </div>
+          <button
+            onClick={handleCopy}
+            className="mt-1.5 flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors ml-auto"
+          >
+            {copied ? (
+              <><Check className="w-3 h-3 text-green-400" /><span className="text-green-400">복사됨</span></>
+            ) : (
+              <><Copy className="w-3 h-3" /><span>탭해서 복사</span></>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* 왜 이 메시지인가 */}
+      {data.messageReasons.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">💡 왜 이 메시지인가</p>
+          <div className="space-y-1.5">
+            {data.messageReasons.map((reason, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <Check className="w-3.5 h-3.5 text-green-400 mt-0.5 shrink-0" />
+                <p className="text-[11px] text-foreground/80 leading-relaxed">{reason}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 절대 보내지 마 */}
+      {data.avoidMessages.length > 0 && (
+        <div>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">⚠️ 절대 보내지 마</p>
+          <div className="space-y-1.5">
+            {data.avoidMessages.map((msg, i) => (
+              <div key={i} className="flex items-start gap-2 opacity-60">
+                <X className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
+                <p className="text-[11px] text-foreground/60 leading-relaxed line-through decoration-red-400/40">{msg}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

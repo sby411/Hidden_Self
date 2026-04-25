@@ -211,11 +211,18 @@ export async function fetchInstagramProfileForReunion(
   };
 }
 
+/** firstMessage 카드 구조화 데이터 */
+export type FirstMessageData = {
+  recommendedMessage: string;
+  messageReasons: string[];
+  avoidMessages: string[];
+};
+
 /** 프리미엄 카드 8개 AI 생성 결과 */
 export type ReunionPremiumCards = {
   waitUntil: string;
   toneReply: string;
-  firstMessage: string;
+  firstMessage: string; // JSON string or plain text (parsed in component)
   replyStyle: string;
   newPerson: string;
   misunderstanding: string;

@@ -529,7 +529,11 @@ Schema:
 {
   "waitUntil": string (Korean, 3~4문장. 상대의 현재 감정 처리 단계(부정/분노/거래/우울/수용)에서 언제 수용으로 넘어갈지, 피드 신호로 어떻게 판단하는지. 단순히 "몇 주 기다려라"가 아니라 "상대 캡션 톤이 이렇게 바뀌면 그때가 타이밍이다"는 식의 심리적 전환 신호 기준.),
   "toneReply": string (Korean, 3~4문장. 상대의 애착 유형에 맞는 톤 전략. 회피형이면 감정 표현 자체가 부담이니 정보성 톤으로, 불안형이면 확인해주는 톤으로 등. 상대 캡션 스타일에서 읽히는 소통 선호를 근거로.),
-  "firstMessage": string (Korean, 3~4문장. 상대의 무의식적 관심사와 현재 감정 단계에 맞는 첫 문장. 상대 최근 게시물 소재에서 뽑되, 그 소재가 상대에게 심리적으로 어떤 의미인지까지 고려.),
+  "firstMessage": object ({
+    "recommendedMessage": string (Korean, 20자 내외. 따옴표 없이 그대로 보낼 수 있는 단 하나의 첫 문장. 상대 최근 게시물 소재에서 추출한 구체적 소재 활용. 감정 표현이 아닌 경험/정보 질문 형태가 이상적.),
+    "messageReasons": string[] (3개. 왜 이 메시지가 먹히는지 핵심 근거. 각 1줄. 상대 피드 데이터와 심리 분석에 근거.),
+    "avoidMessages": string[] (3개. 같은 상황에서 절대 보내면 안 되는 함정 메시지. 실제 사람들이 자주 보내려는 것들. 짧게.)
+  }),
   "replyStyle": string (Korean, 3~4문장. 상대의 소통 패턴에서 읽히는 심리적 선호. 짧은 답 = 처리 비용 최소화 욕구, 이모지만 = 감정 노출 회피, 읽씹 = 대화 자체가 부담. 각 패턴별 대응 전략.),
   "newPerson": string (Korean, 3~4문장. 새 사람 가능성을 심리적 맥락에서 분석. 리바운드인지 진짜 넘어간 건지. 이별 후 빠르게 새 사람이 보이면 회피형 특유의 감정 대체 패턴일 수 있음.),
   "misunderstanding": string (Korean, 3~4문장. 이 커플의 애착 유형 조합에서 가장 위험한 심리적 오해. 불안형이 회피형의 침묵을 "관심 없음"으로 읽는 것, 회피형이 불안형의 연타를 "집착"으로 읽는 것 등.),
@@ -621,13 +625,26 @@ ${JSON.stringify(compatibility || {})}`;
   const parsed = parseClaudeJson(text, "reunion-premium") as Record<string, any> | null;
   if (!parsed) return null;
 
-  const keys = ["waitUntil", "toneReply", "firstMessage", "replyStyle", "newPerson", "misunderstanding", "theirTrace", "myDestroy"];
-  const result: Record<string, string> = {};
-  for (const k of keys) {
+  const stringKeys = ["waitUntil", "toneReply", "replyStyle", "newPerson", "misunderstanding", "theirTrace", "myDestroy"];
+  const result: Record<string, any> = {};
+  for (const k of stringKeys) {
     result[k] = typeof parsed[k] === "string" ? parsed[k].trim() : "";
   }
+
+  // firstMessage: structured object or fallback to string
+  const fm = parsed.firstMessage;
+  if (fm && typeof fm === "object" && typeof fm.recommendedMessage === "string") {
+    result.firstMessage = JSON.stringify({
+      recommendedMessage: fm.recommendedMessage.trim(),
+      messageReasons: Array.isArray(fm.messageReasons) ? fm.messageReasons.filter((x: any) => typeof x === "string").slice(0, 5) : [],
+      avoidMessages: Array.isArray(fm.avoidMessages) ? fm.avoidMessages.filter((x: any) => typeof x === "string").slice(0, 5) : [],
+    });
+  } else {
+    result.firstMessage = typeof fm === "string" ? fm.trim() : "";
+  }
+
   if (!result.waitUntil || !result.toneReply) return null;
-  return result;
+  return result as Record<string, string>;
 }
 
 async function restGetCache(
