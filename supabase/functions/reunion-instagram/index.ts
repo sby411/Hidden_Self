@@ -155,17 +155,24 @@ async function runApifyScrape(userId: string, token: string, resultsLimit: numbe
   return { kind: "ok" as const, data: extracted };
 }
 
-function compactBundleForPrompt(bundle: any, maxPosts: number) {
-  const p = bundle.profile;
-  const posts = (bundle.posts || []).slice(0, maxPosts).map((x: any) => ({
+type CompactPost = { t: string; caption: string; hashtags: string[]; likes: number; comments: number; loc: string };
+
+function mapPost(x: any): CompactPost {
+  return {
     t: x.timestamp,
     caption: String(x.caption || "").slice(0, 280),
     hashtags: (x.hashtags || []).slice(0, 12),
     likes: x.likeCount,
     comments: x.commentCount,
     loc: x.locationName || "",
-  }));
-  return {
+  };
+}
+
+function compactBundleForPrompt(bundle: any, maxPosts: number, breakupYear?: number, breakupMonth?: number) {
+  const p = bundle.profile;
+  const allPosts: CompactPost[] = (bundle.posts || []).slice(0, maxPosts).map(mapPost);
+
+  const base = {
     username: p.username,
     fullName: p.fullName,
     biography: String(p.biography || "").slice(0, 600),
@@ -174,8 +181,42 @@ function compactBundleForPrompt(bundle: any, maxPosts: number) {
     postsCountMeta: p.postsCount,
     isPrivate: p.isPrivate,
     stats: bundle.stats,
-    recentPosts: posts,
   };
+
+  if (!breakupYear || !breakupMonth) {
+    return { ...base, recentPosts: allPosts, breakupContext: null };
+  }
+
+  // Build breakup threshold: first day of breakup month
+  const breakupThreshold = new Date(breakupYear, breakupMonth - 1, 1);
+
+  const before: CompactPost[] = [];
+  const after: CompactPost[] = [];
+  const unknown: CompactPost[] = [];
+
+  for (const post of allPosts) {
+    if (!post.t) { unknown.push(post); continue; }
+    const d = new Date(post.t);
+    if (isNaN(d.getTime())) { unknown.push(post); continue; }
+    if (d < breakupThreshold) { before.push(post); } else { after.push(post); }
+  }
+
+  const analysisMode = before.length >= 1 && after.length >= 1
+    ? "before_after_comparison" as const
+    : "current_only" as const;
+
+  const breakupContext = {
+    breakupDate: `${breakupYear}-${String(breakupMonth).padStart(2, "0")}`,
+    postsBeforeBreakupCount: before.length,
+    postsAfterBreakupCount: after.length,
+    analysisMode,
+  };
+
+  if (analysisMode === "before_after_comparison") {
+    return { ...base, breakupContext, postsBeforeBreakup: before, postsAfterBreakup: after, ...(unknown.length > 0 ? { postsUnknownDate: unknown } : {}) };
+  }
+  // current_only: send all posts as flat array
+  return { ...base, breakupContext, recentPosts: allPosts };
 }
 
 const REUNION_AI_SYSTEM = `You are a relationship psychologist who reads unconscious patterns from Instagram data.
@@ -229,11 +270,29 @@ Schema:
   "psychState": string (Korean, 2문장. 현재 감정 상태를 캡션 톤, 활동 패턴 변화에서 읽어낸 것. "~로 읽힐 수 있다" 톤.)
 }
 Rules:
-- 이별 시기(breakup date)를 기준으로 게시물 timestamp를 비교해서 이별 전후 변화를 반드시 분석할 것.
 - "팔로워가 몇 명이다", "게시물이 몇 개다" 같은 표면 나열 금지. 그 숫자가 심리적으로 뭘 의미하는지를 쓸 것.
 - Do NOT infer gender. Use neutral wording: "이 사람", "계정", "상대".
 - 말투: 친구가 솔직하게 조언하는 톤. 찔리게 쓸 것. 뻔한 위로 금지.
-- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.`;
+- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.
+
+[CRITICAL: breakupContext.analysisMode 기반 분석 분기]
+
+breakupContext가 null이면 이별 시점 관련 언급 자체를 하지 마라.
+
+[Mode: current_only]
+이별 시점 비교 분석 금지. 수집된 게시물이 이별 전후로 충분히 분리되지 않음.
+시점 단정 표현 절대 사용 금지:
+- ❌ "이별 후 본인은...", "이별 전과 다르게...", "헤어진 다음부터...", "요즘 들어서..."
+대신 현재 시점 표현 사용:
+- ✅ "본인은 카페와 셀카 위주의 자기관리형 라이프를 보여준다"
+- ✅ "피드에서 보이는 패턴은...", "인스타에 드러나는 성향은..."
+postBreakupPhase 필드에서도 "이별 후 ~단계"라고 단정하지 말고 "현재 피드에서 읽히는 감정 상태" 정도로 신중하게.
+
+[Mode: before_after_comparison]
+postsBeforeBreakup과 postsAfterBreakup 두 배열이 분리 제공됨. 비교 분석 가능:
+- 이별 전/후 게시물 변화 추적 (톤, 빈도, 소재)
+- 각 인용 시 어느 시기 게시물인지 명확히
+- 단, 한쪽이 1-2개로 적으면 단정 자제. "아직 변화 폭을 판단하기엔 이르지만..." 같이 신중하게.`;
 
 async function callClaudeAnalysis(
   apiKey: string,
@@ -244,18 +303,14 @@ async function callClaudeAnalysis(
   breakupYear?: number,
   breakupMonth?: number,
 ): Promise<Record<string, unknown> | null> {
-  const payload = compactBundleForPrompt(bundle, 20);
+  const payload = compactBundleForPrompt(bundle, 20, breakupYear, breakupMonth);
   const roleLine =
     role === "me"
       ? "This is the USER's own account (the person running the report)."
       : `This is the OTHER person's account (@${peerUsername} is the user viewing the report).`;
 
-  const breakupLine = breakupYear && breakupMonth
-    ? `\nBreakup date: ${breakupYear}년 ${breakupMonth}월. 게시물 timestamp를 이 날짜와 비교해서 이별 전후 변화를 분석할 것.`
-    : "";
-
   const userBlock = `${roleLine}
-Data quality note: ${dataLimited ? "LIMITED — private or few posts; be conservative." : "Public posts available."}${breakupLine}
+Data quality note: ${dataLimited ? "LIMITED — private or few posts; be conservative." : "Public posts available."}
 INPUT_JSON:
 ${JSON.stringify(payload)}`;
 
@@ -357,12 +412,13 @@ Schema:
   "recommendReasons": array of objects (3-4개. 왜 이 재회 추천도/카피가 나왔는지 핵심 근거. 각 항목: {"title": "포인트 제목 (8자 이내)", "body": "1-2문장. 두 계정 데이터에서 도출한 구체 관찰 + 재회 가능성에 미치는 영향. 일반론 금지."}. 예: {"title": "감정 온도차", "body": "이별 후 한쪽은 게시물 폭주, 다른 쪽은 침묵. 감정 처리 속도가 달라서 지금 연락하면 타이밍이 안 맞는다."})
 }
 Rules:
-- 이별 시기를 기준으로 전후 변화를 반드시 언급.
 - 표면 데이터("팔로워 수", "계정 종류") 비교 금지. 심리적 의미를 읽어낼 것.
 - myYearning must always be > partnerYearning. Typical range: myYearning 55-85, partnerYearning 20-55.
 - 말투: 친구가 팩폭하는 톤. 뻔한 위로 금지.
 - Do NOT infer gender. Use neutral wording.
-- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.`;
+- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.
+- analysisMode가 "current_only"면 이별 전후 비교 표현 금지. 현재 피드 성향만으로 분석.
+- analysisMode가 "before_after_comparison"이면 전후 변화 비교 가능하되 데이터 적으면 신중하게.`;
 
 async function callClaudeCompatibility(
   apiKey: string,
@@ -372,14 +428,10 @@ async function callClaudeCompatibility(
   breakupYear?: number,
   breakupMonth?: number,
 ): Promise<{ compatibilityType: string; compatibilityDesc: string; myYearning: number; partnerYearning: number; reunionComment: string; summaryLine: string; theirFirstMoveComment: string; tensionAxis: string; relationshipLoop: string; brutalTruth: string; loveStyle: { my: string[]; their: string[] }; recommendLabel: string; recommendReasons: Array<{ title: string; body: string }> } | null> {
-  const myPayload = compactBundleForPrompt(myBundle, 10);
-  const theirPayload = compactBundleForPrompt(theirBundle, 10);
+  const myPayload = compactBundleForPrompt(myBundle, 10, breakupYear, breakupMonth);
+  const theirPayload = compactBundleForPrompt(theirBundle, 10, breakupYear, breakupMonth);
 
-  const breakupLine = breakupYear && breakupMonth
-    ? `\nBreakup date: ${breakupYear}년 ${breakupMonth}월. 게시물 timestamp를 이 날짜와 비교해서 이별 전후 변화를 분석할 것.`
-    : "";
-
-  const userBlock = `Data quality: ${dataLimited ? "LIMITED — some accounts are private or have few posts." : "Public posts available for both."}${breakupLine}
+  const userBlock = `Data quality: ${dataLimited ? "LIMITED — some accounts are private or have few posts." : "Public posts available for both."}
 MY_ACCOUNT:
 ${JSON.stringify(myPayload)}
 
@@ -486,10 +538,11 @@ Schema:
 }
 Rules:
 - 말투: 친구가 팩폭하는 톤. 뻔한 위로 금지. 찔리게 쓸 것.
-- 이별 시기를 기준으로 전후 변화를 반드시 언급.
 - 표면 데이터 나열 금지. 심리적 의미를 읽어낼 것.
 - Do NOT infer gender. Use neutral wording.
-- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.`;
+- CRITICAL: Respond with ONLY valid JSON. 절대로 \`\`\`json 이나 \`\`\` 로 감싸지 마라.
+- analysisMode가 "current_only"면 이별 전후 비교 표현 금지. 현재 피드 성향만으로 분석.
+- analysisMode가 "before_after_comparison"이면 전후 변화 비교 가능하되 데이터 적으면 신중하게.`;
 
 async function callClaudePremium(
   apiKey: string,
@@ -501,14 +554,10 @@ async function callClaudePremium(
   breakupYear?: number,
   breakupMonth?: number,
 ): Promise<Record<string, string> | null> {
-  const myPayload = compactBundleForPrompt(myBundle, 15);
-  const theirPayload = compactBundleForPrompt(theirBundle, 15);
+  const myPayload = compactBundleForPrompt(myBundle, 15, breakupYear, breakupMonth);
+  const theirPayload = compactBundleForPrompt(theirBundle, 15, breakupYear, breakupMonth);
 
-  const breakupLine = breakupYear && breakupMonth
-    ? `Breakup date: ${breakupYear}년 ${breakupMonth}월. 게시물 timestamp를 이 날짜와 비교해서 이별 전후 변화를 분석할 것.\n\n`
-    : "";
-
-  const userBlock = `${breakupLine}MY_ACCOUNT:
+  const userBlock = `MY_ACCOUNT:
 ${JSON.stringify(myPayload)}
 
 THEIR_ACCOUNT:
